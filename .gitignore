@@ -146,6 +146,8 @@ credentials.json
 api_keys.dart
 keys.dart
 secrets.dart
+assets/credentials/*.json
+genuine-flight-*.json
 
 # Firebase
 **/android/app/google-services.json
