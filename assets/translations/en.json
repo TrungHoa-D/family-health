@@ -1,0 +1,16 @@
+{
+  "error": {
+    "field_is_required": "Field is required"
+  },
+  "login": {
+    "get_started": "Get Started now",
+    "subtitle": "Create an account or log in to explore our app",
+    "sign_in_google": "Sign in with Google"
+  },
+  "home": {
+    "title": "Home",
+    "welcome": "Welcome",
+    "user": "User",
+    "logout": "Logout"
+  }
+}
