@@ -84,3 +84,4 @@ Nếu cần tạo UI mới, luôn ưu tiên sử dụng các Custom Widget sau t
 2. Tránh hỏi lại những quy tắc đã chốt trong này.
 3. Không làm giả/sử dụng "placeholders" bừa bãi khi xử lý UI (ví dụ màu đỏ/xanh lá chói mắt để test layout). Phải dùng token từ `AppColors`. Giao diện phải mang tính Aesthetics đẹp mắt.
 4. Khi sửa nhiều file hoặc thêm lib mới, nên cập nhật docs/AI.md nếu cần thiết lập pattern mới.
+5. **Localization Bắt Buộc**: Bất kỳ đoạn text nào hiển thị trên UI đều **TUYỆT ĐỐI KHÔNG ĐƯỢC HARDCODE**. Phải tạo key đồng thời trong `assets/translations/en.json` và `vi.json`, sau đó sử dụng extension `.tr()` để hiển thị.

@@ -3,14 +3,22 @@
     "field_is_required": "Trường bắt buộc"
   },
   "login": {
-    "get_started": "Bắt đầu ngay",
-    "subtitle": "Tạo tài khoản hoặc đăng nhập để khám phá ứng dụng",
-    "sign_in_google": "Đăng nhập bằng Google"
+    "title": "Đăng nhập",
+    "welcome": "Chào mừng bạn",
+    "description": "Quản lý sức khỏe cả nhà, mọi lúc mọi nơi cùng Family Health",
+    "sign_in_google": "Đăng nhập bằng Google",
+    "disclaimer": "Bằng việc tiếp tục, bạn đồng ý với ",
+    "terms": "Điều khoản sử dụng"
   },
   "home": {
     "title": "Trang chủ",
     "welcome": "Xin chào",
     "user": "Người dùng",
     "logout": "Đăng xuất"
+  },
+  "splash": {
+    "title": "Family Health",
+    "subtitle": "Quản lý Y tế Gia đình",
+    "footer": "CLINICAL CONCIERGE • PREMIUM QUALITY"
   }
 }

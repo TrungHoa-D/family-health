@@ -6,6 +6,7 @@ import 'package:family_health/presentation/resources/styles.dart';
 import 'package:family_health/presentation/view/widgets/app_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import 'splash_cubit.dart';
 
@@ -68,9 +69,9 @@ class SplashPage extends BaseCubitPage<SplashCubit, SplashState> {
               const SizedBox(height: AppSpacing.lg),
 
               // App Title
-              const Text(
-                'Family Health',
-                style: TextStyle(
+              Text(
+                'splash.title'.tr(),
+                style: const TextStyle(
                   fontFamily: 'Inter',
                   fontSize: 32,
                   fontWeight: FontWeight.w700,
@@ -82,9 +83,9 @@ class SplashPage extends BaseCubitPage<SplashCubit, SplashState> {
               const SizedBox(height: AppSpacing.sm),
 
               // App Subtitle
-              const Text(
-                'Quản lý Y tế Gia đình',
-                style: TextStyle(
+              Text(
+                'splash.subtitle'.tr(),
+                style: const TextStyle(
                   fontFamily: 'Inter',
                   fontSize: 18,
                   fontWeight: FontWeight.w400,
@@ -100,7 +101,7 @@ class SplashPage extends BaseCubitPage<SplashCubit, SplashState> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'CLINICAL CONCIERGE • PREMIUM QUALITY',
+                    'splash.footer'.tr(),
                     style: AppStyles.labelSmall.copyWith(
                       color: AppColors.white.withValues(alpha: 0.7),
                       letterSpacing: 2.0,

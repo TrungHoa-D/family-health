@@ -3,14 +3,22 @@
     "field_is_required": "Field is required"
   },
   "login": {
-    "get_started": "Get Started now",
-    "subtitle": "Create an account or log in to explore our app",
-    "sign_in_google": "Sign in with Google"
+    "title": "Log in",
+    "welcome": "Welcome",
+    "description": "Family health management, anytime, anywhere with Family Health",
+    "sign_in_google": "Sign in with Google",
+    "disclaimer": "By continuing, you agree to the ",
+    "terms": "Terms of Use"
   },
   "home": {
     "title": "Home",
     "welcome": "Welcome",
     "user": "User",
     "logout": "Logout"
+  },
+  "splash": {
+    "title": "Family Health",
+    "subtitle": "Family Health Management",
+    "footer": "CLINICAL CONCIERGE • PREMIUM QUALITY"
   }
 }
