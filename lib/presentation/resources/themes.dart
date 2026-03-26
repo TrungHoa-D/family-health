@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:family_health/gen/fonts.gen.dart';
+import 'package:family_health/presentation/resources/app_spacing.dart';
 import 'package:family_health/presentation/resources/styles.dart';
 import 'package:family_health/shared/extension/theme_data.dart';
+import 'package:flutter/material.dart';
 
 import 'colors.dart';
 import 'theme_data.dart';
@@ -9,109 +10,166 @@ import 'theme_data.dart';
 const kDefaultPaddingLabelTabBar = 8.0;
 
 abstract class AppTheme {
-  static final InputBorder _defaultOutlineInputBorder = OutlineInputBorder(
-    borderSide: const BorderSide(color: AppColors.pattensBlue, width: 1),
-    borderRadius: BorderRadius.circular(12),
+  // ─── Input border (no border by default) ─────────
+  static final InputBorder _defaultInputBorder = OutlineInputBorder(
+    borderSide: BorderSide.none,
+    borderRadius: BorderRadius.circular(AppSpacing.radiusInput),
+  );
+
+  static final InputBorder _focusedInputBorder = OutlineInputBorder(
+    borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+    borderRadius: BorderRadius.circular(AppSpacing.radiusInput),
+  );
+
+  static final InputBorder _errorInputBorder = OutlineInputBorder(
+    borderSide: const BorderSide(color: AppColors.error, width: 1.5),
+    borderRadius: BorderRadius.circular(AppSpacing.radiusInput),
   );
 
   static const _dividerTheme = DividerThemeData(
     space: 0,
     thickness: 1,
-    color: AppColors.pattensBlue,
+    color: AppColors.border,
   );
 
   static ThemeData get lightTheme {
     return ThemeData(
-      fontFamily: FontFamily.googleSans,
-      useMaterial3: false,
+      fontFamily: FontFamily.inter,
+      useMaterial3: true,
       appBarTheme: AppBarTheme(
-        color: AppColors.white,
-        titleTextStyle: AppStyles.title.copyWith(color: AppColors.nightRider),
-        shadowColor: AppColors.gray20,
-        elevation: 20,
-        iconTheme: const IconThemeData(color: AppColors.nightRider),
+        color: AppColors.background,
+        titleTextStyle:
+            AppStyles.titleLarge.copyWith(color: AppColors.textPrimary),
+        shadowColor: Colors.transparent,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        iconTheme: const IconThemeData(
+          color: AppColors.textPrimary,
+          size: AppSpacing.iconStandard,
+        ),
       ),
       scrollbarTheme: ScrollbarThemeData(
         thickness: WidgetStateProperty.all(6.0),
         radius: const Radius.circular(3),
         minThumbLength: 90,
-        thumbColor: WidgetStateProperty.all(AppColors.pattensBlue),
+        thumbColor: WidgetStateProperty.all(AppColors.border),
       ),
       colorScheme: const ColorScheme.light(
-        surface: AppColors.white,
-        primary: AppColors.denim,
+        surface: AppColors.background,
+        primary: AppColors.primary,
+        error: AppColors.error,
+        onPrimary: AppColors.white,
+        onSurface: AppColors.textPrimary,
       ),
       inputDecorationTheme: InputDecorationTheme(
-        border: _defaultOutlineInputBorder,
-        focusedErrorBorder: _defaultOutlineInputBorder,
-        errorBorder: _defaultOutlineInputBorder,
-        disabledBorder: _defaultOutlineInputBorder,
-        enabledBorder: _defaultOutlineInputBorder,
-        focusedBorder: _defaultOutlineInputBorder,
-        hintStyle: AppStyles.primary.copyWith(color: AppColors.nobel),
-        labelStyle: AppStyles.primary.copyWith(color: AppColors.nightRider),
-        errorStyle: AppStyles.primary.copyWith(color: AppColors.sunsetOrange),
-        suffixStyle: AppStyles.primary.copyWith(color: AppColors.nobel),
-        iconColor: AppColors.atlantis,
-        suffixIconColor: AppColors.atlantis,
-        prefixIconColor: AppColors.atlantis,
+        border: _defaultInputBorder,
+        focusedErrorBorder: _errorInputBorder,
+        errorBorder: _errorInputBorder,
+        disabledBorder: _defaultInputBorder,
+        enabledBorder: _defaultInputBorder,
+        focusedBorder: _focusedInputBorder,
+        hintStyle: AppStyles.bodyLarge.copyWith(color: AppColors.textSecondary),
+        labelStyle:
+            AppStyles.bodySmall.copyWith(color: AppColors.textSecondary),
+        errorStyle: AppStyles.labelSmall.copyWith(color: AppColors.error),
+        suffixStyle:
+            AppStyles.bodySmall.copyWith(color: AppColors.textSecondary),
+        iconColor: AppColors.textSecondary,
+        suffixIconColor: AppColors.textSecondary,
+        prefixIconColor: AppColors.textSecondary,
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 11,
+          horizontal: AppSpacing.md,
+          vertical: 14,
         ),
         isDense: true,
         filled: true,
+        fillColor: AppColors.surface,
       ),
       scaffoldBackgroundColor: AppColors.background,
-      iconTheme: const IconThemeData(color: AppColors.atlantis),
-      primaryIconTheme: const IconThemeData(color: AppColors.atlantis),
+      iconTheme: const IconThemeData(
+        color: AppColors.textSecondary,
+        size: AppSpacing.iconStandard,
+      ),
+      primaryIconTheme: const IconThemeData(
+        color: AppColors.textSecondary,
+        size: AppSpacing.iconStandard,
+      ),
       dividerTheme: _dividerTheme,
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: AppColors.denim,
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.white,
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(28),
+        ),
       ),
       tabBarTheme: TabBarThemeData(
-        labelStyle: AppStyles.highlightsBold,
-        unselectedLabelStyle: AppStyles.highlightsBold.copyWith(
+        labelStyle: AppStyles.labelMedium,
+        unselectedLabelStyle: AppStyles.labelMedium.copyWith(
           fontWeight: FontWeight.normal,
         ),
-        labelColor: AppColors.denim,
-        unselectedLabelColor: AppColors.atlantis,
+        labelColor: AppColors.primary,
+        unselectedLabelColor: AppColors.textSecondary,
         indicatorSize: TabBarIndicatorSize.tab,
         labelPadding: const EdgeInsets.symmetric(
           horizontal: kDefaultPaddingLabelTabBar,
         ),
       ),
+      cardTheme: CardThemeData(
+        color: AppColors.white,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppSpacing.radiusCard),
+        ),
+      ),
+      chipTheme: ChipThemeData(
+        backgroundColor: AppColors.surface,
+        selectedColor: AppColors.primary,
+        labelStyle: AppStyles.labelMedium,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppSpacing.radiusChip),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+      ),
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        backgroundColor: AppColors.white,
+        selectedItemColor: AppColors.primary,
+        unselectedItemColor: AppColors.textSecondary,
+        selectedLabelStyle: AppStyles.bottomNavigation,
+        unselectedLabelStyle: AppStyles.bottomNavigation,
+        type: BottomNavigationBarType.fixed,
+      ),
     )..addOwn(
         Brightness.light,
         AppThemeData(
           textTheme: AppTextTheme(
-            h1: AppStyles.h1,
-            h2: AppStyles.h2,
-            h3: AppStyles.h3,
-            primary: AppStyles.primary,
-            medium: AppStyles.medium,
-            small: AppStyles.small,
-            highlightsMedium: AppStyles.highlightsMedium,
-            highlightsBold: AppStyles.highlightsBold,
-            button: AppStyles.button,
-            title: AppStyles.title,
-            header: AppStyles.header,
+            h1: AppStyles.displayLarge,
+            h2: AppStyles.headlineMedium,
+            h3: AppStyles.titleSmall,
+            primary: AppStyles.bodySmall,
+            medium: AppStyles.bodyLarge,
+            small: AppStyles.labelSmall,
+            highlightsMedium: AppStyles.labelMedium,
+            highlightsBold: AppStyles.labelMedium,
+            button: AppStyles.labelLarge,
+            title: AppStyles.titleSmall,
+            header: AppStyles.titleMedium,
           ),
           colorSchema: AppColorSchema(
-            primary: AppColors.denim,
-            mainText: AppColors.nightRider,
-            subText: AppColors.atlantis,
+            primary: AppColors.primary,
+            mainText: AppColors.textPrimary,
+            subText: AppColors.textSecondary,
             whiteText: AppColors.white,
-            disableText: AppColors.nobel,
-            border: AppColors.pattensBlue,
-            background: AppColors.white,
-            secondary1: AppColors.pigmentGreen,
-            secondary2: AppColors.sunsetOrange,
-            secondary3: AppColors.supernova,
-            secondary4: AppColors.gorse,
-            barrierColor: AppColors.black80,
-            badgeColor: AppColors.coralRed,
-            title2: AppColors.gray76,
+            disableText: AppColors.textSecondary,
+            border: AppColors.border,
+            background: AppColors.background,
+            secondary1: AppColors.success,
+            secondary2: AppColors.error,
+            secondary3: AppColors.warning,
+            secondary4: AppColors.secondary,
+            barrierColor: AppColors.black.withValues(alpha: 0.5),
+            badgeColor: AppColors.error,
+            title2: AppColors.textSecondary,
           ),
         ),
       );

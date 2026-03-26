@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:family_health/gen/assets.gen.dart';
 import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/shared/extension/context.dart';
+import 'package:flutter/material.dart';
 
 enum CheckBoxSize {
   normal(22.0),
@@ -103,11 +103,11 @@ class AppCheckBox extends StatelessWidget {
     final _checkedWidget = checkedWidget ?? Assets.icons.icCheck.svg();
     final _checkedColor = checkedColor ??
         context.themeOwn().colorSchema?.primary ??
-        AppColors.denim;
+        AppColors.primary;
     final _disabledColor = disabledColor ?? Theme.of(context).disabledColor;
     final _borderColor = borderColor ??
         context.themeOwn().colorSchema?.border ??
-        AppColors.pattensBlue;
+        AppColors.border;
 
     if (enable)
       return GestureDetector(

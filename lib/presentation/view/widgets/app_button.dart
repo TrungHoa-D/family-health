@@ -16,7 +16,7 @@ class AppButton extends StatelessWidget {
     this.backgroundColor = Colors.transparent,
     this.prefixIcon,
     this.suffixIcon,
-    this.borderRadius = 6,
+    this.borderRadius = 24,
     this.titleStyle = const TextStyle(color: AppColors.white),
     required this.onPressed,
     this.borderColor,
@@ -33,6 +33,13 @@ class AppButton extends StatelessWidget {
     double borderRadius,
     Widget? icon,
   }) = _AppButtonPrimary;
+
+  factory AppButton.simplified({
+    bool enable,
+    required String title,
+    required VoidCallback onPressed,
+    Widget? icon,
+  }) = _AppButtonSimplified;
 
   factory AppButton.outline({
     required String title,
@@ -114,7 +121,7 @@ class _AppButtonPrimary extends AppButton {
     required String title,
     TextStyle? titleStyle,
     required super.onPressed,
-    double borderRadius = 12,
+    double borderRadius = 24,
     Color? backgroundColor,
     bool enable = true,
     Widget? icon,
@@ -125,8 +132,8 @@ class _AppButtonPrimary extends AppButton {
             titleStyle: titleStyle,
           ),
           enable: enable,
-          height: 40,
-          backgroundColor: backgroundColor ?? AppColors.denim,
+          height: 48,
+          backgroundColor: backgroundColor ?? AppColors.primary,
           minWidth: double.infinity,
           borderRadius: borderRadius,
         );
@@ -160,6 +167,22 @@ class _AppButtonPrimaryChild extends StatelessWidget {
   }
 }
 
+class _AppButtonSimplified extends AppButton {
+  _AppButtonSimplified({
+    required String title,
+    required super.onPressed,
+    bool enable = true,
+    Widget? icon,
+  }) : super(
+          child: _AppButtonPrimaryChild(title: title, icon: icon),
+          enable: enable,
+          height: 72,
+          backgroundColor: AppColors.primary,
+          minWidth: double.infinity,
+          borderRadius: 16,
+        );
+}
+
 class _AppButtonMini extends AppButton {
   _AppButtonMini({
     required String title,
@@ -168,8 +191,8 @@ class _AppButtonMini extends AppButton {
   }) : super(
           child: _AppButtonMiniChild(title: title),
           onPressed: onPressed,
-          borderRadius: 6,
-          backgroundColor: AppColors.denim,
+          borderRadius: 24,
+          backgroundColor: AppColors.primary,
           padding: const EdgeInsets.symmetric(horizontal: 12),
           height: 34,
           enable: enable,
@@ -217,9 +240,9 @@ class _AppButtonOutline extends AppButton {
   }) : super(
           child: _AppButtonOutlineChild(title: title),
           backgroundColor: Colors.transparent,
-          borderColor: AppColors.pattensBlue,
-          borderRadius: 12,
-          height: 40,
+          borderColor: AppColors.border,
+          borderRadius: 24,
+          height: 48,
           minWidth: double.infinity,
         );
 }

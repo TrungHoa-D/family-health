@@ -53,7 +53,7 @@ class HomePage extends BaseCubitPage<HomeCubit, HomeState> {
                     backgroundImage: user?.photoUrl != null
                         ? NetworkImage(user!.photoUrl!)
                         : null,
-                    backgroundColor: AppColors.pattensBlue,
+                    backgroundColor: AppColors.surface,
                     child: user?.photoUrl == null
                         ? Icon(
                             Icons.person,

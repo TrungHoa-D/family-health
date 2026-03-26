@@ -37,7 +37,7 @@ class AppBottomNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _unSelectedTextStyle = unSelectedTextStyle ??
-        AppStyles.bottomNavigation.copyWith(color: AppColors.suvaGrey);
+        AppStyles.bottomNavigation.copyWith(color: AppColors.textSecondary);
     final _selectedTextStyle = selectedTextStyle ??
         _unSelectedTextStyle.copyWith(
           fontWeight: FontWeight.w500,

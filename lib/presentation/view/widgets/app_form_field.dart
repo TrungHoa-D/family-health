@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/shared/extension/context.dart';
 import 'package:family_health/shared/utils/decimal_text_input_formatter.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class AppFormField extends StatefulWidget {
   const AppFormField({
@@ -72,14 +73,14 @@ class _AppFormFieldState extends State<AppFormField> {
     final _decoration = (widget.decoration ?? const InputDecoration())
         .applyDefaults(Theme.of(context).inputDecorationTheme);
     final fillColor = widget.enabled
-        ? Colors.transparent
+        ? AppColors.surface
         : context.themeOwn().colorSchema?.border;
 
     final errorText = widget.errorText ?? _decoration.errorText;
 
-    final _inputFormatter =  widget.inputFormatters ?? [];
+    final _inputFormatter = widget.inputFormatters ?? [];
 
-    if (widget.keyboardType == TextInputType.number ) {
+    if (widget.keyboardType == TextInputType.number) {
       _inputFormatter.add(DecimalTextInputFormatter());
     }
 
@@ -87,7 +88,7 @@ class _AppFormFieldState extends State<AppFormField> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          height: widget.maxLine == 1 ? 40 : 80,
+          height: widget.maxLine == 1 ? 52 : 92,
           child: TextFormField(
             maxLength: widget.maxLength,
             enabled: widget.enabled,
@@ -101,7 +102,9 @@ class _AppFormFieldState extends State<AppFormField> {
             inputFormatters: _inputFormatter,
             style: context.themeOwn().textTheme?.highlightsMedium,
             decoration: InputDecoration(
-              counterStyle: const TextStyle(height: double.minPositive,),
+              counterStyle: const TextStyle(
+                height: double.minPositive,
+              ),
               counterText: '',
               suffixStyle: _decoration.suffixStyle,
               suffixIconConstraints:
