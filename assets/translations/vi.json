@@ -13,6 +13,8 @@
   "home": {
     "title": "Trang chủ",
     "welcome": "Xin chào",
+    "other": "Khác",
+    "enter_other_disease": "Nhập tên bệnh khác...",
     "user": "Người dùng",
     "logout": "Đăng xuất"
   },
@@ -20,5 +22,28 @@
     "title": "Family Health",
     "subtitle": "Quản lý Y tế Gia đình",
     "footer": "CLINICAL CONCIERGE • PREMIUM QUALITY"
+  },
+  "setup_health_profile": {
+    "title": "Thiết lập Hồ sơ Sức khỏe",
+    "subtitle": "Cung cấp thông tin cơ bản để chúng tôi hỗ trợ bạn tốt nhất",
+    "height": "Chiều cao",
+    "weight": "Cân nặng",
+    "blood_type": "Nhóm máu",
+    "medical_history": "Tiền sử bệnh",
+    "select_all_applicable": "Chọn tất cả những gì phù hợp",
+    "diabetes": "Tiểu đường",
+    "blood_pressure": "Huyết áp",
+    "cardiovascular": "Tim mạch",
+    "allergies": "Dị ứng",
+    "asthma": "Hen suyễn",
+    "stomach": "Dạ dày",
+    "add_other_disease": "Thêm bệnh khác",
+    "current_risk_level": "Mức độ rủi ro hiện tại",
+    "based_on_provided_info": "Dựa trên thông tin đã cung cấp",
+    "normal": "Bình thường",
+    "complete": "Hoàn tất",
+    "update_later": "Để sau, tôi sẽ cập nhật sau",
+    "data_security": "Bảo mật dữ liệu 100%",
+    "data_security_desc": "Thông tin y tế của bạn được mã hóa đầu cuối và chỉ dùng cho mục đích chẩn đoán cá nhân."
   }
 }

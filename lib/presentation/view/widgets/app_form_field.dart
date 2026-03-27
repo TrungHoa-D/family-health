@@ -62,8 +62,15 @@ class _AppFormFieldState extends State<AppFormField> {
 
   @override
   void didUpdateWidget(covariant AppFormField oldWidget) {
-    if (_controller.text != widget.value) {
-      _controller.text = widget.value ?? '';
+    if (widget.value != null &&
+        widget.value != oldWidget.value &&
+        _controller.text != widget.value) {
+      final oldSelection = _controller.selection;
+      _controller.text = widget.value!;
+      if (oldSelection.baseOffset >= 0 &&
+          oldSelection.baseOffset <= _controller.text.length) {
+        _controller.selection = oldSelection;
+      }
     }
     super.didUpdateWidget(oldWidget);
   }

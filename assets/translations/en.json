@@ -13,6 +13,8 @@
   "home": {
     "title": "Home",
     "welcome": "Welcome",
+    "other": "Other",
+    "enter_other_disease": "Enter other disease name...",
     "user": "User",
     "logout": "Logout"
   },
@@ -20,5 +22,28 @@
     "title": "Family Health",
     "subtitle": "Family Health Management",
     "footer": "CLINICAL CONCIERGE • PREMIUM QUALITY"
+  },
+  "setup_health_profile": {
+    "title": "Setup Health Profile",
+    "subtitle": "Provide basic information so we can best support you",
+    "height": "Height",
+    "weight": "Weight",
+    "blood_type": "Blood Type",
+    "medical_history": "Medical History",
+    "select_all_applicable": "Select all that apply",
+    "diabetes": "Diabetes",
+    "blood_pressure": "Blood Pressure",
+    "cardiovascular": "Cardiovascular",
+    "allergies": "Allergies",
+    "asthma": "Asthma",
+    "stomach": "Stomach",
+    "add_other_disease": "Add other disease",
+    "current_risk_level": "Current risk level",
+    "based_on_provided_info": "Based on provided information",
+    "normal": "Normal",
+    "complete": "Complete",
+    "update_later": "I'll update later",
+    "data_security": "100% Data Security",
+    "data_security_desc": "Your medical information is end-to-end encrypted and used only for personal diagnostic purposes."
   }
 }
