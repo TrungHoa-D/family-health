@@ -25,6 +25,8 @@ class AppFormField extends StatefulWidget {
     this.value,
     this.hintText,
     this.errorText,
+    this.textAlign = TextAlign.start,
+    this.textCapitalization = TextCapitalization.none,
   }) : super(key: key);
 
   final String? value;
@@ -45,6 +47,8 @@ class AppFormField extends StatefulWidget {
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onFieldSubmitted;
   final String? Function(String?)? validator;
+  final TextAlign textAlign;
+  final TextCapitalization textCapitalization;
 
   @override
   State<AppFormField> createState() => _AppFormFieldState();
@@ -101,6 +105,8 @@ class _AppFormFieldState extends State<AppFormField> {
             enabled: widget.enabled,
             readOnly: widget.readOnly,
             focusNode: widget.focusNode,
+            textAlign: widget.textAlign,
+            textCapitalization: widget.textCapitalization,
             keyboardType: widget.keyboardType,
             maxLines: widget.maxLine,
             obscureText: widget.obscureText,

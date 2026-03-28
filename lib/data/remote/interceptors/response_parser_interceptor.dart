@@ -12,9 +12,7 @@ class ResponseParserInterceptor extends Interceptor {
       try {
         final Map valueMap = response.data;
         final result = valueMap['result'];
-        if (result != null) {
-
-        }
+        if (result != null) {}
       } catch (error) {
         return handler.reject(
           DioException(

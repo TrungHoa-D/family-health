@@ -3,9 +3,6 @@ import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_logger/easy_logger.dart';
-import 'package:family_health/presentation/router/router.dart';
-import 'package:family_health/shared/utils/bloc_observer.dart';
-import 'package:family_health/shared/utils/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +13,9 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'app.dart';
 import 'di/di.dart';
 import 'firebase_options.dart';
+import 'presentation/router/router.dart';
+import 'shared/utils/bloc_observer.dart';
+import 'shared/utils/logger.dart';
 
 Future main() async {
   runZonedGuarded(() async {
@@ -54,7 +54,6 @@ Future main() async {
     if (isLoggedIn) {
       appRouter.replaceAll([const HomeRoute()]);
     }
-
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);

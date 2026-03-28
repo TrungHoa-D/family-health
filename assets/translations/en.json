@@ -38,6 +38,7 @@
     "asthma": "Asthma",
     "stomach": "Stomach",
     "add_other_disease": "Add other disease",
+    "enter_other_disease": "Enter other disease name...",
     "current_risk_level": "Current risk level",
     "based_on_provided_info": "Based on provided information",
     "normal": "Normal",
@@ -45,5 +46,29 @@
     "update_later": "I'll update later",
     "data_security": "100% Data Security",
     "data_security_desc": "Your medical information is end-to-end encrypted and used only for personal diagnostic purposes."
+  },
+  "family_setup": {
+    "title": "Family Setup",
+    "start_journey": "Start your journey",
+    "journey_desc": "Choose how you want to connect with your loved ones.",
+    "create_family": "Create new family group",
+    "create_family_desc": "You will be the Admin and manage members.",
+    "or": "or",
+    "join_family": "Join existing family",
+    "join_family_desc": "Use an invite code from a family member.",
+    "invite_code_hint": "6-character code",
+    "invite_code_hint_desc": "Invite code contains 6 letters or numbers.",
+    "continue": "Continue",
+    "need_help": "Need help?"
+  },
+  "interface_mode": {
+    "title": "Select Interface",
+    "choose": "Choose interface mode",
+    "choose_desc": "You can change this later in Settings",
+    "standard": "Standard Mode",
+    "standard_desc": "Full features, for caregivers",
+    "simplified": "Simplified Mode",
+    "simplified_desc": "Simple interface, large text, for elderly",
+    "continue": "Continue"
   }
 }

@@ -613,7 +613,7 @@ class SetupHealthProfilePage
               onPressed: () {
                 final cubit = context.read<SetupHealthProfileCubit>();
                 if (cubit.submitForm()) {
-                  context.router.replaceAll([const HomeRoute()]);
+                  context.router.push(const FamilySetupRoute());
                 }
               },
               style: ElevatedButton.styleFrom(

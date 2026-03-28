@@ -43,8 +43,10 @@ extension ListExtensions<E> on List<E> {
     return this;
   }
 
-  List<E> difference(List<E> list,
-      bool Function(E element1, E element2) equalCondition,) {
+  List<E> difference(
+    List<E> list,
+    bool Function(E element1, E element2) equalCondition,
+  ) {
     final newList = <E>[];
     forEach((e) {
       if (!list.any((element) => equalCondition(e, element))) {

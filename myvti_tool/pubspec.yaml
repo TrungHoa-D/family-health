@@ -7,3 +7,4 @@ environment:
 
 dependencies:
   prompts: ^2.0.0
+  path: ^1.9.0

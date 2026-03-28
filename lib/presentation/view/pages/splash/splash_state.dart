@@ -22,4 +22,3 @@ class SplashState with _$SplashState implements BaseCubitState {
     );
   }
 }
-

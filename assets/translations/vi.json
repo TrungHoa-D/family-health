@@ -38,6 +38,7 @@
     "asthma": "Hen suyễn",
     "stomach": "Dạ dày",
     "add_other_disease": "Thêm bệnh khác",
+    "enter_other_disease": "Nhập tên bệnh khác...",
     "current_risk_level": "Mức độ rủi ro hiện tại",
     "based_on_provided_info": "Dựa trên thông tin đã cung cấp",
     "normal": "Bình thường",
@@ -45,5 +46,29 @@
     "update_later": "Để sau, tôi sẽ cập nhật sau",
     "data_security": "Bảo mật dữ liệu 100%",
     "data_security_desc": "Thông tin y tế của bạn được mã hóa đầu cuối và chỉ dùng cho mục đích chẩn đoán cá nhân."
+  },
+  "family_setup": {
+    "title": "Thiết lập Gia đình",
+    "start_journey": "Bắt đầu hành trình",
+    "journey_desc": "Chọn cách bạn muốn kết nối với những người thân yêu.",
+    "create_family": "Tạo nhóm gia đình mới",
+    "create_family_desc": "Bạn sẽ là Quản trị viên của nhóm và có quyền quản lý thành viên.",
+    "or": "hoặc",
+    "join_family": "Tham gia gia đình có sẵn",
+    "join_family_desc": "Sử dụng mã mời từ thành viên gia đình khác.",
+    "invite_code_hint": "Mã 6 ký tự",
+    "invite_code_hint_desc": "Mã mời gồm 6 chữ cái hoặc số.",
+    "continue": "Tiếp tục",
+    "need_help": "Cần trợ giúp?"
+  },
+  "interface_mode": {
+    "title": "Chọn giao diện",
+    "choose": "Chọn chế độ giao diện",
+    "choose_desc": "Bạn có thể thay đổi sau trong phần Cài đặt",
+    "standard": "Chế độ Tiêu chuẩn",
+    "standard_desc": "Đầy đủ tính năng, dành cho người chăm sóc",
+    "simplified": "Chế độ Đơn giản",
+    "simplified_desc": "Giao diện đơn giản, chữ to, dành cho người cao tuổi",
+    "continue": "Tiếp tục"
   }
 }

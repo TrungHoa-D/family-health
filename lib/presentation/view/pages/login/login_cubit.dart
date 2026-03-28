@@ -26,19 +26,11 @@ class LoginCubit extends BaseCubit<LoginState> {
   Future<void> signInWithGoogle(BuildContext context) async {
     emit(state.copyWith(isSigningIn: true));
     try {
-      final UserEntity user =
-          await _googleSignInUseCase.call(params: null);
+      final UserEntity user = await _googleSignInUseCase.call(params: null);
       emit(state.copyWith(isSigningIn: false, user: user));
 
       if (context.mounted) {
-        // Tạm thời luôn trả về true để test (coi như chưa có hồ sơ sức khỏe)
-        // ignore: dead_code
-        const bool isMissingHealthProfile = true;
-        if (isMissingHealthProfile) {
-          context.router.replaceAll([const SetupHealthProfileRoute()]);
-        } else {
-          context.router.replaceAll([const HomeRoute()]);
-        }
+        context.router.replaceAll([const SetupHealthProfileRoute()]);
       }
     } catch (e) {
       logger.e('Google Sign-In failed: $e');
@@ -47,4 +39,3 @@ class LoginCubit extends BaseCubit<LoginState> {
     }
   }
 }
-
