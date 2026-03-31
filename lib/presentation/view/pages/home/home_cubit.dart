@@ -27,6 +27,10 @@ class HomeCubit extends BaseCubit<HomeState> {
     ));
   }
 
+  void changeTab(int index) {
+    emit(state.copyWith(currentTabIndex: index));
+  }
+
   Future<void> signOut() async {
     try {
       showLoading();

@@ -70,5 +70,12 @@
     "simplified": "Simplified Mode",
     "simplified_desc": "Simple interface, large text, for elderly",
     "continue": "Continue"
+  },
+  "bottom_nav": {
+    "home": "Home",
+    "meds": "Meds",
+    "events": "Events",
+    "chat": "Chat",
+    "settings": "Settings"
   }
 }

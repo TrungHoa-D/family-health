@@ -4,6 +4,7 @@ part of 'home_cubit.dart';
 class HomeState with _$HomeState implements BaseCubitState {
   const factory HomeState({
     @Default(PageStatus.Uninitialized) PageStatus pageStatus,
+    @Default(0) int currentTabIndex,
     String? pageErrorMessage,
     UserEntity? user,
   }) = _HomeState;

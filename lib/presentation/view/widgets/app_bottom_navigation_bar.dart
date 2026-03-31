@@ -131,20 +131,39 @@ class _Tile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkResponse(
+    final activeColor = AppColors.primary;
+    const inactiveColor = Color(0xFF94A3B8); // slate-400
+
+    return InkWell(
       onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: 8),
-          if (isSelected) item.selectedIcon else item.icon,
-          const SizedBox(height: 4),
-          Text(
-            item.label,
-            style: isSelected ? selectedTextStyle : unSelectedTextStyle,
-          ),
-          const SizedBox(height: 4),
-        ],
+      splashColor: activeColor.withValues(alpha: 0.1),
+      highlightColor: Colors.transparent,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconTheme(
+              data: IconThemeData(
+                color: isSelected ? activeColor : inactiveColor,
+                size: 24,
+              ),
+              child: isSelected ? item.selectedIcon : item.icon,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              item.label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: (isSelected ? selectedTextStyle : unSelectedTextStyle).copyWith(
+                color: isSelected ? activeColor : inactiveColor,
+                fontSize: 11,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

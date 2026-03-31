@@ -4,9 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit_page.dart';
 import 'package:family_health/presentation/resources/colors.dart';
+import 'package:family_health/presentation/resources/styles.dart';
 import 'package:family_health/presentation/router/router.dart';
+import 'package:family_health/presentation/view/widgets/app_bottom_navigation_bar.dart';
 import 'package:family_health/shared/extension/theme_data.dart';
 
+import '../dashboard/dashboard_page.dart';
+import '../meds/meds_page.dart';
+import '../events/events_page.dart';
+import '../chat/chat_page.dart';
+import '../settings/settings_page.dart';
 import 'home_cubit.dart';
 
 @RoutePage()
@@ -22,64 +29,94 @@ class HomePage extends BaseCubitPage<HomeCubit, HomeState> {
   @override
   Widget builder(BuildContext context) {
     final themeOwn = Theme.of(context).own();
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('home.title'.tr()),
-        actions: [
-          IconButton(
-            onPressed: () async {
-              await context.read<HomeCubit>().signOut();
-              if (context.mounted) {
-                context.router.replaceAll([const LoginRoute()]);
-              }
-            },
-            icon: const Icon(Icons.logout),
-            tooltip: 'home.logout'.tr(),
-          ),
-        ],
-      ),
-      body: BlocBuilder<HomeCubit, HomeState>(
-        builder: (context, state) {
-          final user = state.user;
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                spacing: 16,
-                children: [
-                  CircleAvatar(
-                    radius: 48,
-                    backgroundImage: user?.photoUrl != null
-                        ? NetworkImage(user!.photoUrl!)
-                        : null,
-                    backgroundColor: AppColors.surface,
-                    child: user?.photoUrl == null
-                        ? Icon(
-                            Icons.person,
-                            size: 48,
-                            color: themeOwn.colorSchema?.subText,
-                          )
-                        : null,
-                  ),
-                  Text(
-                    '${'home.welcome'.tr()}, ${user?.displayName ?? 'home.user'.tr()}!',
-                    style: themeOwn.textTheme?.h2,
-                    textAlign: TextAlign.center,
-                  ),
-                  if (user?.email != null)
-                    Text(
-                      user!.email!,
-                      style: themeOwn.textTheme?.primary?.copyWith(
-                        color: themeOwn.colorSchema?.subText,
-                      ),
-                    ),
-                ],
+    
+    return BlocBuilder<HomeCubit, HomeState>(
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(
+            leadingWidth: 56,
+            leading: Padding(
+              padding: const EdgeInsets.only(left: 16),
+              child: CircleAvatar(
+                radius: 20,
+                backgroundImage: state.user?.photoUrl != null
+                    ? NetworkImage(state.user!.photoUrl!)
+                    : null,
+                backgroundColor: AppColors.surface,
+                child: state.user?.photoUrl == null
+                    ? const Icon(Icons.person, size: 20)
+                    : null,
               ),
             ),
-          );
-        },
-      ),
+            title: Text(
+              'Vitalis Family',
+              style: AppStyles.titleLarge.copyWith(
+                color: Colors.blue[700],
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  // TODO: Emergency action
+                },
+                icon: const Icon(Icons.emergency, color: Colors.blue),
+              ),
+              const SizedBox(width: 8),
+            ],
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(1),
+              child: Divider(height: 1, color: Colors.grey[200]),
+            ),
+          ),
+          body: IndexedStack(
+            index: state.currentTabIndex,
+            children: const [
+              DashboardPage(),
+              MedsPage(),
+              EventsPage(),
+              ChatPage(),
+              SettingsPage(),
+            ],
+          ),
+          bottomNavigationBar: AppBottomNavigationBar(
+            currentIndex: state.currentTabIndex,
+            onTap: (index) => context.read<HomeCubit>().changeTab(index),
+            items: [
+              AppBottomNavigationItem(
+                label: 'bottom_nav.home'.tr(),
+                icon: const Icon(Icons.home_outlined),
+                selectedIcon: const Icon(Icons.home),
+                page: const HomeRoute(),
+              ),
+              AppBottomNavigationItem(
+                label: 'bottom_nav.meds'.tr(),
+                icon: const Icon(Icons.medication_outlined),
+                selectedIcon: const Icon(Icons.medication),
+                page: const HomeRoute(),
+              ),
+              AppBottomNavigationItem(
+                label: 'bottom_nav.events'.tr(),
+                icon: const Icon(Icons.calendar_month_outlined),
+                selectedIcon: const Icon(Icons.calendar_month),
+                page: const HomeRoute(),
+              ),
+              AppBottomNavigationItem(
+                label: 'bottom_nav.chat'.tr(),
+                icon: const Icon(Icons.forum_outlined),
+                selectedIcon: const Icon(Icons.forum),
+                page: const HomeRoute(),
+              ),
+              AppBottomNavigationItem(
+                label: 'bottom_nav.settings'.tr(),
+                icon: const Icon(Icons.settings_outlined),
+                selectedIcon: const Icon(Icons.settings),
+                page: const HomeRoute(),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

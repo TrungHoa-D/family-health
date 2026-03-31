@@ -70,5 +70,12 @@
     "simplified": "Chế độ Đơn giản",
     "simplified_desc": "Giao diện đơn giản, chữ to, dành cho người cao tuổi",
     "continue": "Tiếp tục"
+  },
+  "bottom_nav": {
+    "home": "Home",
+    "meds": "Meds",
+    "events": "Events",
+    "chat": "Chat",
+    "settings": "Settings"
   }
 }
