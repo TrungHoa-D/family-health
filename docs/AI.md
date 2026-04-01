@@ -45,6 +45,10 @@ Tất cả các con số liên quan đến margin, padding, height, radius phả
   - `radiusButton` (24px - dạng Capsule).
 - **Component Height**: `buttonHeight` (48dp), `buttonHeightSimplified` (72dp), `inputHeight` (52dp), `bottomNavHeight` (56dp).
 
+### D. Chống Overflow (Responsive Design)
+- **Luôn kiểm tra Overflow**: Mọi `Row` chứa `Text` dài hoặc nhiều component linh hoạt phải bọc con trong `Expanded` hoặc `Flexible`.
+- **Text Truncation**: Sử dụng `maxLines` và `overflow: TextOverflow.ellipsis` cho các nhãn có khả năng thay đổi độ dài theo ngôn ngữ.
+
 ---
 
 ## 🧩 3. Các Widget UI Chuẩn mực có sẵn
@@ -84,4 +88,4 @@ Nếu cần tạo UI mới, luôn ưu tiên sử dụng các Custom Widget sau t
 2. Tránh hỏi lại những quy tắc đã chốt trong này.
 3. Không làm giả/sử dụng "placeholders" bừa bãi khi xử lý UI (ví dụ màu đỏ/xanh lá chói mắt để test layout). Phải dùng token từ `AppColors`. Giao diện phải mang tính Aesthetics đẹp mắt.
 4. Khi sửa nhiều file hoặc thêm lib mới, nên cập nhật docs/AI.md nếu cần thiết lập pattern mới.
-5. **Localization Bắt Buộc**: Bất kỳ đoạn text nào hiển thị trên UI đều **TUYỆT ĐỐI KHÔNG ĐƯỢC HARDCODE**. Phải tạo key đồng thời trong `assets/translations/en.json` và `vi.json`, sau đó sử dụng extension `.tr()` để hiển thị.
+5. **Localization Bắt Buộc**: Bất kỳ đoạn text nào hiển thị trên UI đều **TUYỆT ĐỐI KHÔNG ĐƯỢC HARDCODE**. Phải tạo key đồng thời trong `assets/translations/en.json` và `vi.json`, sau đó sử dụng extension `.tr()` để hiển thị. **Lưu ý**: Luôn kiểm tra sự tồn tại của key trong cả 2 file trước khi chạy ứng dụng.

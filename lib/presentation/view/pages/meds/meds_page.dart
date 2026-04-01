@@ -1,27 +1,58 @@
-import 'package:easy_localization/easy_localization.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:family_health/shared/extension/theme_data.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:family_health/presentation/cubit_base/base_cubit_page.dart';
+import 'package:family_health/presentation/resources/colors.dart';
 
-class MedsPage extends StatelessWidget {
+import 'components/meds_filter_bar.dart';
+import 'components/meds_header.dart';
+import 'components/meds_list_section.dart';
+import 'components/meds_refill_section.dart';
+import 'meds_cubit.dart';
+
+@RoutePage()
+class MedsPage extends BaseCubitPage<MedsCubit, MedsState> {
   const MedsPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final themeOwn = Theme.of(context).own();
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.medication, size: 64, color: Colors.blue),
-          const SizedBox(height: 16),
-          Text(
-            'bottom_nav.meds'.tr(),
-            style: themeOwn.textTheme?.h2,
+  void onInitState(BuildContext context) {
+    super.onInitState(context);
+    context.read<MedsCubit>().loadData();
+  }
+
+  @override
+  Widget builder(BuildContext context) {
+    return BlocBuilder<MedsCubit, MedsState>(
+      builder: (context, state) {
+        return Scaffold(
+          backgroundColor: AppColors.background,
+          body: SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.only(bottom: 100), // Spacing for FAB and Nav
+              child: Column(
+                children: [
+                  const MedsHeader(),
+                  MedsFilterBar(
+                    selectedIndex: state.selectedFilterIndex,
+                    onSelected: (index) => context.read<MedsCubit>().changeFilter(index),
+                  ),
+                  MedsListSection(medications: state.medications),
+                  const SizedBox(height: 16),
+                  MedsRefillSection(refills: state.refills),
+                ],
+              ),
+            ),
           ),
-          const SizedBox(height: 8),
-          const Text('Placeholder for Meds management'),
-        ],
-      ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              // TODO: Add new medication
+            },
+            backgroundColor: AppColors.primary,
+            shape: const CircleBorder(),
+            child: const Icon(Icons.add, color: Colors.white, size: 30),
+          ),
+        );
+      },
     );
   }
 }

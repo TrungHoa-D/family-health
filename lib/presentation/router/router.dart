@@ -5,6 +5,8 @@ import 'package:family_health/presentation/view/pages/setup_health_profile/setup
 import 'package:family_health/presentation/view/pages/splash/splash_page.dart';
 import 'package:family_health/presentation/view/pages/family_setup/family_setup_page.dart';
 import 'package:family_health/presentation/view/pages/interface_mode_selection/interface_mode_selection_page.dart';
+import 'package:family_health/presentation/view/pages/dashboard/dashboard_page.dart';
+import 'package:family_health/presentation/view/pages/meds/meds_page.dart';
 
 part 'router.gr.dart';
 
@@ -23,5 +25,7 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: SetupHealthProfileRoute.page),
     AutoRoute(page: FamilySetupRoute.page),
     AutoRoute(page: InterfaceModeSelectionRoute.page),
+    AutoRoute(page: DashboardRoute.page),
+    AutoRoute(page: MedsRoute.page),
   ];
 }

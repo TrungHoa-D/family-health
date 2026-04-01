@@ -28,7 +28,7 @@
     "view_all": "Xem tất cả",
     "next_schedule": "Lịch trình kế tiếp",
     "hospital_fv": "Bệnh viện FV",
-    "checkup": "Khám sức khỏe",
+    "checkup": "Khám sức khỏe tổng quát",
     "father": "Bố",
     "mother": "Mẹ",
     "wife": "Vợ",
@@ -92,10 +92,25 @@
     "continue": "Tiếp tục"
   },
   "bottom_nav": {
-    "home": "Home",
-    "meds": "Meds",
-    "events": "Events",
-    "chat": "Chat",
-    "settings": "Settings"
+    "home": "Trang chủ",
+    "meds": "Tủ thuốc",
+    "events": "Sự kiện",
+    "chat": "Trò chuyện",
+    "settings": "Cài đặt"
+  },
+  "meds": {
+    "title": "Tủ thuốc",
+    "search_hint": "Tìm kiếm thuốc...",
+    "filter_all": "Tất cả",
+    "filter_blood_pressure": "Huyết áp",
+    "filter_diabetes": "Tiểu đường",
+    "filter_supplement": "Bổ sung",
+    "current_list_label": "DANH SÁCH THUỐC HIỆN TẠI",
+    "meds_count": "{} loại thuốc",
+    "member_label": "Thành viên: {}",
+    "detail_link": "Chi tiết",
+    "refill_label": "Cần mua thêm",
+    "remaining_pills": "Còn {} viên",
+    "order_now": "Đặt ngay"
   }
 }

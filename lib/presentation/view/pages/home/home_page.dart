@@ -8,7 +8,6 @@ import 'package:family_health/presentation/resources/styles.dart';
 import 'package:family_health/presentation/router/router.dart';
 import 'package:family_health/presentation/view/widgets/app_avatar.dart';
 import 'package:family_health/presentation/view/widgets/app_bottom_navigation_bar.dart';
-import 'package:family_health/shared/extension/theme_data.dart';
 
 import '../dashboard/dashboard_page.dart';
 import '../meds/meds_page.dart';
@@ -29,12 +28,10 @@ class HomePage extends BaseCubitPage<HomeCubit, HomeState> {
 
   @override
   Widget builder(BuildContext context) {
-    final themeOwn = Theme.of(context).own();
-    
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
         return Scaffold(
-          appBar: state.currentTabIndex == 0
+          appBar: (state.currentTabIndex == 0 || state.currentTabIndex == 1)
               ? null
               : AppBar(
                   leadingWidth: 56,
@@ -67,7 +64,7 @@ class HomePage extends BaseCubitPage<HomeCubit, HomeState> {
             index: state.currentTabIndex,
             children: [
               const DashboardPage().wrappedRoute(context),
-              const MedsPage(),
+              const MedsPage().wrappedRoute(context),
               const EventsPage(),
               const ChatPage(),
               const SettingsPage(),

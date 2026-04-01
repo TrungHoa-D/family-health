@@ -28,7 +28,7 @@
     "view_all": "View all",
     "next_schedule": "Next schedule",
     "hospital_fv": "FV Hospital",
-    "checkup": "Medical checkup",
+    "checkup": "General Checkup",
     "father": "Father",
     "mother": "Mother",
     "wife": "Wife",
@@ -97,5 +97,20 @@
     "events": "Events",
     "chat": "Chat",
     "settings": "Settings"
+  },
+  "meds": {
+    "title": "Medicine Cabinet",
+    "search_hint": "Search meds...",
+    "filter_all": "All",
+    "filter_blood_pressure": "Blood Pressure",
+    "filter_diabetes": "Diabetes",
+    "filter_supplement": "Supplement",
+    "current_list_label": "CURRENT MEDICATIONS",
+    "meds_count": "{} meds",
+    "member_label": "Member: {}",
+    "detail_link": "Details",
+    "refill_label": "Need Refill",
+    "remaining_pills": "{} pills left",
+    "order_now": "Order Now"
   }
 }
