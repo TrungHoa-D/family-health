@@ -6,6 +6,7 @@ import 'package:family_health/presentation/cubit_base/base_cubit_page.dart';
 import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
 import 'package:family_health/presentation/router/router.dart';
+import 'package:family_health/presentation/view/widgets/app_avatar.dart';
 import 'package:family_health/presentation/view/widgets/app_bottom_navigation_bar.dart';
 import 'package:family_health/shared/extension/theme_data.dart';
 
@@ -33,50 +34,43 @@ class HomePage extends BaseCubitPage<HomeCubit, HomeState> {
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
         return Scaffold(
-          appBar: AppBar(
-            leadingWidth: 56,
-            leading: Padding(
-              padding: const EdgeInsets.only(left: 16),
-              child: CircleAvatar(
-                radius: 20,
-                backgroundImage: state.user?.photoUrl != null
-                    ? NetworkImage(state.user!.photoUrl!)
-                    : null,
-                backgroundColor: AppColors.surface,
-                child: state.user?.photoUrl == null
-                    ? const Icon(Icons.person, size: 20)
-                    : null,
-              ),
-            ),
-            title: Text(
-              'Vitalis Family',
-              style: AppStyles.titleLarge.copyWith(
-                color: Colors.blue[700],
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-            actions: [
-              IconButton(
-                onPressed: () {
-                  // TODO: Emergency action
-                },
-                icon: const Icon(Icons.emergency, color: Colors.blue),
-              ),
-              const SizedBox(width: 8),
-            ],
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(1),
-              child: Divider(height: 1, color: Colors.grey[200]),
-            ),
-          ),
+          appBar: state.currentTabIndex == 0
+              ? null
+              : AppBar(
+                  leadingWidth: 56,
+                  leading: const Padding(
+                    padding: EdgeInsets.only(left: 16),
+                    child: AppAvatar.medium(),
+                  ),
+                  title: Text(
+                    'Vitalis Family',
+                    style: AppStyles.titleLarge.copyWith(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  actions: [
+                    IconButton(
+                      onPressed: () {
+                        // TODO: Emergency action
+                      },
+                      icon: const Icon(Icons.emergency, color: AppColors.primary),
+                    ),
+                    const SizedBox(width: 8),
+                  ],
+                  bottom: PreferredSize(
+                    preferredSize: const Size.fromHeight(1),
+                    child: Divider(height: 1, color: Colors.grey[200]),
+                  ),
+                ),
           body: IndexedStack(
             index: state.currentTabIndex,
-            children: const [
-              DashboardPage(),
-              MedsPage(),
-              EventsPage(),
-              ChatPage(),
-              SettingsPage(),
+            children: [
+              const DashboardPage().wrappedRoute(context),
+              const MedsPage(),
+              const EventsPage(),
+              const ChatPage(),
+              const SettingsPage(),
             ],
           ),
           bottomNavigationBar: AppBottomNavigationBar(

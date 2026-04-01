@@ -1,0 +1,131 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:family_health/presentation/resources/app_spacing.dart';
+import 'package:family_health/presentation/resources/colors.dart';
+import 'package:family_health/presentation/resources/styles.dart';
+import 'package:family_health/presentation/view/widgets/app_card.dart';
+import 'package:flutter/material.dart';
+
+class DashboardScheduleSection extends StatelessWidget {
+  final List<DashboardScheduleModel> schedules;
+
+  const DashboardScheduleSection({
+    super.key,
+    required this.schedules,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+          child: Row(
+            children: [
+              const Text('📅', style: TextStyle(fontSize: 20)),
+              const SizedBox(width: AppSpacing.sm),
+              Text(
+                'home.next_schedule'.tr(),
+                style: AppStyles.titleMedium.copyWith(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        ...schedules.map((schedule) => _ScheduleCard(schedule: schedule)),
+      ],
+    );
+  }
+}
+
+class DashboardScheduleModel {
+  final String title;
+  final String month;
+  final String day;
+  final String time;
+  final String location;
+  final VoidCallback? onTap;
+
+  DashboardScheduleModel({
+    required this.title,
+    required this.month,
+    required this.day,
+    required this.time,
+    required this.location,
+    this.onTap,
+  });
+}
+
+class _ScheduleCard extends StatelessWidget {
+  final DashboardScheduleModel schedule;
+
+  const _ScheduleCard({required this.schedule});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppCard(
+      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
+      padding: const EdgeInsets.all(AppSpacing.md),
+      backgroundColor: AppColors.primary.withValues(alpha:0.05),
+      hasBorder: true,
+      borderColor: AppColors.primary.withValues(alpha:0.1),
+      onPressed: schedule.onTap,
+      child: Row(
+        children: [
+          Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+              borderRadius: BorderRadius.circular(AppSpacing.radiusInput),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  schedule.month.toUpperCase(),
+                  style: AppStyles.labelSmall.copyWith(
+                    color: AppColors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  schedule.day,
+                  style: AppStyles.titleLarge.copyWith(
+                    color: AppColors.white,
+                    fontWeight: FontWeight.w900,
+                    height: 1,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  schedule.title,
+                  style: AppStyles.bodyLarge.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                Text(
+                  '${schedule.time} • ${schedule.location}',
+                  style: AppStyles.labelSmall.copyWith(
+                    color: AppColors.textSecondary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Icon(Icons.arrow_forward_ios, color: AppColors.primary, size: 16),
+        ],
+      ),
+    );
+  }
+}
