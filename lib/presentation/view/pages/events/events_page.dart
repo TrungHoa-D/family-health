@@ -33,7 +33,7 @@ class EventsView extends StatelessWidget {
         String monthYear = 'Tháng ${currentDate.month.toString().padLeft(2, '0')}, ${currentDate.year}';
 
         return Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: AppColors.surface,
           body: CustomScrollView(
             slivers: [
               // Header

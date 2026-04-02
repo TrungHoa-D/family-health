@@ -162,5 +162,22 @@
     "online_status": "{} THÀNH VIÊN TRỰC TUYẾN",
     "input_placeholder": "Nhập tin nhắn...",
     "details": "Chi tiết"
+  },
+  "settings": {
+    "edit_profile": "Chỉnh sửa hồ sơ",
+    "medical_records": "HỒ SƠ Y TẾ",
+    "blood_type": "NHÓM MÁU",
+    "height": "CHIỀU CAO",
+    "weight": "CÂN NẶNG",
+    "routines": "NHỊP SINH HOẠT",
+    "family": "GIA ĐÌNH",
+    "manage_family": "Quản lý thành viên",
+    "connected_members": "{} người đang kết nối",
+    "invite_code": "MÃ MỜI GIA ĐÌNH",
+    "invite_desc": "Chia sẻ mã này để con cháu có thể theo dõi sức khoẻ của bạn.",
+    "others": "KHÁC",
+    "help_center": "Trung tâm trợ giúp",
+    "logout": "Đăng xuất",
+    "version": "VITALIS CARE • PHIÊN BẢN {}"
   }
 }

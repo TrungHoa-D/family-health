@@ -3,10 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit_page.dart';
-import 'package:family_health/presentation/resources/colors.dart';
-import 'package:family_health/presentation/resources/styles.dart';
 import 'package:family_health/presentation/router/router.dart';
-import 'package:family_health/presentation/view/widgets/app_avatar.dart';
 import 'package:family_health/presentation/view/widgets/app_bottom_navigation_bar.dart';
 
 import '../dashboard/dashboard_page.dart';
@@ -31,35 +28,6 @@ class HomePage extends BaseCubitPage<HomeCubit, HomeState> {
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
         return Scaffold(
-          appBar: (state.currentTabIndex == 0 || state.currentTabIndex == 1 || state.currentTabIndex == 2 || state.currentTabIndex == 3)
-              ? null
-              : AppBar(
-                  leadingWidth: 56,
-                  leading: const Padding(
-                    padding: EdgeInsets.only(left: 16),
-                    child: AppAvatar.medium(),
-                  ),
-                  title: Text(
-                    'Vitalis Family',
-                    style: AppStyles.titleLarge.copyWith(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                  actions: [
-                    IconButton(
-                      onPressed: () {
-                        // TODO: Emergency action
-                      },
-                      icon: const Icon(Icons.emergency, color: AppColors.primary),
-                    ),
-                    const SizedBox(width: 8),
-                  ],
-                  bottom: PreferredSize(
-                    preferredSize: const Size.fromHeight(1),
-                    child: Divider(height: 1, color: Colors.grey[200]),
-                  ),
-                ),
           body: IndexedStack(
             index: state.currentTabIndex,
             children: [

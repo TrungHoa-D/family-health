@@ -162,5 +162,22 @@
     "online_status": "{} MEMBERS ONLINE",
     "input_placeholder": "Type a message...",
     "details": "Details"
+  },
+  "settings": {
+    "edit_profile": "Edit Profile",
+    "medical_records": "MEDICAL RECORDS",
+    "blood_type": "BLOOD TYPE",
+    "height": "HEIGHT",
+    "weight": "WEIGHT",
+    "routines": "DAILY ROUTINE",
+    "family": "FAMILY",
+    "manage_family": "Manage Family",
+    "connected_members": "{} connected members",
+    "invite_code": "FAMILY INVITE CODE",
+    "invite_desc": "Share this code so your loved ones can track your health.",
+    "others": "OTHERS",
+    "help_center": "Help Center",
+    "logout": "Log Out",
+    "version": "VITALIS CARE • VERSION {}"
   }
 }
