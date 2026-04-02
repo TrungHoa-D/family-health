@@ -8,8 +8,13 @@ import 'meds_card.dart';
 
 class MedsListSection extends StatelessWidget {
   final List<MedicationModel> medications;
+  final ValueChanged<MedicationModel>? onMedicationTap;
 
-  const MedsListSection({super.key, required this.medications});
+  const MedsListSection({
+    super.key,
+    required this.medications,
+    this.onMedicationTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +53,12 @@ class MedsListSection extends StatelessWidget {
           physics: const NeverScrollableScrollPhysics(),
           itemCount: medications.length,
           itemBuilder: (context, index) {
-            return MedsCard(medication: medications[index]);
+            return MedsCard(
+              medication: medications[index],
+              onTap: onMedicationTap != null
+                  ? () => onMedicationTap!(medications[index])
+                  : null,
+            );
           },
         ),
       ],

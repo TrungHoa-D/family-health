@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/material.dart';
 import 'package:family_health/presentation/view/pages/home/home_page.dart';
 import 'package:family_health/presentation/view/pages/login/login_page.dart';
 import 'package:family_health/presentation/view/pages/setup_health_profile/setup_health_profile_page.dart';
@@ -7,6 +8,9 @@ import 'package:family_health/presentation/view/pages/family_setup/family_setup_
 import 'package:family_health/presentation/view/pages/interface_mode_selection/interface_mode_selection_page.dart';
 import 'package:family_health/presentation/view/pages/dashboard/dashboard_page.dart';
 import 'package:family_health/presentation/view/pages/meds/meds_page.dart';
+import 'package:family_health/presentation/view/pages/meds/add_medication/add_medication_page.dart';
+import 'package:family_health/presentation/view/pages/meds/medication_detail/medication_detail_page.dart';
+import 'package:family_health/presentation/view/pages/meds/meds_cubit.dart';
 
 part 'router.gr.dart';
 
@@ -27,5 +31,7 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: InterfaceModeSelectionRoute.page),
     AutoRoute(page: DashboardRoute.page),
     AutoRoute(page: MedsRoute.page),
+    AutoRoute(page: AddMedicationRoute.page),
+    AutoRoute(page: MedicationDetailRoute.page),
   ];
 }

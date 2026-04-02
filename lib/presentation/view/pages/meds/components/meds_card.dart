@@ -8,12 +8,14 @@ import '../meds_cubit.dart';
 
 class MedsCard extends StatelessWidget {
   final MedicationModel medication;
+  final VoidCallback? onTap;
 
-  const MedsCard({super.key, required this.medication});
+  const MedsCard({super.key, required this.medication, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return AppCard(
+      onPressed: onTap,
       margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
       padding: const EdgeInsets.all(AppSpacing.md),
       child: Row(

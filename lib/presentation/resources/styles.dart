@@ -10,118 +10,118 @@ abstract class AppStyles {
   static const _fontFamily = FontFamily.inter;
 
   // ─── Display ─────────────────────────────────────
-  /// 32sp Bold — Splash title, Simplified alarm header
+  /// 28sp Bold — Splash title, Simplified alarm header
   static const displayLarge = TextStyle(
     fontWeight: FontWeight.w700,
-    fontSize: 32,
+    fontSize: 28,
     height: 1.2,
     fontFamily: _fontFamily,
   );
 
   // ─── Headline ────────────────────────────────────
-  /// 28sp Bold — Simplified greeting
+  /// 24sp Bold — Simplified greeting
   static const headlineLarge = TextStyle(
-    fontWeight: FontWeight.w700,
-    fontSize: 28,
-    height: 1.3,
-    fontFamily: _fontFamily,
-  );
-
-  /// 24sp Bold — Screen titles, Welcome text
-  static const headlineMedium = TextStyle(
     fontWeight: FontWeight.w700,
     fontSize: 24,
     height: 1.3,
     fontFamily: _fontFamily,
   );
 
-  // ─── Title ───────────────────────────────────────
-  /// 22sp Bold — Drug name in detail
-  static const titleXLarge = TextStyle(
+  /// 20sp Bold — Screen titles, Welcome text
+  static const headlineMedium = TextStyle(
     fontWeight: FontWeight.w700,
-    fontSize: 22,
+    fontSize: 20,
     height: 1.3,
     fontFamily: _fontFamily,
   );
 
-  /// 20sp SemiBold — AppBar titles, Card mode title
+  // ─── Title ───────────────────────────────────────
+  /// 18sp Bold — Drug name in detail
+  static const titleXLarge = TextStyle(
+    fontWeight: FontWeight.w700,
+    fontSize: 18,
+    height: 1.3,
+    fontFamily: _fontFamily,
+  );
+
+  /// 17sp SemiBold — AppBar titles, Card mode title
   static const titleLarge = TextStyle(
     fontWeight: FontWeight.w600,
-    fontSize: 20,
+    fontSize: 17,
     height: 1.4,
     fontFamily: _fontFamily,
   );
 
-  /// 18sp SemiBold — Section headers, AI card title
+  /// 15sp SemiBold — Section headers, AI card title
   static const titleMedium = TextStyle(
     fontWeight: FontWeight.w600,
-    fontSize: 18,
+    fontSize: 15,
     height: 1.4,
     fontFamily: _fontFamily,
   );
 
-  /// 16sp SemiBold — Card summary header, button text
+  /// 14sp SemiBold — Card summary header, button text
   static const titleSmall = TextStyle(
     fontWeight: FontWeight.w600,
-    fontSize: 16,
+    fontSize: 14,
     height: 1.4,
     fontFamily: _fontFamily,
   );
 
   // ─── Body ────────────────────────────────────────
-  /// 16sp Regular — Standard body text
+  /// 14sp Regular — Standard body text
   static const bodyLarge = TextStyle(
-    fontWeight: FontWeight.w400,
-    fontSize: 16,
-    height: 1.5,
-    fontFamily: _fontFamily,
-  );
-
-  /// 15sp Regular — Chat messages, info rows
-  static const bodyMedium = TextStyle(
-    fontWeight: FontWeight.w400,
-    fontSize: 15,
-    height: 1.5,
-    fontFamily: _fontFamily,
-  );
-
-  /// 14sp Regular — Description, sub-info
-  static const bodySmall = TextStyle(
     fontWeight: FontWeight.w400,
     fontSize: 14,
     height: 1.5,
     fontFamily: _fontFamily,
   );
 
-  /// 13sp Regular — Event detail rows
-  static const caption = TextStyle(
+  /// 13sp Regular — Chat messages, info rows
+  static const bodyMedium = TextStyle(
     fontWeight: FontWeight.w400,
     fontSize: 13,
     height: 1.5,
     fontFamily: _fontFamily,
   );
 
-  // ─── Label ───────────────────────────────────────
-  /// 16sp SemiBold — Primary button label
-  static const labelLarge = TextStyle(
-    fontWeight: FontWeight.w600,
-    fontSize: 16,
-    height: 1.25,
+  /// 12sp Regular — Description, sub-info
+  static const bodySmall = TextStyle(
+    fontWeight: FontWeight.w400,
+    fontSize: 12,
+    height: 1.5,
     fontFamily: _fontFamily,
   );
 
-  /// 14sp SemiBold — Chip text, secondary button label
-  static const labelMedium = TextStyle(
+  /// 11sp Regular — Event detail rows
+  static const caption = TextStyle(
+    fontWeight: FontWeight.w400,
+    fontSize: 11,
+    height: 1.5,
+    fontFamily: _fontFamily,
+  );
+
+  // ─── Label ───────────────────────────────────────
+  /// 14sp SemiBold — Primary button label
+  static const labelLarge = TextStyle(
     fontWeight: FontWeight.w600,
     fontSize: 14,
     height: 1.25,
     fontFamily: _fontFamily,
   );
 
-  /// 12sp Regular — Timestamp, disclaimer, nav label
+  /// 12sp SemiBold — Chip text, secondary button label
+  static const labelMedium = TextStyle(
+    fontWeight: FontWeight.w600,
+    fontSize: 12,
+    height: 1.25,
+    fontFamily: _fontFamily,
+  );
+
+  /// 11sp Regular — Timestamp, disclaimer, nav label
   static const labelSmall = TextStyle(
     fontWeight: FontWeight.w400,
-    fontSize: 12,
+    fontSize: 11,
     height: 1.5,
     fontFamily: _fontFamily,
   );

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit_page.dart';
 import 'package:family_health/presentation/resources/colors.dart';
+import 'package:family_health/presentation/router/router.dart';
 
 import 'components/meds_filter_bar.dart';
 import 'components/meds_header.dart';
@@ -28,15 +29,23 @@ class MedsPage extends BaseCubitPage<MedsCubit, MedsState> {
           backgroundColor: AppColors.background,
           body: SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.only(bottom: 100), // Spacing for FAB and Nav
+              padding: const EdgeInsets.only(bottom: 100),
               child: Column(
                 children: [
                   const MedsHeader(),
                   MedsFilterBar(
                     selectedIndex: state.selectedFilterIndex,
-                    onSelected: (index) => context.read<MedsCubit>().changeFilter(index),
+                    onSelected: (index) =>
+                        context.read<MedsCubit>().changeFilter(index),
                   ),
-                  MedsListSection(medications: state.medications),
+                  MedsListSection(
+                    medications: state.medications,
+                    onMedicationTap: (medication) {
+                      context.router.push(
+                        MedicationDetailRoute(medication: medication),
+                      );
+                    },
+                  ),
                   const SizedBox(height: 16),
                   MedsRefillSection(refills: state.refills),
                 ],
@@ -45,7 +54,7 @@ class MedsPage extends BaseCubitPage<MedsCubit, MedsState> {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
-              // TODO: Add new medication
+              context.router.push(AddMedicationRoute());
             },
             backgroundColor: AppColors.primary,
             shape: const CircleBorder(),
