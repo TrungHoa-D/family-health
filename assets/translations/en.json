@@ -156,5 +156,11 @@
     "today": "Today",
     "add_event": "Add Event",
     "coming_soon": "Feature coming soon!"
+  },
+  "chat": {
+    "group_name": "Nguyen Family",
+    "online_status": "{} MEMBERS ONLINE",
+    "input_placeholder": "Type a message...",
+    "details": "Details"
   }
 }

@@ -156,5 +156,11 @@
     "today": "Hôm nay",
     "add_event": "Thêm sự kiện",
     "coming_soon": "Tính năng sẽ sớm ra mắt!"
+  },
+  "chat": {
+    "group_name": "Gia đình Nguyễn",
+    "online_status": "{} THÀNH VIÊN TRỰC TUYẾN",
+    "input_placeholder": "Nhập tin nhắn...",
+    "details": "Chi tiết"
   }
 }
