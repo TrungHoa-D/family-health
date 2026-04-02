@@ -149,7 +149,12 @@
     "action_delete": "Xóa",
     "copy_coming_soon": "Tính năng sao chép sẽ sớm ra mắt!",
     "delete_confirm_title": "Xác nhận xóa",
-    "delete_confirm_desc": "Bạn có chắc chắn muốn xóa đơn thuốc này? Hành động này không thể hoàn tác.",
     "cancel": "Hủy"
+  },
+  "events": {
+    "title": "Sự kiện y tế",
+    "today": "Hôm nay",
+    "add_event": "Thêm sự kiện",
+    "coming_soon": "Tính năng sẽ sớm ra mắt!"
   }
 }

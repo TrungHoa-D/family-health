@@ -17,7 +17,7 @@ class AppCard extends StatelessWidget {
     this.padding = const EdgeInsets.all(AppSpacing.md),
     this.margin = EdgeInsets.zero,
     this.backgroundColor,
-    this.hasBorder = false,
+    this.hasBorder = true,
     this.borderColor,
     this.borderWidth = 1,
     this.enableShadow = true,
@@ -46,8 +46,8 @@ class AppCard extends StatelessWidget {
           if (enableShadow)
             BoxShadow(
               color: AppColors.cardShadow,
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
             ),
         ],
         border: hasBorder

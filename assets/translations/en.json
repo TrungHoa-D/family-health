@@ -149,7 +149,12 @@
     "action_delete": "Delete",
     "copy_coming_soon": "Copy feature coming soon!",
     "delete_confirm_title": "Confirm Delete",
-    "delete_confirm_desc": "Are you sure you want to delete this medication? This action cannot be undone.",
     "cancel": "Cancel"
+  },
+  "events": {
+    "title": "Medical Events",
+    "today": "Today",
+    "add_event": "Add Event",
+    "coming_soon": "Feature coming soon!"
   }
 }

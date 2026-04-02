@@ -31,7 +31,7 @@ class HomePage extends BaseCubitPage<HomeCubit, HomeState> {
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
         return Scaffold(
-          appBar: (state.currentTabIndex == 0 || state.currentTabIndex == 1)
+          appBar: (state.currentTabIndex == 0 || state.currentTabIndex == 1 || state.currentTabIndex == 2)
               ? null
               : AppBar(
                   leadingWidth: 56,

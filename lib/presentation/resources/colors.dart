@@ -90,7 +90,7 @@ abstract class AppColors {
 
   // ─── Shadows ───────────────────────────────────────
   /// Card shadow color
-  static final cardShadow = black.withValues(alpha: 0.06);
+  static final cardShadow = black.withValues(alpha: 0.12);
 
   /// Primary button shadow
   static final primaryShadow = primary.withValues(alpha: 0.2);
