@@ -15,6 +15,16 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<UserEntity> signInWithEmailPassword(String email, String password) {
+    return _authDataSource.signInWithEmailPassword(email, password);
+  }
+
+  @override
+  Future<UserEntity> signUpWithEmailPassword(String email, String password) {
+    return _authDataSource.signUpWithEmailPassword(email, password);
+  }
+
+  @override
   Future<void> signOut() {
     return _authDataSource.signOut();
   }
@@ -24,3 +34,4 @@ class AuthRepositoryImpl implements AuthRepository {
     return _authDataSource.getCurrentUser();
   }
 }
+

@@ -35,13 +35,11 @@ class SplashCubit extends BaseCubit<SplashState> {
     ));
 
     if (context.mounted) {
-      // TODO(test): Tạm thời skip login để test UI setup_health_profile
-      context.router.replaceAll([const SetupHealthProfileRoute()]);
-      // if (user != null) {
-      //   context.router.replaceAll([const HomeRoute()]);
-      // } else {
-      //   context.router.replaceAll([const LoginRoute()]);
-      // }
+      if (user != null) {
+        context.router.replaceAll([const HomeRoute()]);
+      } else {
+        context.router.replaceAll([const LoginRoute()]);
+      }
     }
   }
 }

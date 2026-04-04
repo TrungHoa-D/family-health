@@ -1,5 +1,8 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:family_health/domain/entities/user_entity.dart';
+import 'package:family_health/domain/usecases/email_sign_in_usecase.dart';
+import 'package:family_health/domain/usecases/email_sign_up_usecase.dart';
 import 'package:family_health/domain/usecases/google_sign_in_usecase.dart';
 import 'package:family_health/presentation/base/page_status.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit.dart';
@@ -15,13 +18,97 @@ part 'login_state.dart';
 
 @injectable
 class LoginCubit extends BaseCubit<LoginState> {
-  LoginCubit(this._googleSignInUseCase) : super(const LoginState());
+  LoginCubit(
+    this._googleSignInUseCase,
+    this._emailSignInUseCase,
+    this._emailSignUpUseCase,
+  ) : super(const LoginState());
 
   final GoogleSignInUseCase _googleSignInUseCase;
+  final EmailSignInUseCase _emailSignInUseCase;
+  final EmailSignUpUseCase _emailSignUpUseCase;
 
   Future<void> init() async {
     emit(state.copyWith(pageStatus: PageStatus.Loaded));
   }
+
+  // ── Email/Password form handlers (Windows) ──────────────────────────────
+
+  void onEmailChanged(String value) {
+    emit(state.copyWith(email: value, emailError: null));
+  }
+
+  void onPasswordChanged(String value) {
+    emit(state.copyWith(password: value, passwordError: null));
+  }
+
+  void togglePasswordVisibility() {
+    emit(state.copyWith(isPasswordVisible: !state.isPasswordVisible));
+  }
+
+  void toggleLoginMode() {
+    emit(state.copyWith(
+      isLoginMode: !state.isLoginMode,
+      emailError: null,
+      passwordError: null,
+    ));
+  }
+
+  bool _validateEmailForm() {
+    String? emailError;
+    String? passwordError;
+
+    if (state.email.trim().isEmpty) {
+      emailError = 'login.email_required'.tr();
+    }
+    if (state.password.isEmpty) {
+      passwordError = 'login.password_required'.tr();
+    }
+
+    if (emailError != null || passwordError != null) {
+      emit(state.copyWith(
+        emailError: emailError,
+        passwordError: passwordError,
+      ));
+      return false;
+    }
+    return true;
+  }
+
+  Future<void> submitEmailForm(BuildContext context) async {
+    if (!_validateEmailForm()) return;
+
+    emit(state.copyWith(isSigningIn: true));
+    try {
+      final params = EmailSignInParams(
+        email: state.email.trim(),
+        password: state.password,
+      );
+
+      final UserEntity user;
+      if (state.isLoginMode) {
+        user = await _emailSignInUseCase.call(params: params);
+      } else {
+        user = await _emailSignUpUseCase.call(params: params);
+      }
+
+      emit(state.copyWith(isSigningIn: false, user: user));
+
+      if (context.mounted) {
+        context.router.replaceAll([const SetupHealthProfileRoute()]);
+      }
+    } catch (e) {
+      logger.e('Email Form failed: $e');
+      emit(state.copyWith(isSigningIn: false));
+      if (state.isLoginMode) {
+        showErrorDialog('login.sign_in_failed'.tr());
+      } else {
+        showErrorDialog('login.sign_up_failed'.tr());
+      }
+    }
+  }
+
+  // ── Google Sign-In (Android / iOS) ──────────────────────────────────────
 
   Future<void> signInWithGoogle(BuildContext context) async {
     emit(state.copyWith(isSigningIn: true));

@@ -1,6 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:flutter/material.dart';
-
 part 'events_state.freezed.dart';
 
 enum EventType { vaccine, dentistry, checkup, other }
@@ -42,11 +40,14 @@ class EventsState with _$EventsState {
 
   /// Returns the next 3 events occurring after the selected date
   List<EventModel> get upcomingEvents {
-    final endOfSelectedDate = DateTime(selectedDate.year, selectedDate.month, selectedDate.day, 23, 59, 59);
-    
-    final upcoming = allEvents.where((event) => event.time.isAfter(endOfSelectedDate)).toList();
+    final endOfSelectedDate = DateTime(
+        selectedDate.year, selectedDate.month, selectedDate.day, 23, 59, 59);
+
+    final upcoming = allEvents
+        .where((event) => event.time.isAfter(endOfSelectedDate))
+        .toList();
     upcoming.sort((a, b) => a.time.compareTo(b.time));
-    
+
     return upcoming.take(3).toList();
   }
 }

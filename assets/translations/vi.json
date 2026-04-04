@@ -8,7 +8,21 @@
     "description": "Quản lý sức khỏe cả nhà, mọi lúc mọi nơi cùng Family Health",
     "sign_in_google": "Đăng nhập bằng Google",
     "disclaimer": "Bằng việc tiếp tục, bạn đồng ý với ",
-    "terms": "Điều khoản sử dụng"
+    "terms": "Điều khoản sử dụng",
+    "email_label": "Email",
+    "password_label": "Mật khẩu",
+    "sign_in_email": "Đăng nhập",
+    "email_hint": "Nhập địa chỉ email",
+    "password_hint": "Nhập mật khẩu",
+    "email_required": "Vui lòng nhập email",
+    "password_required": "Vui lòng nhập mật khẩu",
+    "sign_in_failed": "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.",
+    "sign_up_failed": "Đăng ký thất bại. Vui lòng kiểm tra lại thông tin.",
+    "desktop_notice": "Windows — Đăng nhập bằng Email & Mật khẩu",
+    "sign_up_email": "Đăng ký",
+    "toggle_to_sign_up": "Chưa có tài khoản? Đăng ký ngay",
+    "toggle_to_sign_in": "Đã có tài khoản? Đăng nhập",
+    "or_divider": "hoặc"
   },
   "home": {
     "title": "Trang chủ",

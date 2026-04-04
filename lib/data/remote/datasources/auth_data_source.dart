@@ -31,6 +31,42 @@ class AuthDataSource {
     return _mapFirebaseUser(user);
   }
 
+  Future<UserEntity> signInWithEmailPassword(
+    String email,
+    String password,
+  ) async {
+    final UserCredential userCredential =
+        await _firebaseAuth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+
+    final User? user = userCredential.user;
+    if (user == null) {
+      throw Exception('Firebase authentication failed');
+    }
+
+    return _mapFirebaseUser(user);
+  }
+
+  Future<UserEntity> signUpWithEmailPassword(
+    String email,
+    String password,
+  ) async {
+    final UserCredential userCredential =
+        await _firebaseAuth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+
+    final User? user = userCredential.user;
+    if (user == null) {
+      throw Exception('Firebase sign up failed');
+    }
+
+    return _mapFirebaseUser(user);
+  }
+
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
     await GoogleSignIn.instance.disconnect();

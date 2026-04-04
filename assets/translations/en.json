@@ -8,7 +8,21 @@
     "description": "Family health management, anytime, anywhere with Family Health",
     "sign_in_google": "Sign in with Google",
     "disclaimer": "By continuing, you agree to the ",
-    "terms": "Terms of Use"
+    "terms": "Terms of Use",
+    "email_label": "Email",
+    "password_label": "Password",
+    "sign_in_email": "Sign In",
+    "email_hint": "Enter your email",
+    "password_hint": "Enter your password",
+    "email_required": "Please enter your email",
+    "password_required": "Please enter your password",
+    "sign_in_failed": "Sign in failed. Please check your credentials.",
+    "sign_up_failed": "Sign up failed. Please check your information.",
+    "desktop_notice": "Windows mode — Sign in with Email & Password",
+    "sign_up_email": "Sign Up",
+    "toggle_to_sign_up": "Don't have an account? Sign up now",
+    "toggle_to_sign_in": "Already have an account? Log in",
+    "or_divider": "or"
   },
   "home": {
     "title": "Home",

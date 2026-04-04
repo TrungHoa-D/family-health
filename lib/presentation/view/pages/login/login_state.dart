@@ -7,6 +7,13 @@ class LoginState with _$LoginState implements BaseCubitState {
     String? pageErrorMessage,
     @Default(false) bool isSigningIn,
     UserEntity? user,
+    @Default(true) bool isLoginMode,
+    // Email/Password form fields (for Windows desktop)
+    @Default('') String email,
+    @Default('') String password,
+    @Default(false) bool isPasswordVisible,
+    String? emailError,
+    String? passwordError,
   }) = _LoginState;
 
   const LoginState._();
@@ -22,3 +29,4 @@ class LoginState with _$LoginState implements BaseCubitState {
     );
   }
 }
+

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:auto_route/auto_route.dart';
@@ -8,6 +9,8 @@ import 'package:family_health/presentation/resources/app_spacing.dart';
 import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
 import 'package:family_health/presentation/resources/theme_data.dart';
+import 'package:family_health/presentation/view/widgets/app_button.dart';
+import 'package:family_health/presentation/view/widgets/app_form_field.dart';
 import 'package:family_health/shared/extension/theme_data.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -35,95 +38,260 @@ class LoginPage extends BaseCubitPage<LoginCubit, LoginState> {
         children: [
           _buildBackgroundEllipses(),
           SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.xl, vertical: AppSpacing.lg),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(height: AppSpacing.md),
+            child: _buildContent(context, themeOwn),
+          ),
+        ],
+      ),
+    );
+  }
 
-                  // Header
-                  Text(
-                    'FAMILY HEALTH',
-                    style: AppStyles.labelSmall.copyWith(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 2.0,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.xs),
-                  Text(
-                    'login.title'.tr(),
-                    style: AppStyles.titleXLarge.copyWith(
-                      color: AppColors.textPrimary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+  Widget _buildContent(BuildContext context, AppThemeData themeOwn) {
+    final bool isWindows = Platform.isWindows;
 
-                  const SizedBox(height: AppSpacing.xxl),
-
-                  // Illustration (Family Hero Image)
-                  Expanded(
-                    child: Center(
-                      child: Container(
-                        constraints: const BoxConstraints(maxWidth: 320),
-                        child: AspectRatio(
-                          aspectRatio: 1,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(48),
-                            child: Image.asset(
-                              'assets/images/illustration_family.png',
-                              fit: BoxFit.cover,
+    return BlocBuilder<LoginCubit, LoginState>(
+      buildWhen: (prev, curr) => prev.isLoginMode != curr.isLoginMode,
+      builder: (context, state) {
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            return ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: constraints.maxHeight,
+              ),
+              child: IntrinsicHeight(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.xl, vertical: AppSpacing.sm),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: AppSpacing.sm),
+                      _buildHeader(state.isLoginMode),
+                      const SizedBox(height: AppSpacing.xs),
+                      Center(
+                        child: Container(
+                          constraints: const BoxConstraints(maxWidth: 160),
+                          child: AspectRatio(
+                            aspectRatio: 1,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(40),
+                              child: Image.asset(
+                                'assets/images/illustration_family.png',
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-
-                  const SizedBox(height: AppSpacing.xxl),
-
-                  // Messaging
-                  Text(
-                    'login.welcome'.tr(),
-                    style: AppStyles.displayLarge.copyWith(
-                      color: AppColors.textPrimary,
-                      fontSize: 28,
-                      height: 1.2,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                    child: Text(
-                      'login.description'.tr(),
-                      style: AppStyles.bodyLarge.copyWith(
-                        color: AppColors.textSecondary,
-                        height: 1.5,
+                      const SizedBox(height: AppSpacing.xs),
+                      _buildWelcomeText(),
+                      const SizedBox(height: AppSpacing.md),
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 380),
+                        child:
+                            _buildEmailPasswordForm(context, state.isLoginMode),
                       ),
-                      textAlign: TextAlign.center,
-                    ),
+                      if (!isWindows) ...[
+                        const SizedBox(height: AppSpacing.md),
+                        _buildOrDivider(),
+                        const SizedBox(height: AppSpacing.md),
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 380),
+                          child: _buildGoogleSignInButton(context, themeOwn),
+                        ),
+                      ],
+                      const SizedBox(height: AppSpacing.lg),
+                      _buildDisclaimer(),
+                      const SizedBox(height: AppSpacing.xs),
+                    ],
                   ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
 
-                  const SizedBox(height: 48),
-
-                  // Google Login Button
-                  _buildGoogleSignInButton(context, themeOwn),
-
-                  const SizedBox(height: AppSpacing.xl),
-
-                  // Disclaimer Text Setup
-                  _buildDisclaimer(),
-
-                  const SizedBox(height: AppSpacing.sm),
-                ],
+  Widget _buildEmailPasswordForm(BuildContext context, bool isLoginMode) {
+    return BlocBuilder<LoginCubit, LoginState>(
+      buildWhen: (prev, curr) =>
+          prev.isSigningIn != curr.isSigningIn ||
+          prev.isPasswordVisible != curr.isPasswordVisible ||
+          prev.emailError != curr.emailError ||
+          prev.passwordError != curr.passwordError,
+      builder: (context, state) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'login.email_label'.tr(),
+              style: AppStyles.labelMedium.copyWith(
+                color: AppColors.textSecondary,
+                fontWeight: FontWeight.w600,
               ),
             ),
+            const SizedBox(height: AppSpacing.xs),
+
+            // Email field
+            AppFormField(
+              hintText: 'login.email_hint'.tr(),
+              keyboardType: TextInputType.emailAddress,
+              errorText: state.emailError,
+              onChanged: (v) => context.read<LoginCubit>().onEmailChanged(v),
+            ),
+
+            const SizedBox(height: AppSpacing.md),
+
+            // Password label
+            Text(
+              'login.password_label'.tr(),
+              style: AppStyles.labelMedium.copyWith(
+                color: AppColors.textSecondary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+
+            // Password field — dùng decoration để thêm suffixIcon
+            AppFormField(
+              hintText: 'login.password_hint'.tr(),
+              obscureText: !state.isPasswordVisible,
+              errorText: state.passwordError,
+              onChanged: (v) => context.read<LoginCubit>().onPasswordChanged(v),
+              decoration: InputDecoration(
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    state.isPasswordVisible
+                        ? Icons.visibility_off_outlined
+                        : Icons.visibility_outlined,
+                    color: AppColors.textSecondary,
+                    size: 20,
+                  ),
+                  onPressed: () =>
+                      context.read<LoginCubit>().togglePasswordVisibility(),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: AppSpacing.lg),
+
+            // Sign In / Sign Up button
+            AppButton.primary(
+              title: isLoginMode
+                  ? 'login.sign_in_email'.tr()
+                  : 'login.sign_up_email'.tr(),
+              enable: !state.isSigningIn,
+              onPressed: () =>
+                  context.read<LoginCubit>().submitEmailForm(context),
+              icon: state.isSigningIn
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.white,
+                      ),
+                    )
+                  : null,
+            ),
+
+            const SizedBox(height: AppSpacing.md),
+
+            // Toggle login/signup mode
+            Center(
+              child: TextButton(
+                onPressed: state.isSigningIn
+                    ? null
+                    : () => context.read<LoginCubit>().toggleLoginMode(),
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.md, vertical: AppSpacing.xs),
+                ),
+                child: Text(
+                  isLoginMode
+                      ? 'login.toggle_to_sign_up'.tr()
+                      : 'login.toggle_to_sign_in'.tr(),
+                  style: AppStyles.labelMedium.copyWith(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // ─── Shared Widgets ──────────────────────────────────────────────────────
+
+  Widget _buildHeader(bool isLoginMode) {
+    return Column(
+      children: [
+        Text(
+          'FAMILY HEALTH',
+          style: AppStyles.labelSmall.copyWith(
+            color: AppColors.primary,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 2.0,
           ),
-        ],
-      ),
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Text(
+          isLoginMode ? 'login.title'.tr() : 'login.sign_up_email'.tr(),
+          style: AppStyles.titleXLarge.copyWith(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildOrDivider() {
+    return Row(
+      children: [
+        const Expanded(child: Divider()),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+          child: Text(
+            'login.or_divider'.tr(),
+            style:
+                AppStyles.labelSmall.copyWith(color: AppColors.textSecondary),
+          ),
+        ),
+        const Expanded(child: Divider()),
+      ],
+    );
+  }
+
+  Widget _buildWelcomeText() {
+    return Column(
+      children: [
+        Text(
+          'login.welcome'.tr(),
+          style: AppStyles.displayLarge.copyWith(
+            color: AppColors.textPrimary,
+            fontSize: 24, // reduced font size
+            height: 1.2,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+          child: Text(
+            'login.description'.tr(),
+            style: AppStyles.bodyLarge.copyWith(
+              color: AppColors.textSecondary,
+              height: 1.5,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ],
     );
   }
 
@@ -170,7 +338,7 @@ class LoginPage extends BaseCubitPage<LoginCubit, LoginState> {
       builder: (context, state) {
         return SizedBox(
           width: double.infinity,
-          height: 56, // Large button per design
+          height: 56,
           child: OutlinedButton(
             onPressed: state.isSigningIn
                 ? null
@@ -180,8 +348,7 @@ class LoginPage extends BaseCubitPage<LoginCubit, LoginState> {
             style: OutlinedButton.styleFrom(
               side: const BorderSide(color: AppColors.border, width: 1.0),
               shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.circular(100), // Fully rounded like the mockup
+                borderRadius: BorderRadius.circular(100),
               ),
               backgroundColor: AppColors.white,
               elevation: 0,
