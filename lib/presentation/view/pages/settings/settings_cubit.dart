@@ -1,8 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:family_health/presentation/view/pages/settings/settings_state.dart';
+import 'package:family_health/domain/usecases/sign_out_usecase.dart';
+import 'package:injectable/injectable.dart';
+import 'package:family_health/shared/utils/logger.dart';
 
+@injectable
 class SettingsCubit extends Cubit<SettingsState> {
-  SettingsCubit() : super(const SettingsState()) {
+  final SignOutUseCase _signOutUseCase;
+
+  SettingsCubit(this._signOutUseCase) : super(const SettingsState()) {
     _loadMockData();
   }
 
@@ -37,4 +43,16 @@ class SettingsCubit extends Cubit<SettingsState> {
       ]
     ));
   }
+
+  Future<void> logout() async {
+    emit(state.copyWith(isLoggingOut: true));
+    try {
+      await _signOutUseCase(params: null);
+      emit(state.copyWith(isLoggingOut: false, isLoggedOut: true));
+    } catch (e) {
+      logger.e('Logout failed: $e');
+      emit(state.copyWith(isLoggingOut: false));
+    }
+  }
 }
+

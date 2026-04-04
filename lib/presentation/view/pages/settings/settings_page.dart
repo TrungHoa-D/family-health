@@ -9,6 +9,9 @@ import 'package:family_health/presentation/view/pages/settings/settings_cubit.da
 import 'package:family_health/presentation/view/pages/settings/settings_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:family_health/di/di.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:family_health/presentation/router/router.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -16,7 +19,7 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => SettingsCubit(),
+      create: (_) => getIt<SettingsCubit>(),
       child: const SettingsView(),
     );
   }
@@ -27,7 +30,13 @@ class SettingsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SettingsCubit, SettingsState>(
+    return BlocConsumer<SettingsCubit, SettingsState>(
+      listenWhen: (prev, curr) => prev.isLoggedOut != curr.isLoggedOut,
+      listener: (context, state) {
+        if (state.isLoggedOut) {
+          context.router.replaceAll([const LoginRoute()]);
+        }
+      },
       builder: (context, state) {
         return Scaffold(
           backgroundColor: AppColors.surface, // Based on design, main bg is slightly off white

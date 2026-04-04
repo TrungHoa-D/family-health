@@ -12,6 +12,8 @@ import 'package:family_health/shared/utils/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:family_health/domain/usecases/sync_user_usecase.dart';
+import 'package:family_health/domain/usecases/get_user_usecase.dart';
 
 part 'login_cubit.freezed.dart';
 part 'login_state.dart';
@@ -22,11 +24,15 @@ class LoginCubit extends BaseCubit<LoginState> {
     this._googleSignInUseCase,
     this._emailSignInUseCase,
     this._emailSignUpUseCase,
+    this._syncUserUseCase,
+    this._getUserUseCase,
   ) : super(const LoginState());
 
   final GoogleSignInUseCase _googleSignInUseCase;
   final EmailSignInUseCase _emailSignInUseCase;
   final EmailSignUpUseCase _emailSignUpUseCase;
+  final SyncUserUseCase _syncUserUseCase;
+  final GetUserUseCase _getUserUseCase;
 
   Future<void> init() async {
     emit(state.copyWith(pageStatus: PageStatus.Loaded));
@@ -92,10 +98,19 @@ class LoginCubit extends BaseCubit<LoginState> {
         user = await _emailSignUpUseCase.call(params: params);
       }
 
+      final existingUser = await _getUserUseCase.call(params: user.uid);
+      final isFirstTime = existingUser == null;
+
+      await _syncUserUseCase.call(params: user);
+
       emit(state.copyWith(isSigningIn: false, user: user));
 
       if (context.mounted) {
-        context.router.replaceAll([const SetupHealthProfileRoute()]);
+        if (isFirstTime) {
+          context.router.replaceAll([const InterfaceModeSelectionRoute()]);
+        } else {
+          context.router.replaceAll([const HomeRoute()]);
+        }
       }
     } catch (e) {
       logger.e('Email Form failed: $e');
@@ -114,10 +129,20 @@ class LoginCubit extends BaseCubit<LoginState> {
     emit(state.copyWith(isSigningIn: true));
     try {
       final UserEntity user = await _googleSignInUseCase.call(params: null);
+      
+      final existingUser = await _getUserUseCase.call(params: user.uid);
+      final isFirstTime = existingUser == null;
+
+      await _syncUserUseCase.call(params: user);
+      
       emit(state.copyWith(isSigningIn: false, user: user));
 
       if (context.mounted) {
-        context.router.replaceAll([const SetupHealthProfileRoute()]);
+        if (isFirstTime) {
+          context.router.replaceAll([const InterfaceModeSelectionRoute()]);
+        } else {
+          context.router.replaceAll([const HomeRoute()]);
+        }
       }
     } catch (e) {
       logger.e('Google Sign-In failed: $e');

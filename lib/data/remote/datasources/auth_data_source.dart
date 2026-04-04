@@ -69,7 +69,11 @@ class AuthDataSource {
 
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
-    await GoogleSignIn.instance.disconnect();
+    try {
+      await GoogleSignIn.instance.signOut();
+    } catch (_) {
+      // Ignore UnimplementedError on platforms (like Windows) that don't support Google SignIn completely
+    }
   }
 
   UserEntity? getCurrentUser() {

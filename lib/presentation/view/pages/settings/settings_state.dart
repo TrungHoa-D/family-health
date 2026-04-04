@@ -34,5 +34,7 @@ class SettingsState with _$SettingsState {
     @Default('V I T A L I S - 8 8') String inviteCode,
     MedicalRecord? medicalRecord,
     @Default([]) List<DailyRoutine> routines,
+    @Default(false) bool isLoggingOut,
+    @Default(false) bool isLoggedOut,
   }) = _SettingsState;
 }

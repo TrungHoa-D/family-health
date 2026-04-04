@@ -4,6 +4,8 @@ import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
 import 'package:family_health/presentation/view/widgets/app_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:family_health/presentation/view/pages/settings/settings_cubit.dart';
 
 class OthersSection extends StatelessWidget {
   const OthersSection({super.key});
@@ -42,7 +44,9 @@ class OthersSection extends StatelessWidget {
                   'settings.logout'.tr(),
                   style: AppStyles.titleMedium.copyWith(color: AppColors.error, fontWeight: FontWeight.bold),
                 ),
-                onTap: () {},
+                onTap: () {
+                  context.read<SettingsCubit>().logout();
+                },
               ),
             ],
           ),

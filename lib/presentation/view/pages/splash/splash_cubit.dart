@@ -8,15 +8,18 @@ import 'package:family_health/presentation/router/router.dart';
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:family_health/domain/usecases/get_user_usecase.dart';
+import 'package:family_health/shared/utils/logger.dart';
 
 part 'splash_cubit.freezed.dart';
 part 'splash_state.dart';
 
 @injectable
 class SplashCubit extends BaseCubit<SplashState> {
-  SplashCubit(this._checkAuthStatusUseCase) : super(const SplashState());
+  SplashCubit(this._checkAuthStatusUseCase, this._getUserUseCase) : super(const SplashState());
 
   final CheckAuthStatusUseCase _checkAuthStatusUseCase;
+  final GetUserUseCase _getUserUseCase;
 
   Future<void> init(BuildContext context) async {
     emit(state.copyWith(pageStatus: PageStatus.Loaded, isCheckingAuth: true));
@@ -27,6 +30,15 @@ class SplashCubit extends BaseCubit<SplashState> {
 
     final List<dynamic> results = await Future.wait([delayFuture, authFuture]);
     final UserEntity? user = results[1] as UserEntity?;
+
+    if (user != null) {
+      final userData = await _getUserUseCase.call(params: user.uid);
+      if (userData != null) {
+        logger.i('Fetched user data from Firestore: ${userData.displayName} / ${userData.email}');
+      } else {
+        logger.i('User exists in Auth but not in Firestore yet.');
+      }
+    }
 
     emit(state.copyWith(
       pageStatus: PageStatus.Loaded,
