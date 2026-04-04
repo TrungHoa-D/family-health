@@ -1,19 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:family_health/domain/entities/user_entity.dart';
+import 'package:family_health/domain/entities/health_profile.dart';
 
 part 'settings_state.freezed.dart';
-
-class MedicalRecord {
-  final String bloodType;
-  final int heightCm;
-  final int weightKg;
-
-  const MedicalRecord({
-    required this.bloodType,
-    required this.heightCm,
-    required this.weightKg,
-  });
-}
 
 class DailyRoutine {
   final String title;
@@ -32,7 +21,7 @@ class SettingsState with _$SettingsState {
   const factory SettingsState({
     UserEntity? user,
     @Default('V I T A L I S - 8 8') String inviteCode,
-    MedicalRecord? medicalRecord,
+    HealthProfile? medicalRecord,
     @Default([]) List<DailyRoutine> routines,
     @Default(false) bool isLoggingOut,
     @Default(false) bool isLoggedOut,

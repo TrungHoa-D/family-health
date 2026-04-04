@@ -14,10 +14,21 @@ class SetupHealthProfileState
     @Default(null) String? selectedBloodType,
     @Default(true) bool isRhPositive,
     @Default([]) List<String> selectedDiseases,
+    
+    // New fields
+    @Default(true) bool isMale,
+    DateTime? birthDate,
+    @Default('07:00') String breakfastTime,
+    @Default('12:00') String lunchTime,
+    @Default('19:00') String dinnerTime,
+    @Default('22:00') String sleepTime,
 
     // Other disease
     @Default(false) bool isShowingOtherDiseaseInput,
     @Default('') String otherDisease,
+
+    // Mode
+    @Default(false) bool isUpdateMode,
 
     // Validation
     @Default(false) bool isSubmitted,

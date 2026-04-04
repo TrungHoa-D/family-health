@@ -125,8 +125,10 @@ class _BasePageState<B extends BaseBloc<E, S>, E, S extends BaseState>
               builder: (context, state) {
                 switch (state.pageStatus) {
                   case PageStatus.Uninitialized:
+                  case PageStatus.Loading:
                     return widget.pageLoadingBuilder(context);
                   case PageStatus.Loaded:
+                  case PageStatus.Success:
                     final builder = widget.builder(context);
                     onBuilderComplete.call();
                     return builder;

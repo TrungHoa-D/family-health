@@ -1,9 +1,9 @@
+import 'package:family_health/data/models/user_model.dart';
 import 'package:family_health/domain/entities/user_entity.dart';
 import 'package:family_health/domain/usecases/sync_user_usecase.dart';
 import 'package:family_health/presentation/base/page_status.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit_state.dart';
-import 'package:family_health/data/models/user_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 
@@ -37,7 +37,7 @@ class ProfileEditCubit extends BaseCubit<ProfileEditState> {
   }) async {
     final name = state.name.trim();
     final phone = state.phone.trim();
-    
+
     if (name.isEmpty) {
       emit(state.copyWith(
         pageStatus: PageStatus.Error,

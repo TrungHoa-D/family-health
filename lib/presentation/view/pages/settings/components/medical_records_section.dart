@@ -1,13 +1,15 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:family_health/domain/entities/health_profile.dart';
 import 'package:family_health/presentation/resources/app_spacing.dart';
 import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
-import 'package:family_health/presentation/view/pages/settings/settings_state.dart';
+import 'package:family_health/presentation/router/router.dart';
 import 'package:family_health/presentation/view/widgets/app_card.dart';
 import 'package:flutter/material.dart';
 
 class MedicalRecordsSection extends StatelessWidget {
-  final MedicalRecord record;
+  final HealthProfile record;
 
   const MedicalRecordsSection({super.key, required this.record});
 
@@ -18,13 +20,29 @@ class MedicalRecordsSection extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
-          child: Text(
-            'settings.medical_records'.tr(),
-            style: AppStyles.labelSmall.copyWith(
-              color: AppColors.textSecondary,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1.5,
-            ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'settings.medical_records'.tr(),
+                style: AppStyles.labelSmall.copyWith(
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.5,
+                ),
+              ),
+              TextButton.icon(
+                onPressed: () {
+                  context.router.push(SetupHealthProfileRoute(initialProfile: record));
+                },
+                icon: const Icon(Icons.edit, size: 16),
+                label: Text('settings.update_health_profile'.tr()),
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+                  visualDensity: VisualDensity.compact,
+                ),
+              ),
+            ],
           ),
         ),
         Padding(
@@ -36,7 +54,7 @@ class MedicalRecordsSection extends StatelessWidget {
                   icon: Icons.bloodtype,
                   iconColor: AppColors.error,
                   label: 'settings.blood_type'.tr(),
-                  value: record.bloodType,
+                  value: '${record.bloodType ?? '--'}${record.isRhPositive ? '+' : '-'}',
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
@@ -45,7 +63,7 @@ class MedicalRecordsSection extends StatelessWidget {
                   icon: Icons.height,
                   iconColor: AppColors.primary,
                   label: 'settings.height'.tr(),
-                  value: record.heightCm.toString(),
+                  value: record.height,
                   unit: 'cm',
                 ),
               ),
@@ -55,7 +73,7 @@ class MedicalRecordsSection extends StatelessWidget {
                   icon: Icons.fitness_center,
                   iconColor: AppColors.success,
                   label: 'settings.weight'.tr(),
-                  value: record.weightKg.toString(),
+                  value: record.weight,
                   unit: 'kg',
                 ),
               ),

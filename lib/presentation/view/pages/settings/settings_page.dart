@@ -40,24 +40,28 @@ class SettingsView extends StatelessWidget {
       builder: (context, state) {
         return Scaffold(
           backgroundColor: AppColors.surface, // Based on design, main bg is slightly off white
-          body: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: AppSpacing.xl),
-                ProfileHeaderSection(
-                  user: state.user,
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                if (state.medicalRecord != null) 
-                  MedicalRecordsSection(record: state.medicalRecord!),
-                const SizedBox(height: AppSpacing.lg),
-                RoutinesSection(routines: state.routines),
-                const SizedBox(height: AppSpacing.lg),
-                FamilyInviteSection(inviteCode: state.inviteCode),
-                const SizedBox(height: AppSpacing.lg),
-                const OthersSection(),
-              ],
+          body: RefreshIndicator(
+            onRefresh: () => context.read<SettingsCubit>().refreshData(),
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: AppSpacing.xl),
+                  ProfileHeaderSection(
+                    user: state.user,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  if (state.medicalRecord != null) 
+                    MedicalRecordsSection(record: state.medicalRecord!),
+                  const SizedBox(height: AppSpacing.lg),
+                  RoutinesSection(routines: state.routines),
+                  const SizedBox(height: AppSpacing.lg),
+                  FamilyInviteSection(inviteCode: state.inviteCode),
+                  const SizedBox(height: AppSpacing.lg),
+                  const OthersSection(),
+                ],
+              ),
             ),
           ),
         );

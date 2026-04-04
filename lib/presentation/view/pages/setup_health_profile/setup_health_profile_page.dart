@@ -1,5 +1,5 @@
-import 'package:auto_route/auto_route.dart';
-import 'package:easy_localization/easy_localization.dart';
+import 'package:family_health/domain/entities/health_profile.dart';
+import 'package:family_health/presentation/base/page_status.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit_page.dart';
 import 'package:family_health/presentation/resources/app_spacing.dart';
 import 'package:family_health/presentation/resources/colors.dart';
@@ -10,38 +10,81 @@ import 'package:family_health/presentation/view/widgets/app_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import 'setup_health_profile_cubit.dart';
 
 @RoutePage()
 class SetupHealthProfilePage
     extends BaseCubitPage<SetupHealthProfileCubit, SetupHealthProfileState> {
-  const SetupHealthProfilePage({super.key});
+  final HealthProfile? initialProfile;
+
+  const SetupHealthProfilePage({super.key, this.initialProfile});
 
   @override
   void onInitState(BuildContext context) {
     super.onInitState(context);
-    context.read<SetupHealthProfileCubit>().init();
+    if (initialProfile != null) {
+      context.read<SetupHealthProfileCubit>().initWithProfile(initialProfile!);
+    } else {
+      context.read<SetupHealthProfileCubit>().init();
+    }
   }
 
   @override
   Widget builder(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: AppSpacing.xxl),
-                _buildHeader(),
-                const SizedBox(height: AppSpacing.xl),
-                _buildFormSections(),
-                const SizedBox(height: AppSpacing.xxl),
-                _buildFooter(context),
-              ],
+    return BlocListener<SetupHealthProfileCubit, SetupHealthProfileState>(
+      listenWhen: (prev, curr) => prev.pageStatus != curr.pageStatus,
+      listener: (context, state) {
+        if (state.pageStatus == PageStatus.Success) {
+          if (state.isUpdateMode) {
+            context.router.maybePop();
+          } else {
+            context.router.replaceAll([const HomeRoute()]);
+          }
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: AppColors.primary),
+            onPressed: () => context.router.maybePop(),
+          ),
+          title: BlocBuilder<SetupHealthProfileCubit, SetupHealthProfileState>(
+            buildWhen: (prev, curr) => prev.isUpdateMode != curr.isUpdateMode,
+            builder: (context, state) {
+              return Text(
+                state.isUpdateMode
+                    ? 'Cập nhật hồ sơ'
+                    : 'setup_health_profile.title'.tr(),
+                style: AppStyles.titleLarge.copyWith(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w700,
+                ),
+              );
+            },
+          ),
+        ),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: AppSpacing.lg),
+                  _buildHeader(),
+                  const SizedBox(height: AppSpacing.xl),
+                  _buildFormSections(),
+                  const SizedBox(height: AppSpacing.xxl),
+                  _buildFooter(context),
+                ],
+              ),
             ),
           ),
         ),
@@ -50,73 +93,48 @@ class SetupHealthProfilePage
   }
 
   Widget _buildHeader() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Container(
-          width: 64,
-          height: 64,
-          decoration: const BoxDecoration(
-            color: AppColors.primary,
-            shape: BoxShape.circle,
-          ),
-          child: const Icon(
-            Icons.medical_information_outlined,
-            color: AppColors.white,
-            size: 32,
-          ),
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        Text(
-          'setup_health_profile.title'.tr(),
-          style: AppStyles.displayLarge.copyWith(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w700,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: AppSpacing.xs),
-        Text(
-          'setup_health_profile.subtitle'.tr(),
-          style: AppStyles.bodyMedium.copyWith(
-            color: AppColors.textSecondary,
-            height: 1.5,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: AppSpacing.md),
-        // Stepper Indicators
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+    return BlocBuilder<SetupHealthProfileCubit, SetupHealthProfileState>(
+      buildWhen: (prev, curr) => prev.isUpdateMode != curr.isUpdateMode,
+      builder: (context, state) {
+        if (state.isUpdateMode) return const SizedBox.shrink();
+        
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-                width: 24,
-                height: 6,
-                decoration: BoxDecoration(
-                    color: AppColors.border,
-                    borderRadius: BorderRadius.circular(100))),
-            const SizedBox(width: AppSpacing.xs),
-            Container(
-                width: 24,
-                height: 6,
-                decoration: BoxDecoration(
-                    color: AppColors.border,
-                    borderRadius: BorderRadius.circular(100))),
-            const SizedBox(width: AppSpacing.xs),
-            Container(
-                width: 48,
-                height: 6,
-                decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(100),
-                    boxShadow: [
-                      BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.2),
-                          blurRadius: 4)
-                    ])),
+              width: 64,
+              height: 64,
+              decoration: const BoxDecoration(
+                color: AppColors.primary,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.medical_information_outlined,
+                color: AppColors.white,
+                size: 32,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              'setup_health_profile.title'.tr(),
+              style: AppStyles.displayLarge.copyWith(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.w700,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              'setup_health_profile.subtitle'.tr(),
+              style: AppStyles.bodyMedium.copyWith(
+                color: AppColors.textSecondary,
+                height: 1.5,
+              ),
+              textAlign: TextAlign.center,
+            ),
           ],
-        ),
-      ],
+        );
+      },
     );
   }
 
@@ -126,6 +144,11 @@ class SetupHealthProfilePage
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Gender & Birth Date
+            _buildBasicInfo(context, state),
+
+            const SizedBox(height: AppSpacing.xl),
+
             // Biometric Data Grid
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -167,6 +190,11 @@ class SetupHealthProfilePage
 
             const SizedBox(height: AppSpacing.xl),
 
+            // Anchor Times
+            _buildAnchorTimes(context, state),
+
+            const SizedBox(height: AppSpacing.xl),
+
             // Medical History Multi-select Chips
             _buildMedicalHistory(context, state),
 
@@ -177,6 +205,222 @@ class SetupHealthProfilePage
           ],
         );
       },
+    );
+  }
+
+  Widget _buildBasicInfo(BuildContext context, SetupHealthProfileState state) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'setup_health_profile.gender'.tr().toUpperCase(),
+          style: AppStyles.labelSmall.copyWith(
+            color: AppColors.textSecondary,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.5,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Row(
+          children: [
+            Expanded(
+              child: _buildChoiceChip(
+                context: context,
+                label: 'setup_health_profile.male'.tr(),
+                isSelected: state.isMale,
+                onTap: () =>
+                    context.read<SetupHealthProfileCubit>().updateGender(true),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: _buildChoiceChip(
+                context: context,
+                label: 'setup_health_profile.female'.tr(),
+                isSelected: !state.isMale,
+                onTap: () =>
+                    context.read<SetupHealthProfileCubit>().updateGender(false),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.xl),
+        Text(
+          'setup_health_profile.birth_date'.tr().toUpperCase(),
+          style: AppStyles.labelSmall.copyWith(
+            color: AppColors.textSecondary,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.5,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        GestureDetector(
+          onTap: () async {
+            final date = await showDatePicker(
+              context: context,
+              initialDate: state.birthDate ?? DateTime(1990),
+              firstDate: DateTime(1900),
+              lastDate: DateTime.now(),
+            );
+            if (date != null) {
+              context.read<SetupHealthProfileCubit>().updateBirthDate(date);
+            }
+          },
+          child: AppFormField(
+            enabled: false,
+            hintText: state.birthDate != null
+                ? DateFormat('dd/MM/yyyy').format(state.birthDate!)
+                : 'dd/mm/yyyy',
+            decoration: const InputDecoration(
+              suffixIcon: Icon(Icons.calendar_today, size: 20),
+            ),
+            onChanged: (_) {},
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildChoiceChip({
+    required BuildContext context,
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 48,
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppColors.primary.withValues(alpha: 0.1)
+              : AppColors.surface,
+          border: Border.all(
+            color: isSelected ? AppColors.primary : Colors.transparent,
+            width: 2,
+          ),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          label,
+          style: AppStyles.titleMedium.copyWith(
+            color: isSelected ? AppColors.primary : AppColors.textSecondary,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAnchorTimes(
+      BuildContext context, SetupHealthProfileState state) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'setup_health_profile.anchor_times'.tr().toUpperCase(),
+          style: AppStyles.labelSmall.copyWith(
+            color: AppColors.textSecondary,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.5,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Row(
+          children: [
+            Expanded(
+              child: _buildTimePickerField(
+                context: context,
+                label: 'setup_health_profile.breakfast'.tr(),
+                value: state.breakfastTime,
+                onChanged: (time) => context
+                    .read<SetupHealthProfileCubit>()
+                    .updateAnchorTime('breakfast', time),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: _buildTimePickerField(
+                context: context,
+                label: 'setup_health_profile.lunch'.tr(),
+                value: state.lunchTime,
+                onChanged: (time) => context
+                    .read<SetupHealthProfileCubit>()
+                    .updateAnchorTime('lunch', time),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.md),
+        Row(
+          children: [
+            Expanded(
+              child: _buildTimePickerField(
+                context: context,
+                label: 'setup_health_profile.dinner'.tr(),
+                value: state.dinnerTime,
+                onChanged: (time) => context
+                    .read<SetupHealthProfileCubit>()
+                    .updateAnchorTime('dinner', time),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: _buildTimePickerField(
+                context: context,
+                label: 'setup_health_profile.sleep'.tr(),
+                value: state.sleepTime,
+                onChanged: (time) => context
+                    .read<SetupHealthProfileCubit>()
+                    .updateAnchorTime('sleep', time),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTimePickerField({
+    required BuildContext context,
+    required String label,
+    required String value,
+    required Function(String) onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: AppStyles.bodySmall.copyWith(color: AppColors.textSecondary),
+        ),
+        const SizedBox(height: 4),
+        GestureDetector(
+          onTap: () async {
+            final parts = value.split(':');
+            final initialTime = TimeOfDay(
+              hour: int.parse(parts[0]),
+              minute: int.parse(parts[1]),
+            );
+            final time = await showTimePicker(
+              context: context,
+              initialTime: initialTime,
+            );
+            if (time != null) {
+              onChanged('${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}');
+            }
+          },
+          child: AppFormField(
+            enabled: false,
+            hintText: value,
+            decoration: const InputDecoration(
+              suffixIcon: Icon(Icons.access_time, size: 20),
+            ),
+            onChanged: (_) {},
+          ),
+        ),
+      ],
     );
   }
 
@@ -213,6 +457,7 @@ class SetupHealthProfilePage
         ),
         const SizedBox(height: AppSpacing.xs),
         AppFormField(
+          value: value,
           hintText: hint,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           inputFormatters: [
@@ -601,60 +846,69 @@ class SetupHealthProfilePage
   }
 
   Widget _buildFooter(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            width: double.infinity,
-            height: 56, // Large button
-            child: ElevatedButton(
-              onPressed: () {
-                final cubit = context.read<SetupHealthProfileCubit>();
-                if (cubit.submitForm()) {
-                  context.router.push(const FamilySetupRoute());
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(100),
+    return BlocBuilder<SetupHealthProfileCubit, SetupHealthProfileState>(
+      builder: (context, state) {
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: double.infinity,
+                height: 56, // Large button
+                child: ElevatedButton(
+                  onPressed: () async {
+                    final cubit = context.read<SetupHealthProfileCubit>();
+                    await cubit.submitForm();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+                    elevation: 4,
+                    shadowColor: AppColors.primary.withValues(alpha: 0.5),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        (state.isUpdateMode
+                                ? 'common.save'
+                                : 'setup_health_profile.complete')
+                            .tr(),
+                        style: AppStyles.titleMedium.copyWith(
+                          color: AppColors.white,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.md),
+                      Icon(
+                          state.isUpdateMode ? Icons.check : Icons.arrow_forward,
+                          color: AppColors.white),
+                    ],
+                  ),
                 ),
-                elevation: 4,
-                shadowColor: AppColors.primary.withValues(alpha: 0.5),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'setup_health_profile.complete'.tr(),
-                    style: AppStyles.titleMedium.copyWith(
-                      color: AppColors.white,
-                      fontWeight: FontWeight.w700,
+              if (!state.isUpdateMode) ...[
+                const SizedBox(height: AppSpacing.md),
+                GestureDetector(
+                  onTap: () {
+                    context.router.replaceAll([const HomeRoute()]);
+                  },
+                  child: Text(
+                    'setup_health_profile.update_later'.tr(),
+                    style: AppStyles.bodySmall.copyWith(
+                      color: AppColors.textSecondary,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
-                  const SizedBox(width: AppSpacing.md),
-                  const Icon(Icons.arrow_forward, color: AppColors.white),
-                ],
-              ),
-            ),
+                ),
+              ],
+            ],
           ),
-          const SizedBox(height: AppSpacing.md),
-          GestureDetector(
-            onTap: () {
-              context.router.replaceAll([const HomeRoute()]);
-            },
-            child: Text(
-              'setup_health_profile.update_later'.tr(),
-              style: AppStyles.bodySmall.copyWith(
-                color: AppColors.textSecondary,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

@@ -127,8 +127,10 @@ class _BaseCubitPageState<C extends Cubit<S>, S extends BaseCubitState>
               builder: (context, state) {
                 switch (state.pageStatus) {
                   case PageStatus.Uninitialized:
+                  case PageStatus.Loading:
                     return widget.pageLoadingBuilder(context);
                   case PageStatus.Loaded:
+                  case PageStatus.Success:
                     final builder = widget.builder(context);
                     onBuilderComplete.call();
                     return builder;
