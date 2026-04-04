@@ -6,12 +6,11 @@ import 'package:family_health/presentation/view/widgets/app_button.dart';
 import 'package:flutter/material.dart';
 
 class DashboardAlertSection extends StatelessWidget {
-  final List<DashboardAlertItem> alerts;
-
   const DashboardAlertSection({
     super.key,
     required this.alerts,
   });
+  final List<DashboardAlertItem> alerts;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +27,8 @@ class DashboardAlertSection extends StatelessWidget {
               const SizedBox(width: AppSpacing.sm),
               Text(
                 'home.alerts'.tr(),
-                style: AppStyles.titleMedium.copyWith(fontWeight: FontWeight.bold),
+                style:
+                    AppStyles.titleMedium.copyWith(fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -41,12 +41,6 @@ class DashboardAlertSection extends StatelessWidget {
 }
 
 class DashboardAlertItem {
-  final String personName;
-  final String actionName;
-  final int minutesLate;
-  final VoidCallback? onRemind;
-  final VoidCallback? onView;
-
   DashboardAlertItem({
     required this.personName,
     required this.actionName,
@@ -54,17 +48,24 @@ class DashboardAlertItem {
     this.onRemind,
     this.onView,
   });
+  final String personName;
+  final String actionName;
+  final int minutesLate;
+  final VoidCallback? onRemind;
+  final VoidCallback? onView;
 }
 
 class _AlertCard extends StatelessWidget {
-  final DashboardAlertItem alert;
-
   const _AlertCard({required this.alert});
+  final DashboardAlertItem alert;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
+      margin: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.xs,
+      ),
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.alertBackground,
@@ -79,7 +80,7 @@ class _AlertCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(AppSpacing.sm),
             decoration: BoxDecoration(
-              color: AppColors.error.withValues(alpha:0.1),
+              color: AppColors.error.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.error, color: AppColors.error, size: 24),
@@ -96,13 +97,18 @@ class _AlertCard extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                     children: [
-                      const TextSpan(text: '🔴 ', style: TextStyle(color: AppColors.error)),
+                      const TextSpan(
+                        text: '🔴 ',
+                        style: TextStyle(color: AppColors.error),
+                      ),
                       TextSpan(
-                        text: 'home.alert_msg'.tr(args: [
-                          alert.personName,
-                          alert.actionName,
-                          alert.minutesLate.toString(),
-                        ]),
+                        text: 'home.alert_msg'.tr(
+                          args: [
+                            alert.personName,
+                            alert.actionName,
+                            alert.minutesLate.toString(),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -114,12 +120,13 @@ class _AlertCard extends StatelessWidget {
                       child: AppButton(
                         height: 36,
                         backgroundColor: AppColors.white,
-                        borderColor: AppColors.border.withValues(alpha:0.5),
+                        borderColor: AppColors.border.withValues(alpha: 0.5),
                         borderRadius: AppSpacing.radiusButton,
                         onPressed: alert.onRemind ?? () {},
                         child: Text(
                           'home.remind'.tr(),
-                          style: AppStyles.labelMedium.copyWith(color: AppColors.textPrimary),
+                          style: AppStyles.labelMedium
+                              .copyWith(color: AppColors.textPrimary),
                         ),
                       ),
                     ),
@@ -132,7 +139,8 @@ class _AlertCard extends StatelessWidget {
                         onPressed: alert.onView ?? () {},
                         child: Text(
                           'home.view'.tr(),
-                          style: AppStyles.labelMedium.copyWith(color: AppColors.white),
+                          style: AppStyles.labelMedium
+                              .copyWith(color: AppColors.white),
                         ),
                       ),
                     ),

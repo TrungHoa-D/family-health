@@ -4,7 +4,6 @@ import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
 import 'package:family_health/presentation/view/pages/events/components/calendar_strip.dart';
 import 'package:family_health/presentation/view/pages/events/components/event_card.dart';
-import 'package:intl/intl.dart';
 import 'package:family_health/presentation/view/pages/events/events_cubit.dart';
 import 'package:family_health/presentation/view/pages/events/events_state.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +29,8 @@ class EventsView extends StatelessWidget {
     return BlocBuilder<EventsCubit, EventsState>(
       builder: (context, state) {
         final currentDate = state.currentDate;
-        String monthYear = 'Tháng ${currentDate.month.toString().padLeft(2, '0')}, ${currentDate.year}';
+        final String monthYear =
+            'Tháng ${currentDate.month.toString().padLeft(2, '0')}, ${currentDate.year}';
 
         return Scaffold(
           backgroundColor: AppColors.surface,
@@ -39,7 +39,12 @@ class EventsView extends StatelessWidget {
               // Header
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.xl * 1.5, AppSpacing.md, AppSpacing.lg),
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.md,
+                    AppSpacing.xl * 1.5,
+                    AppSpacing.md,
+                    AppSpacing.lg,
+                  ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -58,7 +63,8 @@ class EventsView extends StatelessWidget {
                           const SizedBox(height: 4),
                           Text(
                             'events.title'.tr(),
-                            style: AppStyles.displayLarge.copyWith(fontWeight: FontWeight.w900),
+                            style: AppStyles.displayLarge
+                                .copyWith(fontWeight: FontWeight.w900),
                           ),
                         ],
                       ),
@@ -80,10 +86,14 @@ class EventsView extends StatelessWidget {
                                 color: AppColors.primary.withValues(alpha: 0.3),
                                 blurRadius: 16,
                                 offset: const Offset(0, 8),
-                              )
+                              ),
                             ],
                           ),
-                          child: const Icon(Icons.add, color: AppColors.white, size: 32),
+                          child: const Icon(
+                            Icons.add,
+                            color: AppColors.white,
+                            size: 32,
+                          ),
                         ),
                       ),
                     ],
@@ -108,7 +118,10 @@ class EventsView extends StatelessWidget {
               // Event List 1: Selected Date (e.g. Hôm nay)
               if (state.selectedDateEvents.isNotEmpty) ...[
                 SliverPadding(
-                  padding: const EdgeInsets.only(left: AppSpacing.md, bottom: AppSpacing.md),
+                  padding: const EdgeInsets.only(
+                    left: AppSpacing.md,
+                    bottom: AppSpacing.md,
+                  ),
                   sliver: SliverToBoxAdapter(
                     child: Row(
                       children: [
@@ -120,16 +133,21 @@ class EventsView extends StatelessWidget {
                                 state.selectedDate.year == now.year) {
                               return 'events.today'.tr();
                             }
-                            String titleDayOfWeek = state.selectedDate.weekday == DateTime.sunday 
-                                ? 'Chủ Nhật' 
-                                : 'Thứ ${state.selectedDate.weekday + 1}';
-                            String dateStr = DateFormat('dd/MM').format(state.selectedDate);
+                            final String titleDayOfWeek =
+                                state.selectedDate.weekday == DateTime.sunday
+                                    ? 'Chủ Nhật'
+                                    : 'Thứ ${state.selectedDate.weekday + 1}';
+                            final String dateStr =
+                                DateFormat('dd/MM').format(state.selectedDate);
                             return '$titleDayOfWeek, $dateStr';
                           }(),
-                          style: AppStyles.titleLarge.copyWith(fontWeight: FontWeight.bold),
+                          style: AppStyles.titleLarge
+                              .copyWith(fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(width: AppSpacing.sm),
-                        Expanded(child: Container(height: 1, color: AppColors.border)),
+                        Expanded(
+                          child: Container(height: 1, color: AppColors.border),
+                        ),
                       ],
                     ),
                   ),
@@ -139,43 +157,60 @@ class EventsView extends StatelessWidget {
                     height: 100, // Card height approx
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: AppSpacing.md),
                       itemCount: state.selectedDateEvents.length,
                       itemBuilder: (context, index) {
-                        return EventCard(event: state.selectedDateEvents[index]);
+                        return EventCard(
+                          event: state.selectedDateEvents[index],
+                        );
                       },
                     ),
                   ),
                 ),
-                const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.xl)),
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: AppSpacing.xl),
+                ),
               ] else ...[
                 SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.md),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                    vertical: AppSpacing.md,
+                  ),
                   sliver: SliverToBoxAdapter(
                     child: Center(
                       child: Text(
                         'Không có sự kiện nào cho ngày này',
-                        style: AppStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+                        style: AppStyles.bodyMedium
+                            .copyWith(color: AppColors.textSecondary),
                       ),
                     ),
                   ),
                 ),
-                const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.xl)),
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: AppSpacing.xl),
+                ),
               ],
 
               // Event List 2: Upcoming (Sắp tới)
               if (state.upcomingEvents.isNotEmpty) ...[
                 SliverPadding(
-                  padding: const EdgeInsets.only(left: AppSpacing.md, bottom: AppSpacing.md),
+                  padding: const EdgeInsets.only(
+                    left: AppSpacing.md,
+                    bottom: AppSpacing.md,
+                  ),
                   sliver: SliverToBoxAdapter(
                     child: Row(
                       children: [
                         Text(
                           'Sắp tới',
-                          style: AppStyles.titleLarge.copyWith(fontWeight: FontWeight.bold),
+                          style: AppStyles.titleLarge
+                              .copyWith(fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(width: AppSpacing.sm),
-                        Expanded(child: Container(height: 1, color: AppColors.border)),
+                        Expanded(
+                          child: Container(height: 1, color: AppColors.border),
+                        ),
                       ],
                     ),
                   ),
@@ -185,7 +220,8 @@ class EventsView extends StatelessWidget {
                     height: 100,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: AppSpacing.md),
                       itemCount: state.upcomingEvents.length,
                       itemBuilder: (context, index) {
                         return EventCard(event: state.upcomingEvents[index]);
@@ -194,11 +230,13 @@ class EventsView extends StatelessWidget {
                   ),
                 ),
               ],
-              
+
               // Bottom spacing
               const SliverToBoxAdapter(
-                child: SizedBox(height: AppSpacing.xl * 2), // for bottom nav overlap
-              )
+                child: SizedBox(
+                  height: AppSpacing.xl * 2,
+                ), // for bottom nav overlap
+              ),
             ],
           ),
         );

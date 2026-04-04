@@ -8,14 +8,6 @@ import 'package:flutter/material.dart';
 /// Section form thông tin thuốc: Tên thuốc + Liều lượng
 /// Hiển thị badge ✨ AI khi cần
 class DrugInfoSection extends StatelessWidget {
-  final String drugName;
-  final String dosage;
-  final String? drugNameError;
-  final String? dosageError;
-  final ValueChanged<String> onDrugNameChanged;
-  final ValueChanged<String> onDosageChanged;
-  final bool isAiFilled;
-
   const DrugInfoSection({
     super.key,
     required this.drugName,
@@ -26,6 +18,13 @@ class DrugInfoSection extends StatelessWidget {
     required this.onDosageChanged,
     this.isAiFilled = false,
   });
+  final String drugName;
+  final String dosage;
+  final String? drugNameError;
+  final String? dosageError;
+  final ValueChanged<String> onDrugNameChanged;
+  final ValueChanged<String> onDosageChanged;
+  final bool isAiFilled;
 
   @override
   Widget build(BuildContext context) {

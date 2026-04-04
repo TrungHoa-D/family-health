@@ -1,19 +1,18 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:family_health/domain/entities/user_entity.dart';
 import 'package:family_health/presentation/resources/app_spacing.dart';
 import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
-import 'package:flutter/material.dart';
-import 'package:auto_route/auto_route.dart';
-import 'package:family_health/domain/entities/user_entity.dart';
 import 'package:family_health/presentation/router/router.dart';
+import 'package:flutter/material.dart';
 
 class ProfileHeaderSection extends StatelessWidget {
-  final UserEntity? user;
-
   const ProfileHeaderSection({
     super.key,
     required this.user,
   });
+  final UserEntity? user;
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +33,11 @@ class ProfileHeaderSection extends StatelessWidget {
                   color: AppColors.surface,
                   child: Center(
                     child: Text(
-                      (user?.displayName?.isNotEmpty == true) ? user!.displayName![0] : 'U',
-                      style: AppStyles.displayLarge.copyWith(color: AppColors.primary),
+                      (user?.displayName?.isNotEmpty == true)
+                          ? user!.displayName![0]
+                          : 'U',
+                      style: AppStyles.displayLarge
+                          .copyWith(color: AppColors.primary),
                     ),
                   ),
                 ),
@@ -54,9 +56,18 @@ class ProfileHeaderSection extends StatelessWidget {
           ],
         ),
         const SizedBox(height: AppSpacing.md),
-        Text(user?.displayName ?? 'Khách', style: AppStyles.headlineMedium.copyWith(fontWeight: FontWeight.w900, color: AppColors.textPrimary)),
+        Text(
+          user?.displayName ?? 'Khách',
+          style: AppStyles.headlineMedium.copyWith(
+            fontWeight: FontWeight.w900,
+            color: AppColors.textPrimary,
+          ),
+        ),
         const SizedBox(height: 4),
-        Text(user?.email ?? 'Chưa cập nhật', style: AppStyles.bodyMedium.copyWith(color: AppColors.textSecondary)),
+        Text(
+          user?.email ?? 'Chưa cập nhật',
+          style: AppStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+        ),
         const SizedBox(height: 12),
         TextButton(
           onPressed: () {
@@ -74,10 +85,17 @@ class ProfileHeaderSection extends StatelessWidget {
             children: [
               Text(
                 'settings.edit_profile'.tr(),
-                style: AppStyles.titleSmall.copyWith(color: AppColors.primary, fontWeight: FontWeight.bold),
+                style: AppStyles.titleSmall.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(width: 4),
-              const Icon(Icons.arrow_forward_ios, size: 12, color: AppColors.primary),
+              const Icon(
+                Icons.arrow_forward_ios,
+                size: 12,
+                color: AppColors.primary,
+              ),
             ],
           ),
         ),

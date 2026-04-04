@@ -36,10 +36,9 @@ class MedsHeader extends StatelessWidget {
 }
 
 class _ActionButton extends StatelessWidget {
+  const _ActionButton({required this.icon, required this.onTap});
   final IconData icon;
   final VoidCallback onTap;
-
-  const _ActionButton({required this.icon, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

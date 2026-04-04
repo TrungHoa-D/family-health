@@ -5,14 +5,13 @@ import 'package:family_health/presentation/resources/styles.dart';
 import 'package:flutter/material.dart';
 
 class MedsFilterBar extends StatelessWidget {
-  final int selectedIndex;
-  final Function(int) onSelected;
-
   const MedsFilterBar({
     super.key,
     required this.selectedIndex,
     required this.onSelected,
   });
+  final int selectedIndex;
+  final Function(int) onSelected;
 
   @override
   Widget build(BuildContext context) {

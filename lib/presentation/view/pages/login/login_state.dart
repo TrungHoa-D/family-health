@@ -29,4 +29,3 @@ class LoginState with _$LoginState implements BaseCubitState {
     );
   }
 }
-

@@ -1,10 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit_page.dart';
 import 'package:family_health/presentation/resources/app_spacing.dart';
 import 'package:family_health/presentation/resources/colors.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'components/dashboard_alert_section.dart';
 import 'components/dashboard_header.dart';
@@ -32,7 +32,8 @@ class DashboardPage extends BaseCubitPage<DashboardCubit, DashboardState> {
           body: SafeArea(
             bottom: false,
             child: SingleChildScrollView(
-              padding: const EdgeInsets.only(bottom: 100), // Spacing for bottom nav
+              padding:
+                  const EdgeInsets.only(bottom: 100), // Spacing for bottom nav
               child: Column(
                 children: [
                   DashboardHeader(

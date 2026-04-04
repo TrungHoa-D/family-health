@@ -12,10 +12,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'profile_edit_cubit.dart';
 
 @RoutePage()
-class ProfileEditPage extends BaseCubitPage<ProfileEditCubit, ProfileEditState> {
-  final UserEntity user;
-
+class ProfileEditPage
+    extends BaseCubitPage<ProfileEditCubit, ProfileEditState> {
   const ProfileEditPage({super.key, required this.user});
+  final UserEntity user;
 
   @override
   void onInitState(BuildContext context) {
@@ -34,19 +34,24 @@ class ProfileEditPage extends BaseCubitPage<ProfileEditCubit, ProfileEditState> 
       },
       builder: (context, state) {
         final cubit = context.read<ProfileEditCubit>();
-        
+
         return Scaffold(
           backgroundColor: AppColors.surface,
           appBar: AppBar(
             backgroundColor: AppColors.surface,
             elevation: 0,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios, color: AppColors.textPrimary, size: 20),
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: AppColors.textPrimary,
+                size: 20,
+              ),
               onPressed: () => context.router.maybePop(),
             ),
             title: Text(
               'settings.edit_profile_title'.tr(),
-              style: AppStyles.titleLarge.copyWith(color: AppColors.textPrimary),
+              style:
+                  AppStyles.titleLarge.copyWith(color: AppColors.textPrimary),
             ),
             centerTitle: true,
           ),
@@ -66,7 +71,10 @@ class ProfileEditPage extends BaseCubitPage<ProfileEditCubit, ProfileEditState> 
                           height: 100,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(color: AppColors.secondary, width: 3),
+                            border: Border.all(
+                              color: AppColors.secondary,
+                              width: 3,
+                            ),
                           ),
                           child: ClipOval(
                             child: Container(
@@ -76,7 +84,8 @@ class ProfileEditPage extends BaseCubitPage<ProfileEditCubit, ProfileEditState> 
                                   user.displayName?.isNotEmpty == true
                                       ? user.displayName![0]
                                       : 'U',
-                                  style: AppStyles.displayLarge.copyWith(color: AppColors.primary),
+                                  style: AppStyles.displayLarge
+                                      .copyWith(color: AppColors.primary),
                                 ),
                               ),
                             ),
@@ -87,9 +96,14 @@ class ProfileEditPage extends BaseCubitPage<ProfileEditCubit, ProfileEditState> 
                           decoration: BoxDecoration(
                             color: AppColors.primary,
                             shape: BoxShape.circle,
-                            border: Border.all(color: AppColors.white, width: 2),
+                            border:
+                                Border.all(color: AppColors.white, width: 2),
                           ),
-                          child: const Icon(Icons.camera_alt, color: AppColors.white, size: 16),
+                          child: const Icon(
+                            Icons.camera_alt,
+                            color: AppColors.white,
+                            size: 16,
+                          ),
                         ),
                       ],
                     ),
@@ -116,7 +130,8 @@ class ProfileEditPage extends BaseCubitPage<ProfileEditCubit, ProfileEditState> 
                   const SizedBox(height: 12),
                   Text(
                     'Email: ${user.email}',
-                    style: AppStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+                    style: AppStyles.bodyMedium
+                        .copyWith(color: AppColors.textSecondary),
                   ),
                   const SizedBox(height: AppSpacing.xxl),
                   AppButton.primary(

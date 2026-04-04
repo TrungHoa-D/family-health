@@ -1,22 +1,23 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:family_health/domain/entities/user_entity.dart';
 import 'package:family_health/domain/usecases/check_auth_status_usecase.dart';
+import 'package:family_health/domain/usecases/get_user_usecase.dart';
 import 'package:family_health/presentation/base/page_status.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit_state.dart';
 import 'package:family_health/presentation/router/router.dart';
+import 'package:family_health/shared/utils/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
-import 'package:family_health/domain/usecases/get_user_usecase.dart';
-import 'package:family_health/shared/utils/logger.dart';
 
 part 'splash_cubit.freezed.dart';
 part 'splash_state.dart';
 
 @injectable
 class SplashCubit extends BaseCubit<SplashState> {
-  SplashCubit(this._checkAuthStatusUseCase, this._getUserUseCase) : super(const SplashState());
+  SplashCubit(this._checkAuthStatusUseCase, this._getUserUseCase)
+      : super(const SplashState());
 
   final CheckAuthStatusUseCase _checkAuthStatusUseCase;
   final GetUserUseCase _getUserUseCase;
@@ -34,17 +35,21 @@ class SplashCubit extends BaseCubit<SplashState> {
     if (user != null) {
       final userData = await _getUserUseCase.call(params: user.uid);
       if (userData != null) {
-        logger.i('Fetched user data from Firestore: ${userData.displayName} / ${userData.email}');
+        logger.i(
+          'Fetched user data from Firestore: ${userData.displayName} / ${userData.email}',
+        );
       } else {
         logger.i('User exists in Auth but not in Firestore yet.');
       }
     }
 
-    emit(state.copyWith(
-      pageStatus: PageStatus.Loaded,
-      isCheckingAuth: false,
-      isAuthenticated: user != null,
-    ));
+    emit(
+      state.copyWith(
+        pageStatus: PageStatus.Loaded,
+        isCheckingAuth: false,
+        isAuthenticated: user != null,
+      ),
+    );
 
     if (context.mounted) {
       if (user != null) {

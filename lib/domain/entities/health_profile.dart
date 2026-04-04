@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'health_profile.freezed.dart';
+part 'health_profile.g.dart';
 
 @freezed
 class HealthProfile with _$HealthProfile {
@@ -15,6 +16,9 @@ class HealthProfile with _$HealthProfile {
     String? otherDisease,
     @Default(AnchorTimes()) AnchorTimes anchorTimes,
   }) = _HealthProfile;
+
+  factory HealthProfile.fromJson(Map<String, dynamic> json) =>
+      _$HealthProfileFromJson(json);
 }
 
 @freezed
@@ -25,4 +29,7 @@ class AnchorTimes with _$AnchorTimes {
     @Default('19:00') String dinner,
     @Default('22:00') String sleep,
   }) = _AnchorTimes;
+
+  factory AnchorTimes.fromJson(Map<String, dynamic> json) =>
+      _$AnchorTimesFromJson(json);
 }

@@ -1,3 +1,5 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:family_health/domain/entities/health_profile.dart';
 import 'package:family_health/presentation/base/page_status.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit_page.dart';
@@ -10,17 +12,14 @@ import 'package:family_health/presentation/view/widgets/app_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:auto_route/auto_route.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 import 'setup_health_profile_cubit.dart';
 
 @RoutePage()
 class SetupHealthProfilePage
     extends BaseCubitPage<SetupHealthProfileCubit, SetupHealthProfileState> {
-  final HealthProfile? initialProfile;
-
   const SetupHealthProfilePage({super.key, this.initialProfile});
+  final HealthProfile? initialProfile;
 
   @override
   void onInitState(BuildContext context) {
@@ -96,8 +95,10 @@ class SetupHealthProfilePage
     return BlocBuilder<SetupHealthProfileCubit, SetupHealthProfileState>(
       buildWhen: (prev, curr) => prev.isUpdateMode != curr.isUpdateMode,
       builder: (context, state) {
-        if (state.isUpdateMode) return const SizedBox.shrink();
-        
+        if (state.isUpdateMode) {
+          return const SizedBox.shrink();
+        }
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -314,7 +315,9 @@ class SetupHealthProfilePage
   }
 
   Widget _buildAnchorTimes(
-      BuildContext context, SetupHealthProfileState state) {
+    BuildContext context,
+    SetupHealthProfileState state,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -408,7 +411,9 @@ class SetupHealthProfilePage
               initialTime: initialTime,
             );
             if (time != null) {
-              onChanged('${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}');
+              onChanged(
+                '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}',
+              );
             }
           },
           child: AppFormField(
@@ -488,7 +493,9 @@ class SetupHealthProfilePage
   }
 
   Widget _buildBloodTypeSelection(
-      BuildContext context, SetupHealthProfileState state) {
+    BuildContext context,
+    SetupHealthProfileState state,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -526,7 +533,10 @@ class SetupHealthProfilePage
             _buildBloodTypeButton(context, 'O', state.selectedBloodType == 'O'),
             const SizedBox(width: AppSpacing.sm),
             _buildBloodTypeButton(
-                context, 'AB', state.selectedBloodType == 'AB'),
+              context,
+              'AB',
+              state.selectedBloodType == 'AB',
+            ),
           ],
         ),
         const SizedBox(height: AppSpacing.xs),
@@ -539,11 +549,21 @@ class SetupHealthProfilePage
           child: Row(
             children: [
               Expanded(
-                  child: _buildRhToggleButton(
-                      context, 'Rh+', true, state.isRhPositive)),
+                child: _buildRhToggleButton(
+                  context,
+                  'Rh+',
+                  true,
+                  state.isRhPositive,
+                ),
+              ),
               Expanded(
-                  child: _buildRhToggleButton(
-                      context, 'Rh-', false, !state.isRhPositive)),
+                child: _buildRhToggleButton(
+                  context,
+                  'Rh-',
+                  false,
+                  !state.isRhPositive,
+                ),
+              ),
             ],
           ),
         ),
@@ -552,7 +572,10 @@ class SetupHealthProfilePage
   }
 
   Widget _buildBloodTypeButton(
-      BuildContext context, String type, bool isSelected) {
+    BuildContext context,
+    String type,
+    bool isSelected,
+  ) {
     return Expanded(
       child: GestureDetector(
         onTap: () =>
@@ -583,7 +606,11 @@ class SetupHealthProfilePage
   }
 
   Widget _buildRhToggleButton(
-      BuildContext context, String label, bool value, bool isSelected) {
+    BuildContext context,
+    String label,
+    bool value,
+    bool isSelected,
+  ) {
     return GestureDetector(
       onTap: () =>
           context.read<SetupHealthProfileCubit>().toggleRhFactor(value),
@@ -595,9 +622,10 @@ class SetupHealthProfilePage
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2))
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
                 ]
               : null,
         ),
@@ -614,7 +642,9 @@ class SetupHealthProfilePage
   }
 
   Widget _buildMedicalHistory(
-      BuildContext context, SetupHealthProfileState state) {
+    BuildContext context,
+    SetupHealthProfileState state,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -647,18 +677,42 @@ class SetupHealthProfilePage
           spacing: AppSpacing.sm,
           runSpacing: AppSpacing.sm,
           children: [
-            _buildDiseaseChip(context, state,
-                'setup_health_profile.diabetes'.tr(), 'diabetes'),
-            _buildDiseaseChip(context, state,
-                'setup_health_profile.blood_pressure'.tr(), 'blood_pressure'),
-            _buildDiseaseChip(context, state,
-                'setup_health_profile.cardiovascular'.tr(), 'cardiovascular'),
-            _buildDiseaseChip(context, state,
-                'setup_health_profile.allergies'.tr(), 'allergies'),
             _buildDiseaseChip(
-                context, state, 'setup_health_profile.asthma'.tr(), 'asthma'),
+              context,
+              state,
+              'setup_health_profile.diabetes'.tr(),
+              'diabetes',
+            ),
             _buildDiseaseChip(
-                context, state, 'setup_health_profile.stomach'.tr(), 'stomach'),
+              context,
+              state,
+              'setup_health_profile.blood_pressure'.tr(),
+              'blood_pressure',
+            ),
+            _buildDiseaseChip(
+              context,
+              state,
+              'setup_health_profile.cardiovascular'.tr(),
+              'cardiovascular',
+            ),
+            _buildDiseaseChip(
+              context,
+              state,
+              'setup_health_profile.allergies'.tr(),
+              'allergies',
+            ),
+            _buildDiseaseChip(
+              context,
+              state,
+              'setup_health_profile.asthma'.tr(),
+              'asthma',
+            ),
+            _buildDiseaseChip(
+              context,
+              state,
+              'setup_health_profile.stomach'.tr(),
+              'stomach',
+            ),
             _buildAddOtherChip(context, state),
           ],
         ),
@@ -669,13 +723,17 @@ class SetupHealthProfilePage
             onChanged: (val) =>
                 context.read<SetupHealthProfileCubit>().updateOtherDisease(val),
           ),
-        ]
+        ],
       ],
     );
   }
 
-  Widget _buildDiseaseChip(BuildContext context, SetupHealthProfileState state,
-      String label, String key) {
+  Widget _buildDiseaseChip(
+    BuildContext context,
+    SetupHealthProfileState state,
+    String label,
+    String key,
+  ) {
     final isSelected = state.selectedDiseases.contains(key);
     return GestureDetector(
       onTap: () => context.read<SetupHealthProfileCubit>().toggleDisease(key),
@@ -698,8 +756,11 @@ class SetupHealthProfilePage
             ),
             if (isSelected) ...[
               const SizedBox(width: AppSpacing.xs),
-              const Icon(Icons.check_circle,
-                  size: 16, color: AppColors.primary),
+              const Icon(
+                Icons.check_circle,
+                size: 16,
+                color: AppColors.primary,
+              ),
             ],
           ],
         ),
@@ -708,7 +769,9 @@ class SetupHealthProfilePage
   }
 
   Widget _buildAddOtherChip(
-      BuildContext context, SetupHealthProfileState state) {
+    BuildContext context,
+    SetupHealthProfileState state,
+  ) {
     final isSelected = state.isShowingOtherDiseaseInput;
     return GestureDetector(
       onTap: () =>
@@ -720,18 +783,20 @@ class SetupHealthProfilePage
           color: isSelected ? AppColors.primaryLight : AppColors.surface,
           borderRadius: BorderRadius.circular(100),
           border: Border.all(
-              color: isSelected
-                  ? AppColors.primary
-                  : AppColors.border.withValues(alpha: 0.5),
-              style: BorderStyle.solid),
+            color: isSelected
+                ? AppColors.primary
+                : AppColors.border.withValues(alpha: 0.5),
+            style: BorderStyle.solid,
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.add,
-                size: 16,
-                color:
-                    isSelected ? AppColors.primary : AppColors.textSecondary),
+            Icon(
+              Icons.add,
+              size: 16,
+              color: isSelected ? AppColors.primary : AppColors.textSecondary,
+            ),
             const SizedBox(width: AppSpacing.xs),
             Text(
               'setup_health_profile.add_other_disease'.tr(),
@@ -779,7 +844,9 @@ class SetupHealthProfilePage
                       const SizedBox(height: AppSpacing.md),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 4),
+                          horizontal: 12,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.success.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(100),
@@ -884,8 +951,9 @@ class SetupHealthProfilePage
                       ),
                       const SizedBox(width: AppSpacing.md),
                       Icon(
-                          state.isUpdateMode ? Icons.check : Icons.arrow_forward,
-                          color: AppColors.white),
+                        state.isUpdateMode ? Icons.check : Icons.arrow_forward,
+                        color: AppColors.white,
+                      ),
                     ],
                   ),
                 ),

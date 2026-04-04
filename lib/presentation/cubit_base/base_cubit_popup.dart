@@ -1,9 +1,9 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:family_health/di/di.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit_state.dart';
 import 'package:family_health/shared/utils/keyboard.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 abstract class BaseCubitPopup<C extends Cubit<S>, S extends BaseCubitState>
     extends StatefulWidget implements AutoRouteWrapper {

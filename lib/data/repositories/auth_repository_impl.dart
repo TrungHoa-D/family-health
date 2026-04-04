@@ -1,7 +1,7 @@
-import 'package:injectable/injectable.dart';
 import 'package:family_health/data/remote/datasources/auth_data_source.dart';
 import 'package:family_health/domain/entities/user_entity.dart';
 import 'package:family_health/domain/repositories/auth_repository.dart';
+import 'package:injectable/injectable.dart';
 
 @LazySingleton(as: AuthRepository)
 class AuthRepositoryImpl implements AuthRepository {
@@ -34,4 +34,3 @@ class AuthRepositoryImpl implements AuthRepository {
     return _authDataSource.getCurrentUser();
   }
 }
-

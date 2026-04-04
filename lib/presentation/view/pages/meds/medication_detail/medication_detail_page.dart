@@ -1,29 +1,28 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:family_health/presentation/cubit_base/base_cubit_page.dart';
 import 'package:family_health/presentation/resources/app_spacing.dart';
 import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
-import 'package:family_health/presentation/cubit_base/base_cubit_page.dart';
 import 'package:family_health/presentation/router/router.dart';
 import 'package:family_health/presentation/view/pages/meds/meds_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'medication_detail_cubit.dart';
-import 'components/medication_hero_section.dart';
 import 'components/ai_assistant_card.dart';
-import 'components/medication_info_list.dart';
 import 'components/medication_action_buttons.dart';
+import 'components/medication_hero_section.dart';
+import 'components/medication_info_list.dart';
+import 'medication_detail_cubit.dart';
 
 @RoutePage()
 class MedicationDetailPage
     extends BaseCubitPage<MedicationDetailCubit, MedicationDetailState> {
-  final MedicationModel medication;
-
   const MedicationDetailPage({
     super.key,
     required this.medication,
   });
+  final MedicationModel medication;
 
   @override
   void onInitState(BuildContext context) {

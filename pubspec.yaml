@@ -42,6 +42,7 @@ dependencies:
   # Local data
   shared_preferences: 2.5.2
   flutter_secure_storage: 9.2.4
+  flutter_dotenv: 5.2.1
 
   # Alert
   cool_alert: 2.0.1
@@ -81,6 +82,7 @@ dev_dependencies:
 
   dependency_validator: ^5.0.2
   flutter_launcher_icons: ^0.14.4
+  bloc_test: ^10.0.0
 
 flutter_gen:
   line_length: 80
@@ -102,6 +104,7 @@ flutter:
     - assets/icons/
     - assets/images/
     - assets/credentials/
+    - .env
   fonts:
     - family: Inter
       fonts:

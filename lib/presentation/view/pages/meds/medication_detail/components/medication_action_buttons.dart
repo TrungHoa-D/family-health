@@ -6,16 +6,15 @@ import 'package:flutter/material.dart';
 
 /// 3 nút hành động hàng ngang: Sửa, Copy, Xóa
 class MedicationActionButtons extends StatelessWidget {
-  final VoidCallback? onEdit;
-  final VoidCallback? onCopy;
-  final VoidCallback? onDelete;
-
   const MedicationActionButtons({
     super.key,
     this.onEdit,
     this.onCopy,
     this.onDelete,
   });
+  final VoidCallback? onEdit;
+  final VoidCallback? onCopy;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -64,13 +63,6 @@ class MedicationActionButtons extends StatelessWidget {
 }
 
 class _ActionButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final Color backgroundColor;
-  final Color textColor;
-  final Color iconColor;
-  final VoidCallback? onTap;
-
   const _ActionButton({
     required this.icon,
     required this.label,
@@ -79,6 +71,12 @@ class _ActionButton extends StatelessWidget {
     required this.iconColor,
     this.onTap,
   });
+  final IconData icon;
+  final String label;
+  final Color backgroundColor;
+  final Color textColor;
+  final Color iconColor;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {

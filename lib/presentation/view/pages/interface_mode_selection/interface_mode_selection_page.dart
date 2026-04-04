@@ -138,7 +138,7 @@ class InterfaceModeSelectionPage extends BaseCubitPage<
                 color: Colors.black.withValues(alpha: 0.02),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
-              )
+              ),
           ],
         ),
         child: Row(
@@ -148,16 +148,17 @@ class InterfaceModeSelectionPage extends BaseCubitPage<
               width: 56,
               height: 56,
               decoration: BoxDecoration(
-                  color: isSelected ? AppColors.primary : AppColors.background,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    if (isSelected)
-                      BoxShadow(
-                        color: AppColors.primary.withValues(alpha: 0.3),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      )
-                  ]),
+                color: isSelected ? AppColors.primary : AppColors.background,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  if (isSelected)
+                    BoxShadow(
+                      color: AppColors.primary.withValues(alpha: 0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                ],
+              ),
               child: Icon(
                 icon,
                 color: isSelected ? AppColors.white : AppColors.textPrimary,
@@ -217,10 +218,11 @@ class InterfaceModeSelectionPage extends BaseCubitPage<
       padding: const EdgeInsets.all(AppSpacing.lg),
       child: AppButton.primary(
         title: 'interface_mode.continue'.tr(),
-        onPressed: () {
+        onPressed: () async {
           final cubit = context.read<InterfaceModeSelectionCubit>();
-          if (cubit.submitForm()) {
-            context.router.replaceAll([const HomeRoute()]);
+          final success = await cubit.submitForm();
+          if (success) {
+            context.router.replaceAll([const FamilySetupRoute()]);
           }
         },
         icon: const Icon(Icons.arrow_forward, color: AppColors.white),

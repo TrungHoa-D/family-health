@@ -4,17 +4,16 @@ import 'package:family_health/domain/usecases/use_case.dart';
 import 'package:injectable/injectable.dart';
 
 class SaveHealthProfileParams {
+  SaveHealthProfileParams({required this.uid, required this.profile});
   final String uid;
   final HealthProfile profile;
-
-  SaveHealthProfileParams({required this.uid, required this.profile});
 }
 
 @injectable
-class SaveHealthProfileUseCase implements UseCase<void, SaveHealthProfileParams> {
-  final HealthRepository _healthRepository;
-
+class SaveHealthProfileUseCase
+    implements UseCase<void, SaveHealthProfileParams> {
   SaveHealthProfileUseCase(this._healthRepository);
+  final HealthRepository _healthRepository;
 
   @override
   Future<void> call({required SaveHealthProfileParams params}) async {

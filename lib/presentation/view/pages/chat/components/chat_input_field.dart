@@ -4,9 +4,8 @@ import 'package:family_health/presentation/resources/colors.dart';
 import 'package:flutter/material.dart';
 
 class ChatInputField extends StatefulWidget {
-  final ValueChanged<String> onSend;
-
   const ChatInputField({super.key, required this.onSend});
+  final ValueChanged<String> onSend;
 
   @override
   State<ChatInputField> createState() => _ChatInputFieldState();
@@ -34,10 +33,13 @@ class _ChatInputFieldState extends State<ChatInputField> {
             color: AppColors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
-          )
+          ),
         ],
       ),
-      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.lg),
+      margin: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.lg,
+      ),
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
       child: Row(
         children: [
@@ -52,7 +54,8 @@ class _ChatInputFieldState extends State<ChatInputField> {
                 hintText: 'chat.input_placeholder'.tr(),
                 border: InputBorder.none,
                 isDense: true,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
               ),
               onSubmitted: (_) => _handleSend(),
             ),

@@ -7,14 +7,13 @@ import '../meds_cubit.dart';
 import 'meds_card.dart';
 
 class MedsListSection extends StatelessWidget {
-  final List<MedicationModel> medications;
-  final ValueChanged<MedicationModel>? onMedicationTap;
-
   const MedsListSection({
     super.key,
     required this.medications,
     this.onMedicationTap,
   });
+  final List<MedicationModel> medications;
+  final ValueChanged<MedicationModel>? onMedicationTap;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +21,10 @@ class MedsListSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.md),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.md,
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

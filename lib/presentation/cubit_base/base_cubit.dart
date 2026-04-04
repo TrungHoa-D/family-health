@@ -1,10 +1,10 @@
 import 'package:bloc/bloc.dart';
-import 'package:flutter/material.dart';
 import 'package:family_health/dependencies/dialog_manager.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit_state.dart';
 import 'package:family_health/shared/common/error_converter.dart';
 import 'package:family_health/shared/common/error_entity/business_error_entity.dart';
 import 'package:family_health/shared/common/error_handler.dart';
+import 'package:flutter/material.dart';
 
 abstract class BaseCubit<S extends BaseCubitState> extends Cubit<S> {
   BaseCubit(S initialState) : super(initialState);

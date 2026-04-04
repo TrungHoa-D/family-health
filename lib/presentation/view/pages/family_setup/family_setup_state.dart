@@ -8,6 +8,7 @@ class FamilySetupState with _$FamilySetupState implements BaseCubitState {
 
     // Form fields
     @Default(FamilySetupOption.create) FamilySetupOption selectedOption,
+    @Default('') String groupName,
     @Default('') String inviteCode,
 
     // Validation
@@ -42,7 +43,7 @@ class FamilySetupState with _$FamilySetupState implements BaseCubitState {
 
   bool get isFormValid {
     if (selectedOption == FamilySetupOption.create) {
-      return true;
+      return groupName.isNotEmpty;
     }
     return inviteCode.length == 6;
   }

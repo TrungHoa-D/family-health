@@ -6,14 +6,13 @@ import 'package:flutter/material.dart';
 
 /// Card Trợ lý Y khoa AI — gradient card + nút "Hỏi ngay"
 class AiAssistantCard extends StatelessWidget {
-  final String medicationName;
-  final VoidCallback? onAskNow;
-
   const AiAssistantCard({
     super.key,
     required this.medicationName,
     this.onAskNow,
   });
+  final String medicationName;
+  final VoidCallback? onAskNow;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +20,7 @@ class AiAssistantCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [

@@ -13,10 +13,12 @@ class MedicationDetailCubit extends BaseCubit<MedicationDetailState> {
   MedicationDetailCubit() : super(const MedicationDetailState());
 
   void loadMedication(MedicationModel medication) {
-    emit(state.copyWith(
-      pageStatus: PageStatus.Loaded,
-      medication: medication,
-    ));
+    emit(
+      state.copyWith(
+        pageStatus: PageStatus.Loaded,
+        medication: medication,
+      ),
+    );
   }
 
   void deleteMedication() {

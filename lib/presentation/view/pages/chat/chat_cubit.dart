@@ -1,5 +1,5 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:family_health/presentation/view/pages/chat/chat_state.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ChatCubit extends Cubit<ChatState> {
   ChatCubit() : super(const ChatState()) {
@@ -15,7 +15,7 @@ class ChatCubit extends Cubit<ChatState> {
         time: DateTime(now.year, now.month, now.day, 8, 30),
         senderType: MessageSenderType.otherMember,
         senderName: 'Bố',
-        avatarUrl: 'B', 
+        avatarUrl: 'B',
       ),
       ChatMessageModel(
         id: '2',
@@ -31,13 +31,15 @@ class ChatCubit extends Cubit<ChatState> {
       ),
       ChatMessageModel(
         id: '4',
-        content: 'Con vừa kiểm tra chỉ số tim mạch của bố trên app. Mọi thứ đều rất tuyệt vời.',
+        content:
+            'Con vừa kiểm tra chỉ số tim mạch của bố trên app. Mọi thứ đều rất tuyệt vời.',
         time: DateTime(now.year, now.month, now.day, 9, 05),
         senderType: MessageSenderType.me,
       ),
       ChatMessageModel(
         id: '5',
-        content: 'Tuyệt quá! Trưa nay chị sẽ ghé qua nấu cơm cho Bố nhé. Có ai dặn mua gì không?',
+        content:
+            'Tuyệt quá! Trưa nay chị sẽ ghé qua nấu cơm cho Bố nhé. Có ai dặn mua gì không?',
         time: DateTime(now.year, now.month, now.day, 9, 12),
         senderType: MessageSenderType.otherMember,
         senderName: 'Chị Lan',
@@ -58,8 +60,10 @@ class ChatCubit extends Cubit<ChatState> {
       senderType: MessageSenderType.me,
     );
 
-    emit(state.copyWith(
-      messages: [...state.messages, newMessage],
-    ));
+    emit(
+      state.copyWith(
+        messages: [...state.messages, newMessage],
+      ),
+    );
   }
 }

@@ -7,9 +7,8 @@ import 'package:flutter/material.dart';
 
 /// Danh sách thông tin thuốc: Liều lượng, Thời gian, Người dùng, Giám sát
 class MedicationInfoList extends StatelessWidget {
-  final MedicationModel medication;
-
   const MedicationInfoList({super.key, required this.medication});
+  final MedicationModel medication;
 
   @override
   Widget build(BuildContext context) {
@@ -69,17 +68,16 @@ class MedicationInfoList extends StatelessWidget {
 
 /// Một hàng thông tin: icon tròn + label + value
 class _InfoRow extends StatelessWidget {
-  final IconData icon;
-  final Color iconColor;
-  final String label;
-  final String value;
-
   const _InfoRow({
     required this.icon,
     required this.iconColor,
     required this.label,
     required this.value,
   });
+  final IconData icon;
+  final Color iconColor;
+  final String label;
+  final String value;
 
   @override
   Widget build(BuildContext context) {
@@ -143,9 +141,8 @@ class _InfoRow extends StatelessWidget {
 
 /// Hàng giám sát — hiển thị avatar chồng nhau
 class _SupervisorRow extends StatelessWidget {
-  final List<String> supervisorNames;
-
   const _SupervisorRow({required this.supervisorNames});
+  final List<String> supervisorNames;
 
   @override
   Widget build(BuildContext context) {
@@ -210,7 +207,8 @@ class _SupervisorRow extends StatelessWidget {
       );
     }
 
-    final displayCount = supervisorNames.length > 2 ? 2 : supervisorNames.length;
+    final displayCount =
+        supervisorNames.length > 2 ? 2 : supervisorNames.length;
     final remaining = supervisorNames.length - displayCount;
 
     return Row(

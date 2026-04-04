@@ -4,12 +4,10 @@ import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
 import 'package:family_health/presentation/view/pages/chat/chat_state.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class ChatBubble extends StatelessWidget {
-  final ChatMessageModel message;
-
   const ChatBubble({super.key, required this.message});
+  final ChatMessageModel message;
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +22,8 @@ class ChatBubble extends StatelessWidget {
 }
 
 class _SystemAiBubble extends StatelessWidget {
-  final ChatMessageModel message;
   const _SystemAiBubble({required this.message});
+  final ChatMessageModel message;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +32,10 @@ class _SystemAiBubble extends StatelessWidget {
     final sub = parts.length > 1 ? parts.sublist(1).join('\n') : '';
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+      margin: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
+      ),
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.surface,
@@ -54,18 +55,29 @@ class _SystemAiBubble extends StatelessWidget {
                     color: AppColors.secondary.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.monitor_heart, color: AppColors.secondary),
+                  child: const Icon(
+                    Icons.monitor_heart,
+                    color: AppColors.secondary,
+                  ),
                 ),
                 const SizedBox(width: AppSpacing.md),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(title, style: AppStyles.titleSmall.copyWith(fontWeight: FontWeight.bold)),
+                      Text(
+                        title,
+                        style: AppStyles.titleSmall
+                            .copyWith(fontWeight: FontWeight.bold),
+                      ),
                       if (sub.isNotEmpty) ...[
                         const SizedBox(height: 2),
-                        Text(sub, style: AppStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
-                      ]
+                        Text(
+                          sub,
+                          style: AppStyles.bodySmall
+                              .copyWith(color: AppColors.textSecondary),
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -76,9 +88,12 @@ class _SystemAiBubble extends StatelessWidget {
             onPressed: () {},
             child: Text(
               'chat.details'.tr().toUpperCase(),
-              style: AppStyles.labelSmall.copyWith(color: AppColors.primary, fontWeight: FontWeight.bold),
+              style: AppStyles.labelSmall.copyWith(
+                color: AppColors.primary,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -86,28 +101,37 @@ class _SystemAiBubble extends StatelessWidget {
 }
 
 class _MyBubble extends StatelessWidget {
-  final ChatMessageModel message;
   const _MyBubble({required this.message});
+  final ChatMessageModel message;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 48, right: AppSpacing.md, top: AppSpacing.xs, bottom: AppSpacing.sm),
+      padding: const EdgeInsets.only(
+        left: 48,
+        right: AppSpacing.md,
+        top: AppSpacing.xs,
+        bottom: AppSpacing.sm,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.md,
+            ),
             decoration: BoxDecoration(
               color: AppColors.primary,
-              borderRadius: BorderRadius.circular(16).copyWith(bottomRight: const Radius.circular(4)),
+              borderRadius: BorderRadius.circular(16)
+                  .copyWith(bottomRight: const Radius.circular(4)),
               boxShadow: [
                 BoxShadow(
                   color: AppColors.black.withValues(alpha: 0.1),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
-                )
-              ]
+                ),
+              ],
             ),
             child: Text(
               message.content,
@@ -120,12 +144,17 @@ class _MyBubble extends StatelessWidget {
             children: [
               Text(
                 DateFormat('hh:mm a').format(message.time),
-                style: AppStyles.bodySmall.copyWith(color: AppColors.textSecondary, fontSize: 10),
+                style: AppStyles.bodySmall
+                    .copyWith(color: AppColors.textSecondary, fontSize: 10),
               ),
               const SizedBox(width: 4),
-              const Icon(Icons.check_circle, size: 14, color: AppColors.primary),
+              const Icon(
+                Icons.check_circle,
+                size: 14,
+                color: AppColors.primary,
+              ),
             ],
-          )
+          ),
         ],
       ),
     );
@@ -133,13 +162,18 @@ class _MyBubble extends StatelessWidget {
 }
 
 class _OtherMemberBubble extends StatelessWidget {
-  final ChatMessageModel message;
   const _OtherMemberBubble({required this.message});
+  final ChatMessageModel message;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: AppSpacing.md, right: 48, top: AppSpacing.xs, bottom: AppSpacing.sm),
+      padding: const EdgeInsets.only(
+        left: AppSpacing.md,
+        right: 48,
+        top: AppSpacing.xs,
+        bottom: AppSpacing.sm,
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
@@ -147,14 +181,17 @@ class _OtherMemberBubble extends StatelessWidget {
             width: 32,
             height: 32,
             margin: const EdgeInsets.only(bottom: 16),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: AppColors.primaryLight,
               shape: BoxShape.circle,
             ),
             child: Center(
               child: Text(
                 message.avatarUrl ?? 'U',
-                style: AppStyles.titleSmall.copyWith(color: AppColors.primary, fontWeight: FontWeight.bold),
+                style: AppStyles.titleSmall.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -167,25 +204,34 @@ class _OtherMemberBubble extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 4, bottom: 4),
                   child: Text(
                     message.senderName?.toUpperCase() ?? 'MEMBER',
-                    style: AppStyles.labelSmall.copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.bold, fontSize: 10),
+                    style: AppStyles.labelSmall.copyWith(
+                      color: AppColors.textSecondary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 10,
+                    ),
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.lg,
+                    vertical: AppSpacing.md,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.surface,
-                    borderRadius: BorderRadius.circular(16).copyWith(bottomLeft: const Radius.circular(4)),
+                    borderRadius: BorderRadius.circular(16)
+                        .copyWith(bottomLeft: const Radius.circular(4)),
                     boxShadow: [
                       BoxShadow(
                         color: AppColors.black.withValues(alpha: 0.05),
                         blurRadius: 4,
                         offset: const Offset(0, 2),
-                      )
-                    ]
+                      ),
+                    ],
                   ),
                   child: Text(
                     message.content,
-                    style: AppStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
+                    style: AppStyles.bodyMedium
+                        .copyWith(color: AppColors.textPrimary),
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -193,7 +239,8 @@ class _OtherMemberBubble extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 4),
                   child: Text(
                     DateFormat('hh:mm a').format(message.time),
-                    style: AppStyles.bodySmall.copyWith(color: AppColors.textSecondary, fontSize: 10),
+                    style: AppStyles.bodySmall
+                        .copyWith(color: AppColors.textSecondary, fontSize: 10),
                   ),
                 ),
               ],

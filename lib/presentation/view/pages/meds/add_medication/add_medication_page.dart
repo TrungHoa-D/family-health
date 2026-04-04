@@ -1,9 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:family_health/presentation/cubit_base/base_cubit_page.dart';
 import 'package:family_health/presentation/resources/app_spacing.dart';
 import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
-import 'package:family_health/presentation/cubit_base/base_cubit_page.dart';
 import 'package:family_health/presentation/view/pages/meds/meds_cubit.dart';
 import 'package:family_health/presentation/view/widgets/app_button.dart';
 import 'package:flutter/material.dart';
@@ -17,9 +17,8 @@ import 'components/schedule_section.dart';
 @RoutePage()
 class AddMedicationPage
     extends BaseCubitPage<AddMedicationCubit, AddMedicationState> {
-  final MedicationModel? medication;
-
   const AddMedicationPage({super.key, this.medication});
+  final MedicationModel? medication;
 
   @override
   void onInitState(BuildContext context) {
@@ -60,9 +59,7 @@ class AddMedicationPage
               onPressed: () => context.router.maybePop(),
             ),
             title: Text(
-              state.isEditing
-                  ? 'meds.edit_title'.tr()
-                  : 'meds.add_title'.tr(),
+              state.isEditing ? 'meds.edit_title'.tr() : 'meds.add_title'.tr(),
               style:
                   AppStyles.titleLarge.copyWith(color: AppColors.textPrimary),
             ),
@@ -135,7 +132,8 @@ class AddMedicationPage
                 // Vùng 5 — Save Button
                 AppButton.primary(
                   title: 'meds.save_button'.tr(),
-                  icon: const Icon(Icons.save, color: AppColors.white, size: 20),
+                  icon:
+                      const Icon(Icons.save, color: AppColors.white, size: 20),
                   onPressed: cubit.save,
                 ),
 

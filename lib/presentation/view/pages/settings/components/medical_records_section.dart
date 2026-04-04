@@ -9,9 +9,8 @@ import 'package:family_health/presentation/view/widgets/app_card.dart';
 import 'package:flutter/material.dart';
 
 class MedicalRecordsSection extends StatelessWidget {
-  final HealthProfile record;
-
   const MedicalRecordsSection({super.key, required this.record});
+  final HealthProfile record;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +18,10 @@ class MedicalRecordsSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.sm,
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -33,12 +35,14 @@ class MedicalRecordsSection extends StatelessWidget {
               ),
               TextButton.icon(
                 onPressed: () {
-                  context.router.push(SetupHealthProfileRoute(initialProfile: record));
+                  context.router
+                      .push(SetupHealthProfileRoute(initialProfile: record));
                 },
                 icon: const Icon(Icons.edit, size: 16),
                 label: Text('settings.update_health_profile'.tr()),
                 style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
                   visualDensity: VisualDensity.compact,
                 ),
               ),
@@ -54,7 +58,8 @@ class MedicalRecordsSection extends StatelessWidget {
                   icon: Icons.bloodtype,
                   iconColor: AppColors.error,
                   label: 'settings.blood_type'.tr(),
-                  value: '${record.bloodType ?? '--'}${record.isRhPositive ? '+' : '-'}',
+                  value:
+                      '${record.bloodType ?? '--'}${record.isRhPositive ? '+' : '-'}',
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
@@ -86,12 +91,6 @@ class MedicalRecordsSection extends StatelessWidget {
 }
 
 class _RecordCard extends StatelessWidget {
-  final IconData icon;
-  final Color iconColor;
-  final String label;
-  final String value;
-  final String? unit;
-
   const _RecordCard({
     required this.icon,
     required this.iconColor,
@@ -99,11 +98,19 @@ class _RecordCard extends StatelessWidget {
     required this.value,
     this.unit,
   });
+  final IconData icon;
+  final Color iconColor;
+  final String label;
+  final String value;
+  final String? unit;
 
   @override
   Widget build(BuildContext context) {
     return AppCard(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg, horizontal: AppSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+        vertical: AppSpacing.lg,
+        horizontal: AppSpacing.sm,
+      ),
       child: Column(
         children: [
           Icon(icon, color: iconColor, size: 24),
@@ -125,18 +132,20 @@ class _RecordCard extends StatelessWidget {
             children: [
               Text(
                 value,
-                style: AppStyles.titleLarge.copyWith(fontWeight: FontWeight.w900),
+                style:
+                    AppStyles.titleLarge.copyWith(fontWeight: FontWeight.w900),
               ),
               if (unit != null)
                 Padding(
                   padding: const EdgeInsets.only(left: 2),
                   child: Text(
                     unit!,
-                    style: AppStyles.bodySmall.copyWith(color: AppColors.textSecondary),
+                    style: AppStyles.bodySmall
+                        .copyWith(color: AppColors.textSecondary),
                   ),
                 ),
             ],
-          )
+          ),
         ],
       ),
     );

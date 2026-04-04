@@ -1,13 +1,13 @@
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
+import 'package:family_health/data/remote/interceptors/response_parser_interceptor.dart';
+import 'package:family_health/data/remote/services/api_service.dart';
+import 'package:family_health/shared/extension/duration.dart';
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
-import 'package:family_health/data/remote/interceptors/response_parser_interceptor.dart';
-import 'package:family_health/data/remote/services/api_service.dart';
-import 'package:family_health/shared/extension/duration.dart';
 
 @module
 abstract class NetworkModule {

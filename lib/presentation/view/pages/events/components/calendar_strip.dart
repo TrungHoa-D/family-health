@@ -3,29 +3,31 @@ import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
 import 'package:flutter/material.dart';
 
-
 class CalendarStrip extends StatelessWidget {
-  final DateTime currentDate;
-  final DateTime selectedDate;
-  final ValueChanged<DateTime> onDateSelected;
-
   const CalendarStrip({
     super.key,
     required this.currentDate,
     required this.selectedDate,
     required this.onDateSelected,
   });
+  final DateTime currentDate;
+  final DateTime selectedDate;
+  final ValueChanged<DateTime> onDateSelected;
 
   @override
   Widget build(BuildContext context) {
     // Generate 7 days: 3 before, today, 3 after
     final startDate = currentDate.subtract(const Duration(days: 3));
-    final days = List.generate(7, (index) => startDate.add(Duration(days: index)));
+    final days =
+        List.generate(7, (index) => startDate.add(Duration(days: index)));
 
     return SizedBox(
       height: 100, // accommodate scale-105 selected item
       child: ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.xs,
+        ),
         scrollDirection: Axis.horizontal,
         itemCount: days.length,
         separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.md),
@@ -60,7 +62,7 @@ class CalendarStrip extends StatelessWidget {
                           color: AppColors.primary.withValues(alpha: 0.3),
                           blurRadius: 10,
                           offset: const Offset(0, 4),
-                        )
+                        ),
                       ]
                     : [],
               ),
@@ -70,7 +72,9 @@ class CalendarStrip extends StatelessWidget {
                   Text(
                     dayOfWeek.toUpperCase(),
                     style: AppStyles.labelSmall.copyWith(
-                      color: isSelected ? AppColors.white.withValues(alpha: 0.8) : AppColors.textSecondary,
+                      color: isSelected
+                          ? AppColors.white.withValues(alpha: 0.8)
+                          : AppColors.textSecondary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -78,7 +82,8 @@ class CalendarStrip extends StatelessWidget {
                   Text(
                     '${date.day}',
                     style: AppStyles.headlineMedium.copyWith(
-                      color: isSelected ? AppColors.white : AppColors.textPrimary,
+                      color:
+                          isSelected ? AppColors.white : AppColors.textPrimary,
                     ),
                   ),
                   if (isSelected) ...[
@@ -91,7 +96,7 @@ class CalendarStrip extends StatelessWidget {
                         shape: BoxShape.circle,
                       ),
                     ),
-                  ]
+                  ],
                 ],
               ),
             ),

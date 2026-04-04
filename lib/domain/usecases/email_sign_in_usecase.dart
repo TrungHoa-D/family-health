@@ -1,6 +1,6 @@
-import 'package:injectable/injectable.dart';
 import 'package:family_health/domain/entities/user_entity.dart';
 import 'package:family_health/domain/repositories/auth_repository.dart';
+import 'package:injectable/injectable.dart';
 
 class EmailSignInParams {
   const EmailSignInParams({required this.email, required this.password});

@@ -63,7 +63,7 @@ class _ChatViewState extends State<ChatView> {
                   return ChatBubble(message: state.messages[index]);
                 },
               ),
-              
+
               // Input Field Positioned at bottom
               Positioned(
                 left: 0,

@@ -7,15 +7,6 @@ import 'package:flutter/material.dart';
 /// Section lịch trình & giám sát — Grid 2x2
 /// Gồm: Người uống, Mốc thời gian, Độ lệch, Người giám sát
 class ScheduleSection extends StatelessWidget {
-  final String selectedUser;
-  final String anchorTime;
-  final String offset;
-  final String supervisor;
-  final ValueChanged<String> onUserChanged;
-  final ValueChanged<String> onAnchorTimeChanged;
-  final ValueChanged<String> onOffsetChanged;
-  final ValueChanged<String> onSupervisorChanged;
-
   const ScheduleSection({
     super.key,
     required this.selectedUser,
@@ -27,6 +18,14 @@ class ScheduleSection extends StatelessWidget {
     required this.onOffsetChanged,
     required this.onSupervisorChanged,
   });
+  final String selectedUser;
+  final String anchorTime;
+  final String offset;
+  final String supervisor;
+  final ValueChanged<String> onUserChanged;
+  final ValueChanged<String> onAnchorTimeChanged;
+  final ValueChanged<String> onOffsetChanged;
+  final ValueChanged<String> onSupervisorChanged;
 
   static const _users = ['Bố', 'Mẹ', 'Em', 'Ông nội'];
   static const _anchorTimes = [
@@ -104,17 +103,16 @@ class ScheduleSection extends StatelessWidget {
 
 /// Grid item — dropdown-like selector
 class _ScheduleGridItem extends StatelessWidget {
-  final String label;
-  final String value;
-  final List<String> items;
-  final ValueChanged<String> onChanged;
-
   const _ScheduleGridItem({
     required this.label,
     required this.value,
     required this.items,
     required this.onChanged,
   });
+  final String label;
+  final String value;
+  final List<String> items;
+  final ValueChanged<String> onChanged;
 
   @override
   Widget build(BuildContext context) {

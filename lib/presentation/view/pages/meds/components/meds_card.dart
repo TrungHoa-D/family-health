@@ -7,16 +7,18 @@ import 'package:flutter/material.dart';
 import '../meds_cubit.dart';
 
 class MedsCard extends StatelessWidget {
+  const MedsCard({super.key, required this.medication, this.onTap});
   final MedicationModel medication;
   final VoidCallback? onTap;
-
-  const MedsCard({super.key, required this.medication, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return AppCard(
       onPressed: onTap,
-      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+      margin: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
+      ),
       padding: const EdgeInsets.all(AppSpacing.md),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,28 +45,39 @@ class MedsCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         medication.name,
-                        style: AppStyles.titleMedium.copyWith(fontWeight: FontWeight.bold),
+                        style: AppStyles.titleMedium
+                            .copyWith(fontWeight: FontWeight.bold),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     const SizedBox(width: AppSpacing.sm),
-                    _Tag(label: medication.tag, color: medication.tagColor, textColor: medication.textColor),
+                    _Tag(
+                      label: medication.tag,
+                      color: medication.tagColor,
+                      textColor: medication.textColor,
+                    ),
                   ],
                 ),
                 Text(
                   'meds.member_label'.tr(args: [medication.memberName]),
-                  style: AppStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+                  style: AppStyles.bodyMedium
+                      .copyWith(color: AppColors.textSecondary),
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 Row(
                   children: [
-                    const Icon(Icons.access_time, size: 16, color: AppColors.textSecondary),
+                    const Icon(
+                      Icons.access_time,
+                      size: 16,
+                      color: AppColors.textSecondary,
+                    ),
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
                         medication.schedule,
-                        style: AppStyles.labelSmall.copyWith(color: AppColors.textSecondary),
+                        style: AppStyles.labelSmall
+                            .copyWith(color: AppColors.textSecondary),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -86,7 +99,11 @@ class MedsCard extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const Icon(Icons.arrow_forward_ios, size: 12, color: AppColors.primary),
+                          const Icon(
+                            Icons.arrow_forward_ios,
+                            size: 12,
+                            color: AppColors.primary,
+                          ),
                         ],
                       ),
                     ),
@@ -102,11 +119,14 @@ class MedsCard extends StatelessWidget {
 }
 
 class _Tag extends StatelessWidget {
+  const _Tag({
+    required this.label,
+    required this.color,
+    required this.textColor,
+  });
   final String label;
   final Color color;
   final Color textColor;
-
-  const _Tag({required this.label, required this.color, required this.textColor});
 
   @override
   Widget build(BuildContext context) {

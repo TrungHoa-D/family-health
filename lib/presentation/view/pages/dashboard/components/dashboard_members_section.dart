@@ -6,14 +6,13 @@ import 'package:family_health/presentation/view/widgets/app_avatar.dart';
 import 'package:flutter/material.dart';
 
 class DashboardMembersSection extends StatelessWidget {
-  final List<DashboardMemberModel> members;
-  final VoidCallback? onViewAll;
-
   const DashboardMembersSection({
     super.key,
     required this.members,
     this.onViewAll,
   });
+  final List<DashboardMemberModel> members;
+  final VoidCallback? onViewAll;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +30,8 @@ class DashboardMembersSection extends StatelessWidget {
                   const SizedBox(width: AppSpacing.sm),
                   Text(
                     'home.members'.tr(),
-                    style: AppStyles.titleMedium.copyWith(fontWeight: FontWeight.bold),
+                    style: AppStyles.titleMedium
+                        .copyWith(fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -39,7 +39,8 @@ class DashboardMembersSection extends StatelessWidget {
                 onPressed: onViewAll,
                 child: Text(
                   'home.view_all'.tr(),
-                  style: AppStyles.labelMedium.copyWith(color: AppColors.primary),
+                  style:
+                      AppStyles.labelMedium.copyWith(color: AppColors.primary),
                 ),
               ),
             ],
@@ -66,12 +67,13 @@ class DashboardMembersSection extends StatelessWidget {
   Widget _buildAddButton() {
     return Container(
       width: 100,
-      margin: const EdgeInsets.only(right: AppSpacing.md, bottom: AppSpacing.md),
+      margin:
+          const EdgeInsets.only(right: AppSpacing.md, bottom: AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(AppSpacing.radiusCard),
         border: Border.all(
-          color: AppColors.border.withValues(alpha:0.5),
+          color: AppColors.border.withValues(alpha: 0.5),
           style: BorderStyle.solid,
         ),
       ),
@@ -89,7 +91,8 @@ class DashboardMembersSection extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
           Text(
             'home.add'.tr(),
-            style: AppStyles.labelMedium.copyWith(color: AppColors.textSecondary),
+            style:
+                AppStyles.labelMedium.copyWith(color: AppColors.textSecondary),
           ),
         ],
       ),
@@ -98,29 +101,28 @@ class DashboardMembersSection extends StatelessWidget {
 }
 
 class DashboardMemberModel {
-  final String name;
-  final String? photoUrl;
-  final String progress; // e.g. "4/6"
-  final Color statusColor;
-
   DashboardMemberModel({
     required this.name,
     this.photoUrl,
     required this.progress,
     required this.statusColor,
   });
+  final String name;
+  final String? photoUrl;
+  final String progress; // e.g. "4/6"
+  final Color statusColor;
 }
 
 class _MemberItem extends StatelessWidget {
-  final DashboardMemberModel member;
-
   const _MemberItem({required this.member});
+  final DashboardMemberModel member;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: 110,
-      margin: const EdgeInsets.only(right: AppSpacing.md, bottom: AppSpacing.md),
+      margin:
+          const EdgeInsets.only(right: AppSpacing.md, bottom: AppSpacing.md),
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.white,

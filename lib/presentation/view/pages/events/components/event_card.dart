@@ -7,9 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class EventCard extends StatelessWidget {
-  final EventModel event;
-
   const EventCard({super.key, required this.event});
+  final EventModel event;
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +67,11 @@ class EventCard extends StatelessWidget {
                   const SizedBox(height: 6),
                   Row(
                     children: [
-                      Icon(Icons.schedule, size: 14, color: AppColors.textSecondary),
+                      const Icon(
+                        Icons.schedule,
+                        size: 14,
+                        color: AppColors.textSecondary,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         DateFormat('HH:mm').format(event.time),
@@ -79,7 +82,11 @@ class EventCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: AppSpacing.sm),
-                      Icon(Icons.location_on, size: 14, color: AppColors.textSecondary),
+                      const Icon(
+                        Icons.location_on,
+                        size: 14,
+                        color: AppColors.textSecondary,
+                      ),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(

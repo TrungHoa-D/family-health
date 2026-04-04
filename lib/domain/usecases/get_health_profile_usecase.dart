@@ -5,9 +5,8 @@ import 'package:injectable/injectable.dart';
 
 @injectable
 class GetHealthProfileUseCase implements UseCase<HealthProfile?, String> {
-  final HealthRepository _healthRepository;
-
   GetHealthProfileUseCase(this._healthRepository);
+  final HealthRepository _healthRepository;
 
   @override
   Future<HealthProfile?> call({required String params}) async {

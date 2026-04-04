@@ -8,6 +8,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'app.dart';
@@ -20,6 +21,11 @@ import 'shared/utils/logger.dart';
 Future main() async {
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
+    try {
+      await dotenv.load(fileName: '.env');
+    } catch (e) {
+      logger.w('Không tìm thấy file .env: $e. Các tính năng AI sẽ bị vô hiệu hóa.');
+    }
 
     // Initialize Firebase
     await Firebase.initializeApp(

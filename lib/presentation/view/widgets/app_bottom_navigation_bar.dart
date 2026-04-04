@@ -1,8 +1,8 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/material.dart';
 import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
 import 'package:family_health/shared/extension/context.dart';
+import 'package:flutter/material.dart';
 
 class AppBottomNavigationItem {
   AppBottomNavigationItem({
@@ -131,7 +131,7 @@ class _Tile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final activeColor = AppColors.primary;
+    const activeColor = AppColors.primary;
     const inactiveColor = Color(0xFF94A3B8); // slate-400
 
     return InkWell(
@@ -156,7 +156,8 @@ class _Tile extends StatelessWidget {
               item.label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: (isSelected ? selectedTextStyle : unSelectedTextStyle).copyWith(
+              style: (isSelected ? selectedTextStyle : unSelectedTextStyle)
+                  .copyWith(
                 color: isSelected ? activeColor : inactiveColor,
                 fontSize: 11,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,

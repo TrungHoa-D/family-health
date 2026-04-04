@@ -1,7 +1,8 @@
 part of 'medication_detail_cubit.dart';
 
 @freezed
-class MedicationDetailState with _$MedicationDetailState
+class MedicationDetailState
+    with _$MedicationDetailState
     implements BaseCubitState {
   const factory MedicationDetailState({
     @Default(PageStatus.Uninitialized) PageStatus pageStatus,

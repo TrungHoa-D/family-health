@@ -1,6 +1,6 @@
-import 'package:injectable/injectable.dart';
 import 'package:family_health/domain/repositories/auth_repository.dart';
 import 'package:family_health/domain/usecases/use_case.dart';
+import 'package:injectable/injectable.dart';
 
 @injectable
 class SignOutUseCase implements UseCase<void, void> {

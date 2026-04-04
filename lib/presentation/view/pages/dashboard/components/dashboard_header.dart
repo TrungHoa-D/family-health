@@ -5,16 +5,15 @@ import 'package:family_health/presentation/view/widgets/app_avatar.dart';
 import 'package:flutter/material.dart';
 
 class DashboardHeader extends StatelessWidget {
-  final String? userName;
-  final String? userPhotoUrl;
-  final VoidCallback? onNotificationTap;
-
   const DashboardHeader({
     super.key,
     this.userName,
     this.userPhotoUrl,
     this.onNotificationTap,
   });
+  final String? userName;
+  final String? userPhotoUrl;
+  final VoidCallback? onNotificationTap;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +29,8 @@ class DashboardHeader extends StatelessWidget {
           const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Text(
-              'home.greeting_with_name'.tr(args: [userName ?? 'home.user'.tr()]),
+              'home.greeting_with_name'
+                  .tr(args: [userName ?? 'home.user'.tr()]),
               style: AppStyles.bodyLarge.copyWith(
                 fontWeight: FontWeight.bold,
               ),

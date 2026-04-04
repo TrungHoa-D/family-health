@@ -25,22 +25,6 @@ class MedsState with _$MedsState implements BaseCubitState {
 }
 
 class MedicationModel {
-  final String? id;
-  final String name;
-  final String memberName;
-  final String schedule;
-  final String tag;
-  final Color tagColor;
-  final Color textColor;
-  final String? imageUrl;
-  final String? description;
-  final String? dosage;
-  final String? timingDescription;
-  final String? targetUserName;
-  final List<String> supervisorNames;
-  final String? anchorTime;
-  final String? offset;
-
   MedicationModel({
     this.id,
     required this.name,
@@ -58,14 +42,28 @@ class MedicationModel {
     this.anchorTime,
     this.offset,
   });
+  final String? id;
+  final String name;
+  final String memberName;
+  final String schedule;
+  final String tag;
+  final Color tagColor;
+  final Color textColor;
+  final String? imageUrl;
+  final String? description;
+  final String? dosage;
+  final String? timingDescription;
+  final String? targetUserName;
+  final List<String> supervisorNames;
+  final String? anchorTime;
+  final String? offset;
 }
 
 class MedicationRefillModel {
-  final String name;
-  final int remainingPills;
-
   MedicationRefillModel({
     required this.name,
     required this.remainingPills,
   });
+  final String name;
+  final int remainingPills;
 }

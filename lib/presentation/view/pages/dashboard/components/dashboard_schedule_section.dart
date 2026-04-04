@@ -6,12 +6,11 @@ import 'package:family_health/presentation/view/widgets/app_card.dart';
 import 'package:flutter/material.dart';
 
 class DashboardScheduleSection extends StatelessWidget {
-  final List<DashboardScheduleModel> schedules;
-
   const DashboardScheduleSection({
     super.key,
     required this.schedules,
   });
+  final List<DashboardScheduleModel> schedules;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +25,8 @@ class DashboardScheduleSection extends StatelessWidget {
               const SizedBox(width: AppSpacing.sm),
               Text(
                 'home.next_schedule'.tr(),
-                style: AppStyles.titleMedium.copyWith(fontWeight: FontWeight.bold),
+                style:
+                    AppStyles.titleMedium.copyWith(fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -39,13 +39,6 @@ class DashboardScheduleSection extends StatelessWidget {
 }
 
 class DashboardScheduleModel {
-  final String title;
-  final String month;
-  final String day;
-  final String time;
-  final String location;
-  final VoidCallback? onTap;
-
   DashboardScheduleModel({
     required this.title,
     required this.month,
@@ -54,21 +47,29 @@ class DashboardScheduleModel {
     required this.location,
     this.onTap,
   });
+  final String title;
+  final String month;
+  final String day;
+  final String time;
+  final String location;
+  final VoidCallback? onTap;
 }
 
 class _ScheduleCard extends StatelessWidget {
-  final DashboardScheduleModel schedule;
-
   const _ScheduleCard({required this.schedule});
+  final DashboardScheduleModel schedule;
 
   @override
   Widget build(BuildContext context) {
     return AppCard(
-      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
+      margin: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.xs,
+      ),
       padding: const EdgeInsets.all(AppSpacing.md),
-      backgroundColor: AppColors.primary.withValues(alpha:0.05),
+      backgroundColor: AppColors.primary.withValues(alpha: 0.05),
       hasBorder: true,
-      borderColor: AppColors.primary.withValues(alpha:0.1),
+      borderColor: AppColors.primary.withValues(alpha: 0.1),
       onPressed: schedule.onTap,
       child: Row(
         children: [
@@ -123,7 +124,11 @@ class _ScheduleCard extends StatelessWidget {
               ],
             ),
           ),
-          const Icon(Icons.arrow_forward_ios, color: AppColors.primary, size: 16),
+          const Icon(
+            Icons.arrow_forward_ios,
+            color: AppColors.primary,
+            size: 16,
+          ),
         ],
       ),
     );

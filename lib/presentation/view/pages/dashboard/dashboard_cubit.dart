@@ -11,15 +11,16 @@ part 'dashboard_state.dart';
 
 @injectable
 class DashboardCubit extends BaseCubit<DashboardState> {
-  final AuthRepository _authRepository;
-
   DashboardCubit(this._authRepository) : super(const DashboardState());
+  final AuthRepository _authRepository;
 
   Future<void> loadData() async {
     final user = _authRepository.getCurrentUser();
-    emit(state.copyWith(
-      pageStatus: PageStatus.Loaded,
-      user: user,
-    ));
+    emit(
+      state.copyWith(
+        pageStatus: PageStatus.Loaded,
+        user: user,
+      ),
+    );
   }
 }

@@ -2,10 +2,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:family_health/presentation/resources/app_spacing.dart';
 import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
+import 'package:family_health/presentation/view/pages/settings/settings_cubit.dart';
 import 'package:family_health/presentation/view/widgets/app_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:family_health/presentation/view/pages/settings/settings_cubit.dart';
 
 class OthersSection extends StatelessWidget {
   const OthersSection({super.key});
@@ -16,7 +16,10 @@ class OthersSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.sm,
+          ),
           child: Text(
             'settings.others'.tr(),
             style: AppStyles.labelSmall.copyWith(
@@ -33,8 +36,15 @@ class OthersSection extends StatelessWidget {
             children: [
               ListTile(
                 leading: const Icon(Icons.help, color: AppColors.textSecondary),
-                title: Text('settings.help_center'.tr(), style: AppStyles.titleMedium),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textSecondary),
+                title: Text(
+                  'settings.help_center'.tr(),
+                  style: AppStyles.titleMedium,
+                ),
+                trailing: const Icon(
+                  Icons.arrow_forward_ios,
+                  size: 16,
+                  color: AppColors.textSecondary,
+                ),
                 onTap: () {},
               ),
               const Divider(height: 1, color: AppColors.border),
@@ -42,7 +52,10 @@ class OthersSection extends StatelessWidget {
                 leading: const Icon(Icons.logout, color: AppColors.error),
                 title: Text(
                   'settings.logout'.tr(),
-                  style: AppStyles.titleMedium.copyWith(color: AppColors.error, fontWeight: FontWeight.bold),
+                  style: AppStyles.titleMedium.copyWith(
+                    color: AppColors.error,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 onTap: () {
                   context.read<SettingsCubit>().logout();

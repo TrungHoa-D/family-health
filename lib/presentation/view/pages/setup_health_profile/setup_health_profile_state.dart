@@ -14,7 +14,7 @@ class SetupHealthProfileState
     @Default(null) String? selectedBloodType,
     @Default(true) bool isRhPositive,
     @Default([]) List<String> selectedDiseases,
-    
+
     // New fields
     @Default(true) bool isMale,
     DateTime? birthDate,
@@ -49,35 +49,61 @@ class SetupHealthProfileState
 
   // Validation getters
   String? get heightError {
-    if (!isSubmitted) return null;
-    if (height.isEmpty) return 'required';
+    if (!isSubmitted) {
+      return null;
+    }
+    if (height.isEmpty) {
+      return 'required';
+    }
     final value = double.tryParse(height);
-    if (value == null || value <= 0 || value > 300) return 'invalid';
+    if (value == null || value <= 0 || value > 300) {
+      return 'invalid';
+    }
     return null;
   }
 
   String? get weightError {
-    if (!isSubmitted) return null;
-    if (weight.isEmpty) return 'required';
+    if (!isSubmitted) {
+      return null;
+    }
+    if (weight.isEmpty) {
+      return 'required';
+    }
     final value = double.tryParse(weight);
-    if (value == null || value <= 0 || value > 500) return 'invalid';
+    if (value == null || value <= 0 || value > 500) {
+      return 'invalid';
+    }
     return null;
   }
 
   String? get bloodTypeError {
-    if (!isSubmitted) return null;
-    if (selectedBloodType == null) return 'required';
+    if (!isSubmitted) {
+      return null;
+    }
+    if (selectedBloodType == null) {
+      return 'required';
+    }
     return null;
   }
 
   bool get isFormValid {
-    if (height.isEmpty) return false;
+    if (height.isEmpty) {
+      return false;
+    }
     final h = double.tryParse(height);
-    if (h == null || h <= 0 || h > 300) return false;
-    if (weight.isEmpty) return false;
+    if (h == null || h <= 0 || h > 300) {
+      return false;
+    }
+    if (weight.isEmpty) {
+      return false;
+    }
     final w = double.tryParse(weight);
-    if (w == null || w <= 0 || w > 500) return false;
-    if (selectedBloodType == null) return false;
+    if (w == null || w <= 0 || w > 500) {
+      return false;
+    }
+    if (selectedBloodType == null) {
+      return false;
+    }
     return true;
   }
 }

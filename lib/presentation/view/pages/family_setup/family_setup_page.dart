@@ -118,8 +118,10 @@ class FamilySetupPage
               child: Row(
                 children: [
                   Expanded(
-                      child: Divider(
-                          color: AppColors.border.withValues(alpha: 0.5))),
+                    child: Divider(
+                      color: AppColors.border.withValues(alpha: 0.5),
+                    ),
+                  ),
                   Padding(
                     padding:
                         const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
@@ -133,8 +135,10 @@ class FamilySetupPage
                     ),
                   ),
                   Expanded(
-                      child: Divider(
-                          color: AppColors.border.withValues(alpha: 0.5))),
+                    child: Divider(
+                      color: AppColors.border.withValues(alpha: 0.5),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -166,43 +170,58 @@ class FamilySetupPage
                 color: Colors.black.withValues(alpha: 0.02),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
-              )
+              ),
           ],
         ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Column(
           children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: AppColors.success.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Icon(Icons.groups, color: AppColors.success),
-            ),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'family_setup.create_family'.tr(),
-                    style: AppStyles.titleMedium.copyWith(
-                      color: AppColors.textPrimary,
-                      fontWeight: FontWeight.w700,
-                    ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: AppColors.success.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  const SizedBox(height: 2),
-                  Text(
-                    'family_setup.create_family_desc'.tr(),
-                    style: AppStyles.bodySmall.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
+                  child: const Icon(Icons.groups, color: AppColors.success),
+                ),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'family_setup.create_family'.tr(),
+                        style: AppStyles.titleMedium.copyWith(
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'family_setup.create_family_desc'.tr(),
+                        style: AppStyles.bodySmall.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
+            if (isSelected) ...[
+              const SizedBox(height: AppSpacing.md),
+              AppFormField(
+                hintText: 'Tên nhóm gia đình (ví dụ: Gia đình họ Nguyễn)',
+                onChanged: (val) =>
+                    context.read<FamilySetupCubit>().updateGroupName(val),
+                errorText: state.isSubmitted && state.groupName.isEmpty
+                    ? 'Vui lòng nhập tên nhóm'
+                    : null,
+              ),
+            ],
           ],
         ),
       ),
@@ -288,7 +307,7 @@ class FamilySetupPage
                 ),
                 textAlign: TextAlign.center,
               ),
-            ]
+            ],
           ],
         ),
       ),
@@ -305,7 +324,7 @@ class FamilySetupPage
             color: AppColors.textPrimary.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, -4),
-          )
+          ),
         ],
       ),
       child: Column(
@@ -313,10 +332,12 @@ class FamilySetupPage
         children: [
           AppButton.primary(
             title: 'family_setup.continue'.tr(),
-            onPressed: () {
+            onPressed: () async {
               final cubit = context.read<FamilySetupCubit>();
-              if (cubit.submitForm()) {
-                context.router.push(const InterfaceModeSelectionRoute());
+              final success = await cubit.submitForm();
+              if (success) {
+                // Navigate to next page (SetupHealthProfile)
+                context.router.push(SetupHealthProfileRoute());
               }
             },
             icon: const Icon(Icons.arrow_forward, color: AppColors.white),
@@ -333,7 +354,7 @@ class FamilySetupPage
                 fontWeight: FontWeight.w600,
               ),
             ),
-          )
+          ),
         ],
       ),
     );

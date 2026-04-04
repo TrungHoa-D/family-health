@@ -1,5 +1,5 @@
-import 'package:flutter/services.dart';
 import 'package:family_health/shared/extension/number.dart';
+import 'package:flutter/services.dart';
 
 class DecimalTextInputFormatter extends TextInputFormatter {
   @override

@@ -12,37 +12,38 @@ part 'setup_health_profile_state.dart';
 
 @injectable
 class SetupHealthProfileCubit extends BaseCubit<SetupHealthProfileState> {
-  final SaveHealthProfileUseCase _saveHealthProfileUseCase;
-  final CheckAuthStatusUseCase _checkAuthStatusUseCase;
-
   SetupHealthProfileCubit(
     this._saveHealthProfileUseCase,
     this._checkAuthStatusUseCase,
   ) : super(const SetupHealthProfileState());
+  final SaveHealthProfileUseCase _saveHealthProfileUseCase;
+  final CheckAuthStatusUseCase _checkAuthStatusUseCase;
 
   void init() {
     emit(state.copyWith(pageStatus: PageStatus.Loaded));
   }
 
   void initWithProfile(HealthProfile profile) {
-    emit(state.copyWith(
-      height: profile.height,
-      weight: profile.weight,
-      selectedBloodType: profile.bloodType,
-      isRhPositive: profile.isRhPositive,
-      selectedDiseases: profile.medicalHistory,
-      isMale: profile.isMale,
-      birthDate: profile.birthDate,
-      breakfastTime: profile.anchorTimes.breakfast,
-      lunchTime: profile.anchorTimes.lunch,
-      dinnerTime: profile.anchorTimes.dinner,
-      sleepTime: profile.anchorTimes.sleep,
-      otherDisease: profile.otherDisease ?? '',
-      isShowingOtherDiseaseInput:
-          profile.otherDisease != null && profile.otherDisease!.isNotEmpty,
-      isUpdateMode: true,
-      pageStatus: PageStatus.Loaded,
-    ));
+    emit(
+      state.copyWith(
+        height: profile.height,
+        weight: profile.weight,
+        selectedBloodType: profile.bloodType,
+        isRhPositive: profile.isRhPositive,
+        selectedDiseases: profile.medicalHistory,
+        isMale: profile.isMale,
+        birthDate: profile.birthDate,
+        breakfastTime: profile.anchorTimes.breakfast,
+        lunchTime: profile.anchorTimes.lunch,
+        dinnerTime: profile.anchorTimes.dinner,
+        sleepTime: profile.anchorTimes.sleep,
+        otherDisease: profile.otherDisease ?? '',
+        isShowingOtherDiseaseInput:
+            profile.otherDisease != null && profile.otherDisease!.isNotEmpty,
+        isUpdateMode: true,
+        pageStatus: PageStatus.Loaded,
+      ),
+    );
   }
 
   void updateHeight(String value) {
@@ -97,18 +98,22 @@ class SetupHealthProfileCubit extends BaseCubit<SetupHealthProfileState> {
   }
 
   void toggleOtherDiseaseInput() {
-    emit(state.copyWith(
-        isShowingOtherDiseaseInput: !state.isShowingOtherDiseaseInput));
+    emit(
+      state.copyWith(
+        isShowingOtherDiseaseInput: !state.isShowingOtherDiseaseInput,
+      ),
+    );
   }
 
   void updateOtherDisease(String value) {
     emit(state.copyWith(otherDisease: value));
   }
 
-  /// Trả về true nếu form thành công, false nếu không
   Future<bool> submitForm() async {
     emit(state.copyWith(isSubmitted: true));
-    if (!state.isFormValid) return false;
+    if (!state.isFormValid) {
+      return false;
+    }
 
     emit(state.copyWith(pageStatus: PageStatus.Loading));
 
@@ -127,7 +132,8 @@ class SetupHealthProfileCubit extends BaseCubit<SetupHealthProfileState> {
         isMale: state.isMale,
         birthDate: state.birthDate,
         medicalHistory: state.selectedDiseases,
-        otherDisease: state.isShowingOtherDiseaseInput ? state.otherDisease : null,
+        otherDisease:
+            state.isShowingOtherDiseaseInput ? state.otherDisease : null,
         anchorTimes: AnchorTimes(
           breakfast: state.breakfastTime,
           lunch: state.lunchTime,

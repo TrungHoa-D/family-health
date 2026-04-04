@@ -6,9 +6,8 @@ import 'package:family_health/presentation/view/widgets/app_card.dart';
 import 'package:flutter/material.dart';
 
 class FamilyInviteSection extends StatelessWidget {
-  final String inviteCode;
-
   const FamilyInviteSection({super.key, required this.inviteCode});
+  final String inviteCode;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +15,10 @@ class FamilyInviteSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.sm,
+          ),
           child: Text(
             'settings.family'.tr(),
             style: AppStyles.labelSmall.copyWith(
@@ -44,16 +46,24 @@ class FamilyInviteSection extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('settings.manage_family'.tr(), style: AppStyles.titleMedium),
+                    Text(
+                      'settings.manage_family'.tr(),
+                      style: AppStyles.titleMedium,
+                    ),
                     const SizedBox(height: 4),
                     Text(
                       'settings.connected_members'.tr(args: ['3']),
-                      style: AppStyles.bodySmall.copyWith(color: AppColors.textSecondary),
+                      style: AppStyles.bodySmall
+                          .copyWith(color: AppColors.textSecondary),
                     ),
                   ],
                 ),
               ),
-              const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textSecondary),
+              const Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: AppColors.textSecondary,
+              ),
             ],
           ),
         ),
@@ -88,12 +98,16 @@ class FamilyInviteSection extends StatelessWidget {
                   ),
                   const SizedBox(width: AppSpacing.sm),
                   Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: AppColors.primaryLight,
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
-                      icon: const Icon(Icons.content_copy, color: AppColors.primary, size: 20),
+                      icon: const Icon(
+                        Icons.content_copy,
+                        color: AppColors.primary,
+                        size: 20,
+                      ),
                       onPressed: () {},
                       constraints: const BoxConstraints(),
                       padding: const EdgeInsets.all(8),
@@ -105,7 +119,8 @@ class FamilyInviteSection extends StatelessWidget {
               Text(
                 'settings.invite_desc'.tr(),
                 textAlign: TextAlign.center,
-                style: AppStyles.bodySmall.copyWith(color: AppColors.textSecondary),
+                style: AppStyles.bodySmall
+                    .copyWith(color: AppColors.textSecondary),
               ),
             ],
           ),

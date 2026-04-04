@@ -6,9 +6,8 @@ import 'package:flutter/material.dart';
 
 /// Card quét đơn thuốc bằng AI — dashed border, icon camera
 class AiScannerCard extends StatelessWidget {
-  final VoidCallback? onTap;
-
   const AiScannerCard({super.key, this.onTap});
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -72,15 +71,14 @@ class AiScannerCard extends StatelessWidget {
 
 /// Custom painter cho dashed border
 class _DashedBorderPainter extends CustomPainter {
-  final Color color;
-  final double strokeWidth;
-  final double radius;
-
   _DashedBorderPainter({
     required this.color,
     required this.strokeWidth,
     required this.radius,
   });
+  final Color color;
+  final double strokeWidth;
+  final double radius;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -90,10 +88,12 @@ class _DashedBorderPainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
 
     final path = Path()
-      ..addRRect(RRect.fromRectAndRadius(
-        Rect.fromLTWH(0, 0, size.width, size.height),
-        Radius.circular(radius),
-      ));
+      ..addRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(0, 0, size.width, size.height),
+          Radius.circular(radius),
+        ),
+      );
 
     const dashWidth = 12.0;
     const dashSpace = 8.0;

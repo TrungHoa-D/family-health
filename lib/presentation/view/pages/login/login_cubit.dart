@@ -3,7 +3,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:family_health/domain/entities/user_entity.dart';
 import 'package:family_health/domain/usecases/email_sign_in_usecase.dart';
 import 'package:family_health/domain/usecases/email_sign_up_usecase.dart';
+import 'package:family_health/domain/usecases/get_user_usecase.dart';
 import 'package:family_health/domain/usecases/google_sign_in_usecase.dart';
+import 'package:family_health/domain/usecases/sync_user_usecase.dart';
 import 'package:family_health/presentation/base/page_status.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit_state.dart';
@@ -12,8 +14,6 @@ import 'package:family_health/shared/utils/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
-import 'package:family_health/domain/usecases/sync_user_usecase.dart';
-import 'package:family_health/domain/usecases/get_user_usecase.dart';
 
 part 'login_cubit.freezed.dart';
 part 'login_state.dart';
@@ -53,11 +53,13 @@ class LoginCubit extends BaseCubit<LoginState> {
   }
 
   void toggleLoginMode() {
-    emit(state.copyWith(
-      isLoginMode: !state.isLoginMode,
-      emailError: null,
-      passwordError: null,
-    ));
+    emit(
+      state.copyWith(
+        isLoginMode: !state.isLoginMode,
+        emailError: null,
+        passwordError: null,
+      ),
+    );
   }
 
   bool _validateEmailForm() {
@@ -72,10 +74,12 @@ class LoginCubit extends BaseCubit<LoginState> {
     }
 
     if (emailError != null || passwordError != null) {
-      emit(state.copyWith(
-        emailError: emailError,
-        passwordError: passwordError,
-      ));
+      emit(
+        state.copyWith(
+          emailError: emailError,
+          passwordError: passwordError,
+        ),
+      );
       return false;
     }
     return true;
@@ -129,12 +133,12 @@ class LoginCubit extends BaseCubit<LoginState> {
     emit(state.copyWith(isSigningIn: true));
     try {
       final UserEntity user = await _googleSignInUseCase.call(params: null);
-      
+
       final existingUser = await _getUserUseCase.call(params: user.uid);
       final isFirstTime = existingUser == null;
 
       await _syncUserUseCase.call(params: user);
-      
+
       emit(state.copyWith(isSigningIn: false, user: user));
 
       if (context.mounted) {

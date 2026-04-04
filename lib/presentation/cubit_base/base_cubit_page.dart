@@ -1,9 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:focus_detector/focus_detector.dart';
 import 'package:family_health/dependencies/dialog_manager.dart';
 import 'package:family_health/di/di.dart';
 import 'package:family_health/presentation/base/page_status.dart';
@@ -13,6 +9,10 @@ import 'package:family_health/presentation/view/widgets/app_list_card_loading.da
 import 'package:family_health/presentation/view/widgets/error_widget.dart';
 import 'package:family_health/shared/extension/theme_data.dart';
 import 'package:family_health/shared/utils/keyboard.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:focus_detector/focus_detector.dart';
 
 abstract class BaseCubitPage<C extends BaseCubit<S>, S extends BaseCubitState>
     extends StatefulWidget implements AutoRouteWrapper {

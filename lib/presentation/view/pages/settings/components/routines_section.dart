@@ -7,9 +7,8 @@ import 'package:family_health/presentation/view/widgets/app_card.dart';
 import 'package:flutter/material.dart';
 
 class RoutinesSection extends StatelessWidget {
-  final List<DailyRoutine> routines;
-
   const RoutinesSection({super.key, required this.routines});
+  final List<DailyRoutine> routines;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +18,10 @@ class RoutinesSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.sm,
+          ),
           child: Text(
             'settings.routines'.tr(),
             style: AppStyles.labelSmall.copyWith(
@@ -36,10 +38,14 @@ class RoutinesSection extends StatelessWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: routines.length,
-            separatorBuilder: (context, index) => const Divider(height: 1, color: AppColors.border),
+            separatorBuilder: (context, index) =>
+                const Divider(height: 1, color: AppColors.border),
             itemBuilder: (context, index) {
               final item = routines[index];
-              return _RoutineTile(item: item, isLast: index == routines.length - 1);
+              return _RoutineTile(
+                item: item,
+                isLast: index == routines.length - 1,
+              );
             },
           ),
         ),
@@ -49,10 +55,9 @@ class RoutinesSection extends StatelessWidget {
 }
 
 class _RoutineTile extends StatelessWidget {
+  const _RoutineTile({required this.item, required this.isLast});
   final DailyRoutine item;
   final bool isLast;
-
-  const _RoutineTile({required this.item, required this.isLast});
 
   IconData _getIconForTitle(String title) {
     final lower = title.toLowerCase();
@@ -95,13 +100,20 @@ class _RoutineTile extends StatelessWidget {
               children: [
                 Text(item.title, style: AppStyles.titleMedium),
                 const SizedBox(height: 2),
-                Text(item.subtitle, style: AppStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
+                Text(
+                  item.subtitle,
+                  style: AppStyles.bodySmall
+                      .copyWith(color: AppColors.textSecondary),
+                ),
               ],
             ),
           ),
           Text(
             item.time,
-            style: AppStyles.titleMedium.copyWith(color: AppColors.primary, fontWeight: FontWeight.bold),
+            style: AppStyles.titleMedium.copyWith(
+              color: AppColors.primary,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ],
       ),

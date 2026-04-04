@@ -1,30 +1,21 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:family_health/data/models/health_profile_model.dart';
+import 'package:family_health/data/remote/datasources/firebase_firestore_datasource.dart';
 import 'package:family_health/domain/entities/health_profile.dart';
 import 'package:family_health/domain/repositories/health_repository.dart';
 import 'package:injectable/injectable.dart';
 
 @LazySingleton(as: HealthRepository)
 class HealthRepositoryImpl implements HealthRepository {
-  final FirebaseFirestore _firestore;
-
-  HealthRepositoryImpl(this._firestore);
+  HealthRepositoryImpl(this._dataSource);
+  final FirebaseFirestoreDataSource _dataSource;
 
   @override
-  Future<void> saveHealthProfile(String uid, HealthProfile profile) async {
-    final data = HealthProfileModel.toJson(profile);
-    await _firestore
-        .collection('health_profiles')
-        .doc(uid)
-        .set(data, SetOptions(merge: true));
+  Future<void> saveHealthProfile(String userId, HealthProfile profile) {
+    return _dataSource.saveHealthProfile(userId, profile.toJson());
   }
 
   @override
-  Future<HealthProfile?> getHealthProfile(String uid) async {
-    final doc = await _firestore.collection('health_profiles').doc(uid).get();
-    if (doc.exists && doc.data() != null) {
-      return HealthProfileModel.fromJson(doc.data()!);
-    }
-    return null;
+  Future<HealthProfile?> getHealthProfile(String userId) async {
+    final data = await _dataSource.getHealthProfile(userId);
+    return data != null ? HealthProfile.fromJson(data) : null;
   }
 }

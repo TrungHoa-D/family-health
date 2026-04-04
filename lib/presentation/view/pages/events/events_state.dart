@@ -4,12 +4,6 @@ part 'events_state.freezed.dart';
 enum EventType { vaccine, dentistry, checkup, other }
 
 class EventModel {
-  final String id;
-  final String title;
-  final DateTime time;
-  final String location;
-  final EventType type;
-
   const EventModel({
     required this.id,
     required this.title,
@@ -17,6 +11,11 @@ class EventModel {
     required this.location,
     required this.type,
   });
+  final String id;
+  final String title;
+  final DateTime time;
+  final String location;
+  final EventType type;
 }
 
 @freezed
@@ -41,7 +40,13 @@ class EventsState with _$EventsState {
   /// Returns the next 3 events occurring after the selected date
   List<EventModel> get upcomingEvents {
     final endOfSelectedDate = DateTime(
-        selectedDate.year, selectedDate.month, selectedDate.day, 23, 59, 59);
+      selectedDate.year,
+      selectedDate.month,
+      selectedDate.day,
+      23,
+      59,
+      59,
+    );
 
     final upcoming = allEvents
         .where((event) => event.time.isAfter(endOfSelectedDate))

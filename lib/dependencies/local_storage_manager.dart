@@ -1,9 +1,9 @@
 import 'dart:convert';
 
+import 'package:family_health/shared/extension/object.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:family_health/shared/extension/object.dart';
 
 enum LocalStorageKeys {
   username,

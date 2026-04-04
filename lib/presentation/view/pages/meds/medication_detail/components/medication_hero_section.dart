@@ -6,9 +6,8 @@ import 'package:flutter/material.dart';
 
 /// Hero section: Ảnh thuốc tròn + Tên thuốc lớn + Mô tả
 class MedicationHeroSection extends StatelessWidget {
-  final MedicationModel medication;
-
   const MedicationHeroSection({super.key, required this.medication});
+  final MedicationModel medication;
 
   @override
   Widget build(BuildContext context) {

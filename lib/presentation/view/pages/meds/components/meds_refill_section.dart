@@ -8,9 +8,8 @@ import 'package:flutter/material.dart';
 import '../meds_cubit.dart';
 
 class MedsRefillSection extends StatelessWidget {
-  final List<MedicationRefillModel> refills;
-
   const MedsRefillSection({super.key, required this.refills});
+  final List<MedicationRefillModel> refills;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +19,10 @@ class MedsRefillSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.md),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.md,
+          ),
           child: Text(
             'meds.refill_label'.tr(),
             style: AppStyles.titleMedium.copyWith(fontWeight: FontWeight.bold),
@@ -33,14 +35,16 @@ class MedsRefillSection extends StatelessWidget {
 }
 
 class _RefillCard extends StatelessWidget {
-  final MedicationRefillModel refill;
-
   const _RefillCard({required this.refill});
+  final MedicationRefillModel refill;
 
   @override
   Widget build(BuildContext context) {
     return AppCard(
-      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+      margin: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
+      ),
       padding: const EdgeInsets.all(AppSpacing.md),
       backgroundColor: AppColors.surface,
       child: Row(
@@ -48,10 +52,14 @@ class _RefillCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(AppSpacing.sm),
             decoration: BoxDecoration(
-              color: AppColors.error.withValues(alpha:0.1),
+              color: AppColors.error.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.warning_amber_rounded, color: AppColors.error, size: 24),
+            child: const Icon(
+              Icons.warning_amber_rounded,
+              color: AppColors.error,
+              size: 24,
+            ),
           ),
           const SizedBox(width: AppSpacing.md),
           Expanded(
@@ -60,11 +68,14 @@ class _RefillCard extends StatelessWidget {
               children: [
                 Text(
                   refill.name,
-                  style: AppStyles.titleMedium.copyWith(fontWeight: FontWeight.bold),
+                  style: AppStyles.titleMedium
+                      .copyWith(fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  'meds.remaining_pills'.tr(args: [refill.remainingPills.toString()]),
-                  style: AppStyles.bodySmall.copyWith(color: AppColors.textSecondary),
+                  'meds.remaining_pills'
+                      .tr(args: [refill.remainingPills.toString()]),
+                  style: AppStyles.bodySmall
+                      .copyWith(color: AppColors.textSecondary),
                 ),
               ],
             ),
@@ -75,7 +86,8 @@ class _RefillCard extends StatelessWidget {
             onPressed: () {},
             child: Text(
               'meds.order_now'.tr(),
-              style: AppStyles.labelSmall.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+              style: AppStyles.labelSmall
+                  .copyWith(color: Colors.white, fontWeight: FontWeight.bold),
             ),
           ),
         ],

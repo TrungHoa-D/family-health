@@ -9,12 +9,7 @@ enum MessageSenderType {
 }
 
 class ChatMessageModel {
-  final String id;
-  final String content;
-  final DateTime time;
-  final MessageSenderType senderType;
-  final String? senderName;
-  final String? avatarUrl; // Initials placeholder
+  // Initials placeholder
 
   const ChatMessageModel({
     required this.id,
@@ -24,6 +19,12 @@ class ChatMessageModel {
     this.senderName,
     this.avatarUrl,
   });
+  final String id;
+  final String content;
+  final DateTime time;
+  final MessageSenderType senderType;
+  final String? senderName;
+  final String? avatarUrl;
 }
 
 @freezed

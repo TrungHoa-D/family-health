@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:family_health/domain/entities/user_entity.dart';
 import 'package:family_health/domain/entities/health_profile.dart';
+import 'package:family_health/domain/entities/user_entity.dart';
 import 'package:family_health/presentation/view/pages/dashboard/dashboard_page.dart';
 import 'package:family_health/presentation/view/pages/family_setup/family_setup_page.dart';
 import 'package:family_health/presentation/view/pages/home/home_page.dart';

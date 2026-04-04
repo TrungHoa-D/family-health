@@ -1,15 +1,15 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit_page.dart';
 import 'package:family_health/presentation/router/router.dart';
 import 'package:family_health/presentation/view/widgets/app_bottom_navigation_bar.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../dashboard/dashboard_page.dart';
-import '../meds/meds_page.dart';
-import '../events/events_page.dart';
 import '../chat/chat_page.dart';
+import '../dashboard/dashboard_page.dart';
+import '../events/events_page.dart';
+import '../meds/meds_page.dart';
 import '../settings/settings_page.dart';
 import 'home_cubit.dart';
 

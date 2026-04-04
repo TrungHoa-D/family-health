@@ -17,7 +17,8 @@ class HealthProfileModel {
       otherDisease: json['other_disease'] as String?,
       anchorTimes: json['anchor_times'] != null
           ? AnchorTimesModel.fromJson(
-              json['anchor_times'] as Map<String, dynamic>)
+              json['anchor_times'] as Map<String, dynamic>,
+            )
           : const AnchorTimes(),
     );
   }
@@ -29,7 +30,9 @@ class HealthProfileModel {
       'blood_type': entity.bloodType,
       'is_rh_positive': entity.isRhPositive,
       'is_male': entity.isMale,
-      'birth_date': entity.birthDate != null ? Timestamp.fromDate(entity.birthDate!) : null,
+      'birth_date': entity.birthDate != null
+          ? Timestamp.fromDate(entity.birthDate!)
+          : null,
       'medical_history': entity.medicalHistory,
       'other_disease': entity.otherDisease,
       'anchor_times': AnchorTimesModel.toJson(entity.anchorTimes),

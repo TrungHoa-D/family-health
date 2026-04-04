@@ -60,7 +60,9 @@ class LoginPage extends BaseCubitPage<LoginCubit, LoginState> {
               child: IntrinsicHeight(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.xl, vertical: AppSpacing.sm),
+                    horizontal: AppSpacing.xl,
+                    vertical: AppSpacing.sm,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -206,7 +208,9 @@ class LoginPage extends BaseCubitPage<LoginCubit, LoginState> {
                     : () => context.read<LoginCubit>().toggleLoginMode(),
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.md, vertical: AppSpacing.xs),
+                    horizontal: AppSpacing.md,
+                    vertical: AppSpacing.xs,
+                  ),
                 ),
                 child: Text(
                   isLoginMode

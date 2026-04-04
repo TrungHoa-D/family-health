@@ -1,7 +1,7 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter/material.dart';
 import 'package:family_health/gen/assets.gen.dart';
 import 'package:family_health/shared/extension/context.dart';
+import 'package:flutter/material.dart';
 
 typedef AppDropDownOptionToString<T> = String Function(T option);
 

@@ -1,6 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:family_health/dependencies/dialog_manager.dart';
 import 'package:family_health/presentation/base/base_state.dart';
 import 'package:family_health/shared/common/error_converter.dart';
@@ -8,6 +6,8 @@ import 'package:family_health/shared/common/error_entity/business_error_entity.d
 import 'package:family_health/shared/common/error_entity/validation_error_entity.dart';
 import 'package:family_health/shared/common/error_handler.dart';
 import 'package:family_health/shared/utils/alert.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 abstract class BaseBloc<V, S extends BaseState> extends Bloc<V, S> {
   BaseBloc(S initialState) : super(initialState);

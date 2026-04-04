@@ -14,35 +14,41 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
 
   void init({MedicationModel? medication}) {
     if (medication != null) {
-      emit(state.copyWith(
-        pageStatus: PageStatus.Loaded,
-        isEditing: true,
-        drugName: medication.name,
-        dosage: medication.dosage ?? '',
-        selectedUser: medication.memberName,
-        anchorTime: medication.anchorTime ?? 'Sau ăn sáng',
-        offset: medication.offset ?? 'Sau 30p',
-        supervisor: medication.supervisorNames.isNotEmpty
-            ? medication.supervisorNames.first
-            : 'Trung Hòa',
-      ));
+      emit(
+        state.copyWith(
+          pageStatus: PageStatus.Loaded,
+          isEditing: true,
+          drugName: medication.name,
+          dosage: medication.dosage ?? '',
+          selectedUser: medication.memberName,
+          anchorTime: medication.anchorTime ?? 'Sau ăn sáng',
+          offset: medication.offset ?? 'Sau 30p',
+          supervisor: medication.supervisorNames.isNotEmpty
+              ? medication.supervisorNames.first
+              : 'Trung Hòa',
+        ),
+      );
     } else {
       emit(state.copyWith(pageStatus: PageStatus.Loaded));
     }
   }
 
   void updateDrugName(String value) {
-    emit(state.copyWith(
-      drugName: value,
-      drugNameError: null,
-    ));
+    emit(
+      state.copyWith(
+        drugName: value,
+        drugNameError: null,
+      ),
+    );
   }
 
   void updateDosage(String value) {
-    emit(state.copyWith(
-      dosage: value,
-      dosageError: null,
-    ));
+    emit(
+      state.copyWith(
+        dosage: value,
+        dosageError: null,
+      ),
+    );
   }
 
   void selectUser(String value) {
@@ -73,10 +79,12 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
     }
 
     if (drugNameError != null || dosageError != null) {
-      emit(state.copyWith(
-        drugNameError: drugNameError,
-        dosageError: dosageError,
-      ));
+      emit(
+        state.copyWith(
+          drugNameError: drugNameError,
+          dosageError: dosageError,
+        ),
+      );
       return false;
     }
     return true;

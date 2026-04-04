@@ -20,24 +20,6 @@ class AppAvatar extends StatelessWidget {
     this.onTap,
   }) : super(key: key);
 
-  /// URL of avatar image (network)
-  final String? imageUrl;
-
-  /// Size in dp (diameter)
-  final double size;
-
-  /// Border width
-  final double borderWidth;
-
-  /// Border color
-  final Color borderColor;
-
-  /// Icon when no image available
-  final IconData fallbackIcon;
-
-  /// Tap handler
-  final VoidCallback? onTap;
-
   /// Small avatar (24dp) — inline in chat bubbles
   const AppAvatar.small({
     Key? key,
@@ -92,6 +74,24 @@ class AppAvatar extends StatelessWidget {
     this.onTap,
   })  : size = AppSpacing.avatarXXLarge,
         super(key: key);
+
+  /// URL of avatar image (network)
+  final String? imageUrl;
+
+  /// Size in dp (diameter)
+  final double size;
+
+  /// Border width
+  final double borderWidth;
+
+  /// Border color
+  final Color borderColor;
+
+  /// Icon when no image available
+  final IconData fallbackIcon;
+
+  /// Tap handler
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {

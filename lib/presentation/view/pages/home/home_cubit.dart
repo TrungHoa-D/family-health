@@ -1,5 +1,3 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:injectable/injectable.dart';
 import 'package:family_health/domain/entities/user_entity.dart';
 import 'package:family_health/domain/repositories/auth_repository.dart';
 import 'package:family_health/domain/usecases/sign_out_usecase.dart';
@@ -7,6 +5,8 @@ import 'package:family_health/presentation/base/page_status.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit_state.dart';
 import 'package:family_health/shared/utils/logger.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 
 part 'home_cubit.freezed.dart';
 part 'home_state.dart';
@@ -21,10 +21,12 @@ class HomeCubit extends BaseCubit<HomeState> {
 
   Future<void> loadData() async {
     final UserEntity? currentUser = _authRepository.getCurrentUser();
-    emit(state.copyWith(
-      pageStatus: PageStatus.Loaded,
-      user: currentUser,
-    ));
+    emit(
+      state.copyWith(
+        pageStatus: PageStatus.Loaded,
+        user: currentUser,
+      ),
+    );
   }
 
   void changeTab(int index) {

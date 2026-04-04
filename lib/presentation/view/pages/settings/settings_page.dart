@@ -1,5 +1,8 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:family_health/di/di.dart';
 import 'package:family_health/presentation/resources/app_spacing.dart';
 import 'package:family_health/presentation/resources/colors.dart';
+import 'package:family_health/presentation/router/router.dart';
 import 'package:family_health/presentation/view/pages/settings/components/family_invite_section.dart';
 import 'package:family_health/presentation/view/pages/settings/components/medical_records_section.dart';
 import 'package:family_health/presentation/view/pages/settings/components/others_section.dart';
@@ -9,9 +12,6 @@ import 'package:family_health/presentation/view/pages/settings/settings_cubit.da
 import 'package:family_health/presentation/view/pages/settings/settings_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:family_health/di/di.dart';
-import 'package:auto_route/auto_route.dart';
-import 'package:family_health/presentation/router/router.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -39,7 +39,8 @@ class SettingsView extends StatelessWidget {
       },
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: AppColors.surface, // Based on design, main bg is slightly off white
+          backgroundColor: AppColors
+              .surface, // Based on design, main bg is slightly off white
           body: RefreshIndicator(
             onRefresh: () => context.read<SettingsCubit>().refreshData(),
             child: SingleChildScrollView(
@@ -52,7 +53,7 @@ class SettingsView extends StatelessWidget {
                     user: state.user,
                   ),
                   const SizedBox(height: AppSpacing.lg),
-                  if (state.medicalRecord != null) 
+                  if (state.medicalRecord != null)
                     MedicalRecordsSection(record: state.medicalRecord!),
                   const SizedBox(height: AppSpacing.lg),
                   RoutinesSection(routines: state.routines),

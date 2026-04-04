@@ -6,12 +6,6 @@ import 'package:family_health/presentation/view/widgets/app_card.dart';
 import 'package:flutter/material.dart';
 
 class DashboardOverviewCard extends StatelessWidget {
-  final double progress; // 0.0 to 1.0 (e.g. 0.67)
-  final int takenCount;
-  final int totalCount;
-  final int waitingCount;
-  final int missedCount;
-
   const DashboardOverviewCard({
     super.key,
     required this.progress,
@@ -20,6 +14,11 @@ class DashboardOverviewCard extends StatelessWidget {
     required this.waitingCount,
     required this.missedCount,
   });
+  final double progress; // 0.0 to 1.0 (e.g. 0.67)
+  final int takenCount;
+  final int totalCount;
+  final int waitingCount;
+  final int missedCount;
 
   @override
   Widget build(BuildContext context) {
@@ -27,14 +26,16 @@ class DashboardOverviewCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: AppSpacing.md, top: AppSpacing.md),
+          padding:
+              const EdgeInsets.only(left: AppSpacing.md, top: AppSpacing.md),
           child: Row(
             children: [
               const Text('📊', style: TextStyle(fontSize: 20)),
               const SizedBox(width: AppSpacing.sm),
               Text(
                 'home.overview_title'.tr(),
-                style: AppStyles.titleMedium.copyWith(fontWeight: FontWeight.bold),
+                style:
+                    AppStyles.titleMedium.copyWith(fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -88,7 +89,8 @@ class DashboardOverviewCard extends StatelessWidget {
                   value: progress,
                   minHeight: 10,
                   backgroundColor: AppColors.surface,
-                  valueColor: const AlwaysStoppedAnimation<Color>(AppColors.secondary),
+                  valueColor:
+                      const AlwaysStoppedAnimation<Color>(AppColors.secondary),
                 ),
               ),
               const SizedBox(height: AppSpacing.xl),
@@ -96,7 +98,7 @@ class DashboardOverviewCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: _buildStatItem(
-                      '${takenCount}/${totalCount}',
+                      '$takenCount/$totalCount',
                       'home.taken'.tr(),
                       AppColors.secondary,
                     ),

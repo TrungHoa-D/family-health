@@ -7,9 +7,8 @@ import 'package:family_health/presentation/view/pages/events/events_state.dart';
 import 'package:flutter/material.dart';
 
 class EventListSection extends StatelessWidget {
-  final List<EventModel> events;
-
   const EventListSection({super.key, required this.events});
+  final List<EventModel> events;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +18,8 @@ class EventListSection extends StatelessWidget {
         child: Center(
           child: Text(
             'Không có sự kiện nào trong ngày này',
-            style: AppStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+            style:
+                AppStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
           ),
         ),
       );
@@ -27,18 +27,19 @@ class EventListSection extends StatelessWidget {
 
     // Grouping events
     final Map<String, List<EventModel>> groupedEvents = {};
-    for (var event in events) {
+    for (final event in events) {
       final date = DateTime(event.time.year, event.time.month, event.time.day);
       final now = DateTime.now();
       final today = DateTime(now.year, now.month, now.day);
-      
+
       String key;
       if (date == today) {
         key = 'events.today'.tr(); // "Hôm nay"
       } else {
-        String dau = DateFormat('EEEE', 'vi_VN').format(date);
-        String cuoi = DateFormat('dd/MM').format(date);
-        key = '${dau[0].toUpperCase()}${dau.substring(1)}, $cuoi'; // e.g. Thứ Bảy, 28/03
+        final String dau = DateFormat('EEEE', 'vi_VN').format(date);
+        final String cuoi = DateFormat('dd/MM').format(date);
+        key =
+            '${dau[0].toUpperCase()}${dau.substring(1)}, $cuoi'; // e.g. Thứ Bảy, 28/03
       }
 
       if (!groupedEvents.containsKey(key)) {
@@ -57,7 +58,8 @@ class EventListSection extends StatelessWidget {
               children: [
                 Text(
                   entry.key,
-                  style: AppStyles.titleLarge.copyWith(fontWeight: FontWeight.bold),
+                  style: AppStyles.titleLarge
+                      .copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(width: AppSpacing.md),
                 Expanded(
