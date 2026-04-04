@@ -3,15 +3,16 @@ import 'package:family_health/presentation/resources/app_spacing.dart';
 import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:family_health/domain/entities/user_entity.dart';
+import 'package:family_health/presentation/router/router.dart';
 
 class ProfileHeaderSection extends StatelessWidget {
-  final String name;
-  final String email;
+  final UserEntity? user;
 
   const ProfileHeaderSection({
     super.key,
-    required this.name,
-    required this.email,
+    required this.user,
   });
 
   @override
@@ -33,7 +34,7 @@ class ProfileHeaderSection extends StatelessWidget {
                   color: AppColors.surface,
                   child: Center(
                     child: Text(
-                      name.isNotEmpty ? name[0] : 'U',
+                      (user?.displayName?.isNotEmpty == true) ? user!.displayName![0] : 'U',
                       style: AppStyles.displayLarge.copyWith(color: AppColors.primary),
                     ),
                   ),
@@ -53,12 +54,16 @@ class ProfileHeaderSection extends StatelessWidget {
           ],
         ),
         const SizedBox(height: AppSpacing.md),
-        Text(name, style: AppStyles.headlineMedium.copyWith(fontWeight: FontWeight.w900, color: AppColors.textPrimary)),
+        Text(user?.displayName ?? 'Khách', style: AppStyles.headlineMedium.copyWith(fontWeight: FontWeight.w900, color: AppColors.textPrimary)),
         const SizedBox(height: 4),
-        Text(email, style: AppStyles.bodyMedium.copyWith(color: AppColors.textSecondary)),
+        Text(user?.email ?? 'Chưa cập nhật', style: AppStyles.bodyMedium.copyWith(color: AppColors.textSecondary)),
         const SizedBox(height: 12),
         TextButton(
-          onPressed: () {},
+          onPressed: () {
+            if (user != null) {
+              context.router.push(ProfileEditRoute(user: user!));
+            }
+          },
           style: TextButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             minimumSize: Size.zero,

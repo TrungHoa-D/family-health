@@ -2,6 +2,13 @@
   "error": {
     "field_is_required": "Trường bắt buộc"
   },
+  "common": {
+    "full_name": "Họ và tên",
+    "phone_number": "Số điện thoại",
+    "saving": "Đang lưu...",
+    "cancel": "Hủy",
+    "save": "Lưu"
+  },
   "login": {
     "title": "Đăng nhập",
     "welcome": "Chào mừng bạn",
@@ -179,6 +186,10 @@
   },
   "settings": {
     "edit_profile": "Chỉnh sửa hồ sơ",
+    "edit_profile_title": "Chỉnh sửa hồ sơ",
+    "name_required": "Vui lòng nhập tên",
+    "save_changes": "Lưu thay đổi",
+    "update_failed": "Cập nhật thất bại",
     "medical_records": "HỒ SƠ Y TẾ",
     "blood_type": "NHÓM MÁU",
     "height": "CHIỀU CAO",

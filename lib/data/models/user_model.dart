@@ -6,12 +6,9 @@ class UserModel extends UserEntity {
     super.displayName,
     super.email,
     super.photoUrl,
-    this.phone,
-    this.uiPreference,
+    super.phone,
+    super.uiPreference,
   });
-
-  final String? phone;
-  final String? uiPreference;
 
   factory UserModel.fromJson(Map<String, dynamic> json, String uid) {
     return UserModel(
@@ -40,6 +37,8 @@ class UserModel extends UserEntity {
       displayName: entity.displayName,
       email: entity.email,
       photoUrl: entity.photoUrl,
+      phone: entity.phone,
+      uiPreference: entity.uiPreference,
     );
   }
 }

@@ -2,6 +2,13 @@
   "error": {
     "field_is_required": "Field is required"
   },
+  "common": {
+    "full_name": "Full Name",
+    "phone_number": "Phone Number",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "save": "Save"
+  },
   "login": {
     "title": "Log in",
     "welcome": "Welcome",
@@ -179,6 +186,10 @@
   },
   "settings": {
     "edit_profile": "Edit Profile",
+    "edit_profile_title": "Edit Profile",
+    "name_required": "Please enter your name",
+    "save_changes": "Save Changes",
+    "update_failed": "Update failed",
     "medical_records": "MEDICAL RECORDS",
     "blood_type": "BLOOD TYPE",
     "height": "HEIGHT",

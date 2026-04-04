@@ -45,7 +45,9 @@ class SettingsView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: AppSpacing.xl),
-                ProfileHeaderSection(name: state.name, email: state.email),
+                ProfileHeaderSection(
+                  user: state.user,
+                ),
                 const SizedBox(height: AppSpacing.lg),
                 if (state.medicalRecord != null) 
                   MedicalRecordsSection(record: state.medicalRecord!),

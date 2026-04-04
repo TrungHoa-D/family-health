@@ -89,3 +89,4 @@ Nếu cần tạo UI mới, luôn ưu tiên sử dụng các Custom Widget sau t
 3. Không làm giả/sử dụng "placeholders" bừa bãi khi xử lý UI (ví dụ màu đỏ/xanh lá chói mắt để test layout). Phải dùng token từ `AppColors`. Giao diện phải mang tính Aesthetics đẹp mắt.
 4. Khi sửa nhiều file hoặc thêm lib mới, nên cập nhật docs/AI.md nếu cần thiết lập pattern mới.
 5. **Localization Bắt Buộc**: Bất kỳ đoạn text nào hiển thị trên UI đều **TUYỆT ĐỐI KHÔNG ĐƯỢC HARDCODE**. Phải tạo key đồng thời trong `assets/translations/en.json` và `vi.json`, sau đó sử dụng extension `.tr()` để hiển thị. **Lưu ý**: Luôn kiểm tra sự tồn tại của key trong cả 2 file trước khi chạy ứng dụng.
+6. **Cấu trúc Trang**: Ưu tiên sử dụng màn hình riêng (`Page`) thay vì `Dialog` cho các tính năng có logic phức tạp hoặc nhập liệu nhiều trường (như Chỉnh sửa hồ sơ) để đảm bảo trải nghiệm người dùng tốt nhất trên đa nền tảng.

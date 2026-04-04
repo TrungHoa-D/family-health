@@ -808,7 +808,7 @@ Màn hình cài đặt và quản lý thông tin cá nhân. Bố cục **ScrollV
 - Bố cục **Row**: Avatar tròn 64dp (viền 2dp `primary-light`) bên trái + Column thông tin bên phải:
   - Dòng 1: "[display_name]", font 20sp Bold, `text-primary`.
   - Dòng 2: "[email]", font 14sp Regular, `text-secondary`.
-  - Dòng 3: Nút text "Chỉnh sửa hồ sơ →" (14sp, `primary`). Bấm → màn hình chỉnh sửa profile.
+  - Dòng 3: Nút text "Chỉnh sửa hồ sơ →" (14sp, `primary`). Bấm → Chuyển đến màn hình **ProfileEditPage**.
 
 **Vùng 2 — Section: Hồ sơ y tế**
 - Card nền `white`, border-radius 16dp, margin `md`, padding vertical `sm`.
