@@ -4,6 +4,7 @@ import 'package:family_health/domain/usecases/get_health_profile_usecase.dart';
 import 'package:family_health/domain/usecases/get_user_usecase.dart';
 import 'package:family_health/domain/usecases/sign_out_usecase.dart';
 import 'package:family_health/domain/usecases/sync_user_usecase.dart';
+import 'package:family_health/domain/usecases/update_ui_preference_usecase.dart';
 import 'package:family_health/presentation/base/page_status.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit.dart';
 import 'package:family_health/presentation/view/pages/settings/settings_state.dart';
@@ -18,6 +19,7 @@ class SettingsCubit extends BaseCubit<SettingsState> {
     this._getUserUseCase,
     this._syncUserUseCase,
     this._getHealthProfileUseCase,
+    this._updateUIPreferenceUseCase,
   ) : super(const SettingsState()) {
     _loadInitialData();
   }
@@ -26,6 +28,7 @@ class SettingsCubit extends BaseCubit<SettingsState> {
   final GetUserUseCase _getUserUseCase;
   final SyncUserUseCase _syncUserUseCase;
   final GetHealthProfileUseCase _getHealthProfileUseCase;
+  final UpdateUIPreferenceUseCase _updateUIPreferenceUseCase;
 
   Future<void> _loadInitialData() async {
     await refreshData();
@@ -192,6 +195,27 @@ class SettingsCubit extends BaseCubit<SettingsState> {
     } catch (e) {
       logger.e('Logout failed: $e');
       emit(state.copyWith(isLoggingOut: false));
+    }
+  }
+
+  Future<void> updateUIMode(String mode) async {
+    final uid = state.user?.uid;
+    if (uid == null) return;
+
+    try {
+      await _updateUIPreferenceUseCase.call(
+        params: UpdateUIPreferenceParams(uid: uid, preference: mode),
+      );
+
+      // Cập nhật state cục bộ để UI phản hồi ngay lập tức
+      if (state.user != null) {
+        emit(state.copyWith(
+          user: state.user!.copyWith(uiPreference: mode),
+        ));
+      }
+    } catch (e) {
+      logger.e('Failed to update UI mode: $e');
+      emit(state.copyWith(pageErrorMessage: e.toString()));
     }
   }
 }

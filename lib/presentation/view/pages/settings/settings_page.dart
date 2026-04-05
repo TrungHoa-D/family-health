@@ -10,6 +10,7 @@ import 'package:family_health/presentation/view/pages/settings/components/medica
 import 'package:family_health/presentation/view/pages/settings/components/others_section.dart';
 import 'package:family_health/presentation/view/pages/settings/components/profile_header_section.dart';
 import 'package:family_health/presentation/view/pages/settings/components/routines_section.dart';
+import 'package:family_health/presentation/view/pages/settings/components/ui_mode_section.dart';
 import 'package:family_health/presentation/view/pages/settings/settings_cubit.dart';
 import 'package:family_health/presentation/view/pages/settings/settings_state.dart';
 import 'package:flutter/foundation.dart';
@@ -79,6 +80,12 @@ class SettingsPage extends BaseCubitPage<SettingsCubit, SettingsState> {
                   RoutinesSection(routines: state.routines),
                   const SizedBox(height: AppSpacing.lg),
                   FamilyInviteSection(inviteCode: state.inviteCode),
+                  const SizedBox(height: AppSpacing.lg),
+                  UIModeSection(
+                    currentMode: state.user?.uiPreference,
+                    onModeChanged: (mode) =>
+                        context.read<SettingsCubit>().updateUIMode(mode),
+                  ),
                   const SizedBox(height: AppSpacing.lg),
                   const OthersSection(),
                 ],

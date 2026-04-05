@@ -34,6 +34,11 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
+  Future<void> updateUIPreference(String uid, String preference) async {
+    await _firestoreDataSource.syncUser(uid, {'ui_preference': preference});
+  }
+
+  @override
   Future<String> uploadAvatar(String uid, File image) async {
     final path = 'avatars/$uid.jpg';
     final url = await _storageDataSource.uploadFile(path, image);
