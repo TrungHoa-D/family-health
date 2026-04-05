@@ -1,12 +1,16 @@
+import 'package:family_health/presentation/base/page_status.dart';
+import 'package:family_health/presentation/cubit_base/base_cubit.dart';
 import 'package:family_health/presentation/view/pages/chat/chat_state.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
 
-class ChatCubit extends Cubit<ChatState> {
+@injectable
+class ChatCubit extends BaseCubit<ChatState> {
   ChatCubit() : super(const ChatState()) {
     _loadMockMessages();
   }
 
   void _loadMockMessages() {
+    emit(state.copyWith(pageStatus: PageStatus.Loading));
     final now = DateTime.now();
     final mockMessages = [
       ChatMessageModel(
@@ -47,7 +51,10 @@ class ChatCubit extends Cubit<ChatState> {
       ),
     ];
 
-    emit(state.copyWith(messages: mockMessages));
+    emit(state.copyWith(
+      messages: mockMessages,
+      pageStatus: PageStatus.Loaded,
+    ));
   }
 
   void sendMessage(String text) {

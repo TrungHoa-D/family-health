@@ -1,3 +1,5 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:family_health/presentation/cubit_base/base_cubit_page.dart';
 import 'package:family_health/presentation/resources/app_spacing.dart';
 import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/view/pages/chat/chat_cubit.dart';
@@ -8,15 +10,13 @@ import 'package:family_health/presentation/view/pages/chat/components/chat_input
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ChatPage extends StatelessWidget {
+@RoutePage()
+class ChatPage extends BaseCubitPage<ChatCubit, ChatState> {
   const ChatPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => ChatCubit(),
-      child: const ChatView(),
-    );
+  Widget builder(BuildContext context) {
+    return const ChatView();
   }
 }
 
@@ -31,6 +31,7 @@ class _ChatViewState extends State<ChatView> {
   final ScrollController _scrollController = ScrollController();
 
   void _scrollToBottom() {
+    if (!mounted) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(

@@ -1,3 +1,4 @@
+import 'package:family_health/data/models/health_profile_model.dart';
 import 'package:family_health/data/remote/datasources/firebase_firestore_datasource.dart';
 import 'package:family_health/domain/entities/health_profile.dart';
 import 'package:family_health/domain/repositories/health_repository.dart';
@@ -10,12 +11,12 @@ class HealthRepositoryImpl implements HealthRepository {
 
   @override
   Future<void> saveHealthProfile(String userId, HealthProfile profile) {
-    return _dataSource.saveHealthProfile(userId, profile.toJson());
+    return _dataSource.saveHealthProfile(userId, HealthProfileModel.toJson(profile));
   }
 
   @override
   Future<HealthProfile?> getHealthProfile(String userId) async {
     final data = await _dataSource.getHealthProfile(userId);
-    return data != null ? HealthProfile.fromJson(data) : null;
+    return data != null ? HealthProfileModel.fromJson(data) : null;
   }
 }

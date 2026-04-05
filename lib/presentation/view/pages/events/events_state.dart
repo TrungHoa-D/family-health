@@ -1,4 +1,7 @@
+import 'package:family_health/presentation/base/page_status.dart';
+import 'package:family_health/presentation/cubit_base/base_cubit_state.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+
 part 'events_state.freezed.dart';
 
 enum EventType { vaccine, dentistry, checkup, other }
@@ -19,14 +22,27 @@ class EventModel {
 }
 
 @freezed
-class EventsState with _$EventsState {
+class EventsState with _$EventsState implements BaseCubitState {
   const factory EventsState({
+    @Default(PageStatus.Uninitialized) PageStatus pageStatus,
+    String? pageErrorMessage,
     required DateTime currentDate,
     required DateTime selectedDate,
     required List<EventModel> allEvents,
   }) = _EventsState;
 
   const EventsState._();
+
+  @override
+  BaseCubitState copyWithState({
+    PageStatus? pageStatus,
+    String? pageErrorMessage,
+  }) {
+    return copyWith(
+      pageStatus: pageStatus ?? this.pageStatus,
+      pageErrorMessage: pageErrorMessage ?? this.pageErrorMessage,
+    );
+  }
 
   /// Returns events for the selected date
   List<EventModel> get selectedDateEvents {

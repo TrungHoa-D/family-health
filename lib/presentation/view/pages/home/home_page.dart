@@ -33,9 +33,9 @@ class HomePage extends BaseCubitPage<HomeCubit, HomeState> {
             children: [
               const DashboardPage().wrappedRoute(context),
               const MedsPage().wrappedRoute(context),
-              const EventsPage(),
-              const ChatPage(),
-              const SettingsPage(),
+              const EventsPage().wrappedRoute(context),
+              const ChatPage().wrappedRoute(context),
+              const SettingsPage().wrappedRoute(context),
             ],
           ),
           bottomNavigationBar: AppBottomNavigationBar(

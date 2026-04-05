@@ -1,4 +1,6 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:family_health/presentation/cubit_base/base_cubit_page.dart';
 import 'package:family_health/presentation/resources/app_spacing.dart';
 import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
@@ -9,15 +11,13 @@ import 'package:family_health/presentation/view/pages/events/events_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class EventsPage extends StatelessWidget {
+@RoutePage()
+class EventsPage extends BaseCubitPage<EventsCubit, EventsState> {
   const EventsPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => EventsCubit(),
-      child: const EventsView(),
-    );
+  Widget builder(BuildContext context) {
+    return const EventsView();
   }
 }
 

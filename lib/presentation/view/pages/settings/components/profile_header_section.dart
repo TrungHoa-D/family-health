@@ -6,7 +6,9 @@ import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
 import 'package:family_health/presentation/router/router.dart';
 import 'package:family_health/presentation/view/widgets/app_avatar.dart';
+import 'package:family_health/presentation/view/pages/settings/settings_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProfileHeaderSection extends StatelessWidget {
   const ProfileHeaderSection({
@@ -55,7 +57,11 @@ class ProfileHeaderSection extends StatelessWidget {
         TextButton(
           onPressed: () {
             if (user != null) {
-              context.router.push(ProfileEditRoute(user: user!));
+              context.router.push(ProfileEditRoute(user: user!)).then((_) {
+                if (context.mounted) {
+                  context.read<SettingsCubit>().refreshData();
+                }
+              });
             }
           },
           style: TextButton.styleFrom(

@@ -6,7 +6,9 @@ import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
 import 'package:family_health/presentation/router/router.dart';
 import 'package:family_health/presentation/view/widgets/app_card.dart';
+import 'package:family_health/presentation/view/pages/settings/settings_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MedicalRecordsSection extends StatelessWidget {
   const MedicalRecordsSection({super.key, required this.record});
@@ -36,7 +38,12 @@ class MedicalRecordsSection extends StatelessWidget {
               TextButton.icon(
                 onPressed: () {
                   context.router
-                      .push(SetupHealthProfileRoute(initialProfile: record));
+                      .push(SetupHealthProfileRoute(initialProfile: record))
+                      .then((_) {
+                    if (context.mounted) {
+                      context.read<SettingsCubit>().refreshData();
+                    }
+                  });
                 },
                 icon: const Icon(Icons.edit, size: 16),
                 label: Text('settings.update_health_profile'.tr()),

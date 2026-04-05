@@ -4,13 +4,14 @@ import 'package:family_health/domain/usecases/get_health_profile_usecase.dart';
 import 'package:family_health/domain/usecases/get_user_usecase.dart';
 import 'package:family_health/domain/usecases/sign_out_usecase.dart';
 import 'package:family_health/domain/usecases/sync_user_usecase.dart';
+import 'package:family_health/presentation/base/page_status.dart';
+import 'package:family_health/presentation/cubit_base/base_cubit.dart';
 import 'package:family_health/presentation/view/pages/settings/settings_state.dart';
 import 'package:family_health/shared/utils/logger.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 @injectable
-class SettingsCubit extends Cubit<SettingsState> {
+class SettingsCubit extends BaseCubit<SettingsState> {
   SettingsCubit(
     this._signOutUseCase,
     this._checkAuthStatusUseCase,
@@ -31,6 +32,7 @@ class SettingsCubit extends Cubit<SettingsState> {
   }
 
   Future<void> refreshData() async {
+    emit(state.copyWith(pageStatus: PageStatus.Loading));
     try {
       final authUser = await _checkAuthStatusUseCase(params: null);
       if (authUser != null) {
@@ -44,17 +46,27 @@ class SettingsCubit extends Cubit<SettingsState> {
         final healthProfile =
             await _getHealthProfileUseCase(params: authUser.uid);
         if (healthProfile != null) {
-          emit(state.copyWith(medicalRecord: healthProfile));
+          emit(state.copyWith(
+            medicalRecord: healthProfile,
+            pageStatus: PageStatus.Loaded,
+          ));
 
           // Update routines based on anchor times if available
           _updateRoutinesFromHealthProfile(healthProfile);
         } else {
           // If no profile from Firebase, use mock data or keep defaults
           _loadMockData();
+          emit(state.copyWith(pageStatus: PageStatus.Loaded));
         }
+      } else {
+        emit(state.copyWith(pageStatus: PageStatus.Loaded));
       }
     } catch (e) {
       logger.e('Failed to refresh data: $e');
+      emit(state.copyWith(
+        pageStatus: PageStatus.Error,
+        pageErrorMessage: e.toString(),
+      ));
     }
   }
 

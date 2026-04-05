@@ -1,10 +1,14 @@
+import 'package:family_health/presentation/base/page_status.dart';
+import 'package:family_health/presentation/cubit_base/base_cubit.dart';
 import 'package:family_health/presentation/view/pages/events/events_state.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
 
-class EventsCubit extends Cubit<EventsState> {
+@injectable
+class EventsCubit extends BaseCubit<EventsState> {
   EventsCubit()
       : super(
           EventsState(
+            pageStatus: PageStatus.Loaded,
             currentDate: DateTime.now(),
             selectedDate: DateTime.now(),
             allEvents: _mockEvents(),

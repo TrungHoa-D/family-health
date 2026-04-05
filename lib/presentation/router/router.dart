@@ -14,6 +14,9 @@ import 'package:family_health/presentation/view/pages/meds/medication_detail/med
 import 'package:family_health/presentation/view/pages/meds/meds_cubit.dart';
 import 'package:family_health/presentation/view/pages/meds/meds_page.dart';
 import 'package:family_health/presentation/view/pages/profile_edit/profile_edit_page.dart';
+import 'package:family_health/presentation/view/pages/settings/settings_page.dart';
+import 'package:family_health/presentation/view/pages/chat/chat_page.dart';
+import 'package:family_health/presentation/view/pages/events/events_page.dart';
 import 'package:family_health/presentation/view/pages/setup_health_profile/setup_health_profile_page.dart';
 import 'package:family_health/presentation/view/pages/splash/splash_page.dart';
 import 'package:flutter/material.dart';
@@ -41,5 +44,8 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: MedicationDetailRoute.page),
     AutoRoute(page: ProfileEditRoute.page),
     AutoRoute(page: FamilyManagementRoute.page),
+    AutoRoute(page: SettingsRoute.page),
+    AutoRoute(page: ChatRoute.page),
+    AutoRoute(page: EventsRoute.page),
   ];
 }

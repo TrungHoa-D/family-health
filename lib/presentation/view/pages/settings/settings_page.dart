@@ -1,7 +1,9 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:family_health/di/di.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:family_health/presentation/cubit_base/base_cubit_page.dart';
 import 'package:family_health/presentation/resources/app_spacing.dart';
 import 'package:family_health/presentation/resources/colors.dart';
+import 'package:family_health/presentation/resources/styles.dart';
 import 'package:family_health/presentation/router/router.dart';
 import 'package:family_health/presentation/view/pages/settings/components/family_invite_section.dart';
 import 'package:family_health/presentation/view/pages/settings/components/medical_records_section.dart';
@@ -10,26 +12,22 @@ import 'package:family_health/presentation/view/pages/settings/components/profil
 import 'package:family_health/presentation/view/pages/settings/components/routines_section.dart';
 import 'package:family_health/presentation/view/pages/settings/settings_cubit.dart';
 import 'package:family_health/presentation/view/pages/settings/settings_state.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class SettingsPage extends StatelessWidget {
+@RoutePage()
+class SettingsPage extends BaseCubitPage<SettingsCubit, SettingsState> {
   const SettingsPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => getIt<SettingsCubit>(),
-      child: const SettingsView(),
-    );
+  void onInitState(BuildContext context) {
+    super.onInitState(context);
+    context.read<SettingsCubit>().refreshData();
   }
-}
-
-class SettingsView extends StatelessWidget {
-  const SettingsView({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget builder(BuildContext context) {
     return BlocConsumer<SettingsCubit, SettingsState>(
       listenWhen: (prev, curr) => prev.isLoggedOut != curr.isLoggedOut,
       listener: (context, state) {
@@ -39,8 +37,30 @@ class SettingsView extends StatelessWidget {
       },
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: AppColors
-              .surface, // Based on design, main bg is slightly off white
+          backgroundColor: AppColors.surface,
+          appBar: AppBar(
+            backgroundColor: AppColors.white,
+            elevation: 0,
+            surfaceTintColor: Colors.transparent,
+            title: Text(
+              'bottom_nav.settings'.tr(),
+              style: AppStyles.titleLarge.copyWith(
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            actions: [
+              if (defaultTargetPlatform == TargetPlatform.windows ||
+                  defaultTargetPlatform == TargetPlatform.linux ||
+                  defaultTargetPlatform == TargetPlatform.macOS)
+                IconButton(
+                  icon: const Icon(Icons.refresh, color: AppColors.primary),
+                  onPressed: () => context.read<SettingsCubit>().refreshData(),
+                  tooltip: 'common.refresh'.tr(),
+                ),
+              const SizedBox(width: AppSpacing.sm),
+            ],
+          ),
           body: RefreshIndicator(
             onRefresh: () => context.read<SettingsCubit>().refreshData(),
             child: SingleChildScrollView(
