@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:auto_route/auto_route.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:family_health/domain/entities/user_entity.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit_page.dart';
@@ -9,6 +11,7 @@ import 'package:family_health/presentation/view/widgets/app_button.dart';
 import 'package:family_health/presentation/view/widgets/app_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'profile_edit_cubit.dart';
 
 @RoutePage()
@@ -21,6 +24,15 @@ class ProfileEditPage
   void onInitState(BuildContext context) {
     super.onInitState(context);
     context.read<ProfileEditCubit>().init(user);
+  }
+
+  Future<void> _pickImage(BuildContext context) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null && context.mounted) {
+      context.read<ProfileEditCubit>().updateAvatarFile(File(pickedFile.path));
+    }
   }
 
   @override
@@ -63,49 +75,72 @@ class ProfileEditPage
                 children: [
                   const SizedBox(height: AppSpacing.md),
                   Center(
-                    child: Stack(
-                      alignment: Alignment.bottomRight,
-                      children: [
-                        Container(
-                          width: 100,
-                          height: 100,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: AppColors.secondary,
-                              width: 3,
+                    child: GestureDetector(
+                      onTap: () => _pickImage(context),
+                      child: Stack(
+                        alignment: Alignment.bottomRight,
+                        children: [
+                          Container(
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: AppColors.secondary,
+                                width: 3,
+                              ),
                             ),
-                          ),
-                          child: ClipOval(
-                            child: Container(
-                              color: AppColors.surface,
-                              child: Center(
-                                child: Text(
-                                  user.displayName?.isNotEmpty == true
-                                      ? user.displayName![0]
-                                      : 'U',
-                                  style: AppStyles.displayLarge
-                                      .copyWith(color: AppColors.primary),
-                                ),
+                            child: ClipOval(
+                              child: Container(
+                                color: AppColors.surface,
+                                child: state.avatarFile != null
+                                    ? Image.file(
+                                        state.avatarFile!,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : (user.avatarUrl?.isNotEmpty == true
+                                        ? CachedNetworkImage(
+                                            imageUrl: user.avatarUrl!,
+                                            fit: BoxFit.cover,
+                                            placeholder: (context, url) =>
+                                                const Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            ),
+                                            errorWidget: (context, url,
+                                                    error) =>
+                                                const Icon(Icons.error),
+                                          )
+                                        : Center(
+                                            child: Text(
+                                              user.displayName?.isNotEmpty ==
+                                                      true
+                                                  ? user.displayName![0]
+                                                  : 'U',
+                                              style: AppStyles.displayLarge
+                                                  .copyWith(
+                                                      color: AppColors.primary),
+                                            ),
+                                          )),
                               ),
                             ),
                           ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: AppColors.primary,
-                            shape: BoxShape.circle,
-                            border:
-                                Border.all(color: AppColors.white, width: 2),
+                          Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary,
+                              shape: BoxShape.circle,
+                              border:
+                                  Border.all(color: AppColors.white, width: 2),
+                            ),
+                            child: const Icon(
+                              Icons.camera_alt,
+                              color: AppColors.white,
+                              size: 16,
+                            ),
                           ),
-                          child: const Icon(
-                            Icons.camera_alt,
-                            color: AppColors.white,
-                            size: 16,
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(height: AppSpacing.xl),

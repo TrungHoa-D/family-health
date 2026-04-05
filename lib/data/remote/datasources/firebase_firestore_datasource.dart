@@ -107,6 +107,14 @@ class FirebaseFirestoreDataSource {
         .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
   }
 
+  Stream<List<Map<String, dynamic>>> watchFamilySchedules(String familyId) {
+    return _firestore
+        .collection('patient_schedules')
+        .where('family_id', isEqualTo: familyId)
+        .snapshots()
+        .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
+  }
+
   // --- Medical Event Methods ---
   Future<void> saveMedicalEvent(String id, Map<String, dynamic> data) async {
     final docId = id.isEmpty ? generateId('medical_events') : id;
@@ -143,5 +151,32 @@ class FirebaseFirestoreDataSource {
         .limit(50)
         .snapshots()
         .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
+  }
+
+  // --- Medication Log Methods ---
+  Future<void> saveMedicationLog(String id, Map<String, dynamic> data) async {
+    final docId = id.isEmpty ? generateId('medication_logs') : id;
+    final finalData = {...data, 'log_id': docId};
+    await _firestore.collection('medication_logs').doc(docId).set(
+          finalData,
+          SetOptions(merge: true),
+        );
+  }
+
+  Future<List<Map<String, dynamic>>> getMedicationLogs(
+    String familyId,
+    DateTime date,
+  ) async {
+    final startOfDay = DateTime(date.year, date.month, date.day);
+    final endOfDay = startOfDay.add(const Duration(days: 1));
+
+    final query = await _firestore
+        .collection('medication_logs')
+        .where('family_id', isEqualTo: familyId)
+        .where('scheduled_time', isGreaterThanOrEqualTo: startOfDay)
+        .where('scheduled_time', isLessThan: endOfDay)
+        .get();
+
+    return query.docs.map((doc) => doc.data()).toList();
   }
 }

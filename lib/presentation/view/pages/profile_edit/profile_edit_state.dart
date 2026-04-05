@@ -7,6 +7,7 @@ class ProfileEditState with _$ProfileEditState implements BaseCubitState {
     String? pageErrorMessage,
     @Default('') String name,
     @Default('') String phoneNumber,
+    File? avatarFile,
     @Default(false) bool isSuccess,
   }) = _ProfileEditState;
 
