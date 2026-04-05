@@ -31,7 +31,7 @@ String _promptPascalCaseName() {
     if (pascalCaseRegExp.hasMatch(input)) {
       return input;
     } else {
-      print('❌ Tên phải đúng định dạng PascalCase (Ví dụ: Login)');
+      stdout.writeln('❌ Tên phải đúng định dạng PascalCase (Ví dụ: Login)');
     }
   }
 }
@@ -43,7 +43,7 @@ String _sanitizePascalCase(String input) {
 }
 
 void main(List<String> arguments) async {
-  print('🚀 Flutter BLoC & Cubit Generator CLI');
+  stdout.writeln('🚀 Flutter BLoC & Cubit Generator CLI');
 
   final generate = prompts.choose('📌 Bạn muốn tạo gì?', [
     'Page (BLoC)',
@@ -170,7 +170,7 @@ void generateFromTemplate({
   final templateFile = File(templatePath);
 
   if (!templateFile.existsSync()) {
-    print('❌ Không tìm thấy file template: $templatePath');
+    stdout.writeln('❌ Không tìm thấy file template: $templatePath');
     exit(1);
   }
 
@@ -182,7 +182,7 @@ void generateFromTemplate({
   final outputFile = File(outputPath);
   outputFile.createSync(recursive: true);
   outputFile.writeAsStringSync(content);
-  print('✅ Đã tạo: ${File(outputPath).absolute.uri}');
+  stdout.writeln('✅ Đã tạo: ${File(outputPath).absolute.uri}');
 }
 
 void updateRouterFile(
@@ -192,7 +192,7 @@ void updateRouterFile(
 ) {
   final file = File(routerFilePath);
   if (!file.existsSync()) {
-    print('❌ Không tìm thấy file router: $routerFilePath');
+    stdout.writeln('❌ Không tìm thấy file router: $routerFilePath');
     return;
   }
 
@@ -225,7 +225,7 @@ void updateRouterFile(
   }
 
   file.writeAsStringSync(content);
-  print('✅ Đã thêm ${className}Route vào router.dart');
+  stdout.writeln('✅ Đã thêm ${className}Route vào router.dart');
 }
 
 String _toSnakeCase(String input) {

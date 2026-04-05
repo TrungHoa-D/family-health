@@ -19,7 +19,7 @@ class ProfileEditCubit extends BaseCubit<ProfileEditState> {
       state.copyWith(
         pageStatus: PageStatus.Loaded,
         name: user.displayName ?? '',
-        phone: user.phone ?? '',
+        phoneNumber: user.phoneNumber ?? '',
       ),
     );
   }
@@ -29,14 +29,14 @@ class ProfileEditCubit extends BaseCubit<ProfileEditState> {
   }
 
   void updatePhone(String value) {
-    emit(state.copyWith(phone: value));
+    emit(state.copyWith(phoneNumber: value));
   }
 
   Future<void> updateProfile({
     required UserEntity currentUser,
   }) async {
     final name = state.name.trim();
-    final phone = state.phone.trim();
+    final phoneNumber = state.phoneNumber.trim();
 
     if (name.isEmpty) {
       emit(
@@ -53,7 +53,7 @@ class ProfileEditCubit extends BaseCubit<ProfileEditState> {
     try {
       final updatedUser = currentUser.copyWith(
         displayName: name,
-        phone: phone,
+        phoneNumber: phoneNumber,
       );
 
       await _syncUserUseCase(params: updatedUser);

@@ -13,6 +13,8 @@ import 'package:family_health/presentation/view/pages/meds/meds_page.dart';
 import 'package:family_health/presentation/view/pages/profile_edit/profile_edit_page.dart';
 import 'package:family_health/presentation/view/pages/setup_health_profile/setup_health_profile_page.dart';
 import 'package:family_health/presentation/view/pages/splash/splash_page.dart';
+import 'package:family_health/domain/entities/medication.dart';
+import 'package:family_health/domain/entities/patient_schedule.dart';
 import 'package:flutter/material.dart';
 
 part 'router.gr.dart';

@@ -119,7 +119,7 @@ class ProfileEditPage
                   ),
                   const SizedBox(height: AppSpacing.md),
                   AppFormField(
-                    value: state.phone,
+                    value: state.phoneNumber,
                     hintText: 'common.phone_number'.tr(),
                     decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.phone_outlined),

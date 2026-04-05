@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:family_health/data/remote/datasources/firebase_firestore_datasource.dart';
+import 'package:family_health/data/remote/datasources/firebase_storage_datasource.dart';
 import 'package:family_health/domain/entities/medication.dart';
 import 'package:family_health/domain/entities/patient_schedule.dart';
 import 'package:family_health/domain/repositories/medication_repository_interface.dart';
@@ -6,8 +8,9 @@ import 'package:injectable/injectable.dart';
 
 @LazySingleton(as: MedicationRepository)
 class MedicationRepositoryImpl implements MedicationRepository {
-  MedicationRepositoryImpl(this._dataSource);
+  MedicationRepositoryImpl(this._dataSource, this._storageDataSource);
   final FirebaseFirestoreDataSource _dataSource;
+  final FirebaseStorageDataSource _storageDataSource;
 
   @override
   Future<void> saveMedication(Medication medication) {
@@ -31,5 +34,11 @@ class MedicationRepositoryImpl implements MedicationRepository {
     return _dataSource.watchSchedules(targetUserId).map(
           (list) => list.map((json) => PatientSchedule.fromJson(json)).toList(),
         );
+  }
+
+  @override
+  Future<String> uploadMedicationImage(String medId, File image) async {
+    final path = 'medications/$medId.jpg';
+    return await _storageDataSource.uploadFile(path, image);
   }
 }

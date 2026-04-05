@@ -1,44 +1,32 @@
 import 'package:family_health/domain/entities/user_entity.dart';
 
-class UserModel extends UserEntity {
-  const UserModel({
-    required super.uid,
-    super.displayName,
-    super.email,
-    super.photoUrl,
-    super.phone,
-    super.uiPreference,
-  });
+class UserModel {
+  UserModel._();
 
-  factory UserModel.fromJson(Map<String, dynamic> json, String uid) {
-    return UserModel(
+  static UserEntity fromJson(Map<String, dynamic> json, String uid) {
+    return UserEntity(
       uid: uid,
       displayName: json['display_name'] as String?,
       email: json['email'] as String?,
-      photoUrl: json['avatar_url'] as String?,
-      phone: json['phone_number'] as String?,
+      avatarUrl: json['avatar_url'] as String?,
+      phoneNumber: json['phone_number'] as String?,
       uiPreference: json['ui_preference'] as String?,
+      familyId: json['family_id'] as String?,
     );
   }
 
-  Map<String, dynamic> toJson() {
+  static Map<String, dynamic> toJson(UserEntity entity) {
     return {
-      'display_name': displayName ?? '',
-      'email': email ?? '',
-      'avatar_url': photoUrl ?? '',
-      'phone_number': phone ?? '',
-      'ui_preference': uiPreference ?? 'STANDARD',
+      'display_name': entity.displayName ?? '',
+      'email': entity.email ?? '',
+      'avatar_url': entity.avatarUrl ?? '',
+      'phone_number': entity.phoneNumber ?? '',
+      'ui_preference': entity.uiPreference ?? 'STANDARD',
+      'family_id': entity.familyId ?? '',
     };
   }
 
-  factory UserModel.fromEntity(UserEntity entity) {
-    return UserModel(
-      uid: entity.uid,
-      displayName: entity.displayName,
-      email: entity.email,
-      photoUrl: entity.photoUrl,
-      phone: entity.phone,
-      uiPreference: entity.uiPreference,
-    );
+  static UserEntity fromEntity(UserEntity entity) {
+    return entity;
   }
 }

@@ -78,8 +78,19 @@ class AuthDataSource {
 
   UserEntity? getCurrentUser() {
     final User? user = _firebaseAuth.currentUser;
-    if (user == null) return null;
+    if (user == null) {
+      return null;
+    }
     return _mapFirebaseUser(user);
+  }
+
+  Stream<UserEntity?> authStateChanges() {
+    return _firebaseAuth.authStateChanges().map((user) {
+      if (user == null) {
+        return null;
+      }
+      return _mapFirebaseUser(user);
+    });
   }
 
   UserEntity _mapFirebaseUser(User user) {
@@ -87,7 +98,8 @@ class AuthDataSource {
       uid: user.uid,
       displayName: user.displayName,
       email: user.email,
-      photoUrl: user.photoURL,
+      avatarUrl: user.photoURL,
+      phoneNumber: user.phoneNumber,
     );
   }
 }

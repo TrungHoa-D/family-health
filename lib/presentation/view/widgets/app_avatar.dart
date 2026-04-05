@@ -1,137 +1,103 @@
-import 'package:family_health/presentation/resources/app_spacing.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:family_health/presentation/resources/colors.dart';
+import 'package:family_health/presentation/resources/styles.dart';
 import 'package:flutter/material.dart';
 
-/// Family Health — Avatar Component
-///
-/// Theo Style Guide:
-/// - Hình tròn (Circle)
-/// - Border 2px màu Primary Light
-/// - Sizes: small (24dp), medium (40dp), large (48dp), xlarge (64dp), xxlarge (72dp)
-/// - Fallback: icon person trên nền surface
 class AppAvatar extends StatelessWidget {
   const AppAvatar({
-    Key? key,
+    super.key,
     this.imageUrl,
-    this.size = AppSpacing.avatarLarge,
-    this.borderWidth = 2,
-    this.borderColor = AppColors.primaryLight,
-    this.fallbackIcon = Icons.person,
+    this.name = '',
+    this.size = 40,
     this.onTap,
-  }) : super(key: key);
+  });
 
-  /// Small avatar (24dp) — inline in chat bubbles
   const AppAvatar.small({
-    Key? key,
+    super.key,
     this.imageUrl,
-    this.borderWidth = 1,
-    this.borderColor = AppColors.primaryLight,
-    this.fallbackIcon = Icons.person,
+    this.name = '',
     this.onTap,
-  })  : size = AppSpacing.avatarSmall,
-        super(key: key);
+  }) : size = 32;
 
-  /// Medium avatar (40dp) — list items
   const AppAvatar.medium({
-    Key? key,
+    super.key,
     this.imageUrl,
-    this.borderWidth = 2,
-    this.borderColor = AppColors.primaryLight,
-    this.fallbackIcon = Icons.person,
+    this.name = '',
     this.onTap,
-  })  : size = AppSpacing.avatarMedium,
-        super(key: key);
+  }) : size = 48;
 
-  /// Large avatar (48dp) — member cards
   const AppAvatar.large({
-    Key? key,
+    super.key,
     this.imageUrl,
-    this.borderWidth = 2,
-    this.borderColor = AppColors.primaryLight,
-    this.fallbackIcon = Icons.person,
+    this.name = '',
     this.onTap,
-  })  : size = AppSpacing.avatarLarge,
-        super(key: key);
+  }) : size = 80;
 
-  /// Extra large avatar (64dp) — Settings profile
-  const AppAvatar.xlarge({
-    Key? key,
-    this.imageUrl,
-    this.borderWidth = 2,
-    this.borderColor = AppColors.primaryLight,
-    this.fallbackIcon = Icons.person,
-    this.onTap,
-  })  : size = AppSpacing.avatarXLarge,
-        super(key: key);
-
-  /// XXL avatar (72dp) — Simplified Mode greeting
-  const AppAvatar.xxlarge({
-    Key? key,
-    this.imageUrl,
-    this.borderWidth = 3,
-    this.borderColor = AppColors.secondary,
-    this.fallbackIcon = Icons.person,
-    this.onTap,
-  })  : size = AppSpacing.avatarXXLarge,
-        super(key: key);
-
-  /// URL of avatar image (network)
   final String? imageUrl;
-
-  /// Size in dp (diameter)
+  final String name;
   final double size;
-
-  /// Border width
-  final double borderWidth;
-
-  /// Border color
-  final Color borderColor;
-
-  /// Icon when no image available
-  final IconData fallbackIcon;
-
-  /// Tap handler
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    final child = Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(
-          color: borderColor,
-          width: borderWidth,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: AppColors.surface,
+          border: Border.all(color: AppColors.white, width: 2),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.black.withValues(alpha: 0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: ClipOval(
+          child: imageUrl != null && imageUrl!.isNotEmpty
+              ? CachedNetworkImage(
+                  imageUrl: imageUrl!,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => _buildPlaceholder(),
+                  errorWidget: (context, url, error) => _buildPlaceholder(),
+                )
+              : _buildPlaceholder(),
         ),
       ),
-      child: ClipOval(
-        child: imageUrl != null && imageUrl!.isNotEmpty
-            ? Image.network(
-                imageUrl!,
-                fit: BoxFit.cover,
-                width: size,
-                height: size,
-                errorBuilder: (_, __, ___) => _fallback(),
-              )
-            : _fallback(),
-      ),
     );
-
-    if (onTap != null) {
-      return GestureDetector(onTap: onTap, child: child);
-    }
-    return child;
   }
 
-  Widget _fallback() {
+  Widget _buildPlaceholder() {
+    final initials = name.isNotEmpty ? name[0].toUpperCase() : '?';
     return Container(
-      color: AppColors.surface,
-      child: Icon(
-        fallbackIcon,
-        size: size * 0.5,
-        color: AppColors.textSecondary,
+      color: _getPlaceholderColor(name),
+      child: Center(
+        child: Text(
+          initials,
+          style: AppStyles.titleMedium.copyWith(
+            color: AppColors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: size * 0.4,
+          ),
+        ),
       ),
     );
+  }
+
+  Color _getPlaceholderColor(String name) {
+    if (name.isEmpty) return AppColors.primary;
+    final colors = [
+      const Color(0xFF5C6BC0),
+      const Color(0xFF66BB6A),
+      const Color(0xFFFFA726),
+      const Color(0xFFAB47BC),
+      const Color(0xFFEF5350),
+      const Color(0xFF26A69A),
+    ];
+    return colors[name.length % colors.length];
   }
 }

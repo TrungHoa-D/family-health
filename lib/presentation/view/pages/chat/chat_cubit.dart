@@ -51,7 +51,9 @@ class ChatCubit extends Cubit<ChatState> {
   }
 
   void sendMessage(String text) {
-    if (text.trim().isEmpty) return;
+    if (text.trim().isEmpty) {
+      return;
+    }
 
     final newMessage = ChatMessageModel(
       id: DateTime.now().millisecondsSinceEpoch.toString(),

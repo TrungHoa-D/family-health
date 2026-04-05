@@ -8,13 +8,13 @@ class HealthProfile with _$HealthProfile {
   const factory HealthProfile({
     required String height,
     required String weight,
-    required String? bloodType,
-    @Default(true) bool isRhPositive,
-    @Default(true) bool isMale,
-    DateTime? birthDate,
-    @Default([]) List<String> medicalHistory,
-    String? otherDisease,
-    @Default(AnchorTimes()) AnchorTimes anchorTimes,
+    @JsonKey(name: 'blood_type') required String? bloodType,
+    @JsonKey(name: 'is_rh_positive') @Default(true) bool isRhPositive,
+    @JsonKey(name: 'is_male') @Default(true) bool isMale,
+    @JsonKey(name: 'birth_date') DateTime? birthDate,
+    @JsonKey(name: 'medical_history') @Default([]) List<String> medicalHistory,
+    @JsonKey(name: 'other_disease') String? otherDisease,
+    @JsonKey(name: 'anchor_times') @Default(AnchorTimes()) AnchorTimes anchorTimes,
   }) = _HealthProfile;
 
   factory HealthProfile.fromJson(Map<String, dynamic> json) =>

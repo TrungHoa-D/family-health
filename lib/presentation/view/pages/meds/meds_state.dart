@@ -26,37 +26,53 @@ class MedsState with _$MedsState implements BaseCubitState {
 
 class MedicationModel {
   MedicationModel({
-    this.id,
+    required this.id,
     required this.name,
-    required this.memberName,
-    required this.schedule,
-    required this.tag,
-    required this.tagColor,
-    required this.textColor,
+    required this.dosageStandard,
     this.imageUrl,
     this.description,
-    this.dosage,
-    this.timingDescription,
+    this.unit,
+    this.categories = const [],
+    this.stockQuantity,
+    this.expiryDate,
+    // Schedule info (UI combined)
+    this.scheduleDescription,
     this.targetUserName,
-    this.supervisorNames = const [],
-    this.anchorTime,
-    this.offset,
+    this.tag = 'KHÁC',
+    this.tagColor = const Color(0xFFE3F2FD),
+    this.textColor = const Color(0xFF1976D2),
   });
-  final String? id;
+
+  final String id;
   final String name;
-  final String memberName;
-  final String schedule;
+  final String dosageStandard;
+  final String? imageUrl;
+  final String? description;
+  final String? unit;
+  final List<String> categories;
+  final int? stockQuantity;
+  final DateTime? expiryDate;
+
+  // Schedule/Usage info for UI display
+  final String? scheduleDescription;
+  final String? targetUserName;
   final String tag;
   final Color tagColor;
   final Color textColor;
-  final String? imageUrl;
-  final String? description;
-  final String? dosage;
-  final String? timingDescription;
-  final String? targetUserName;
-  final List<String> supervisorNames;
-  final String? anchorTime;
-  final String? offset;
+
+  Medication toEntity() {
+    return Medication(
+      id: id,
+      name: name,
+      dosageStandard: dosageStandard,
+      imageUrl: imageUrl,
+      description: description,
+      unit: unit,
+      categories: categories,
+      stockQuantity: stockQuantity,
+      expiryDate: expiryDate,
+    );
+  }
 }
 
 class MedicationRefillModel {

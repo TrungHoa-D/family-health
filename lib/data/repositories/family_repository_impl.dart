@@ -10,7 +10,7 @@ class FamilyRepositoryImpl implements FamilyRepository {
 
   @override
   Future<void> createFamilyGroup(FamilyGroup family) {
-    return _dataSource.createFamilyGroup(family.id, family.toJson());
+    return _dataSource.createFamilyGroup(family.familyId, family.toJson());
   }
 
   @override
@@ -27,7 +27,7 @@ class FamilyRepositoryImpl implements FamilyRepository {
 
   @override
   Future<void> updateFamilyGroup(FamilyGroup family) {
-    return _dataSource.updateFamilyGroup(family.id, family.toJson());
+    return _dataSource.updateFamilyGroup(family.familyId, family.toJson());
   }
 
   @override
@@ -37,7 +37,7 @@ class FamilyRepositoryImpl implements FamilyRepository {
       throw Exception('Không tìm thấy nhóm gia đình với mã mời này.');
     }
 
-    if (family.memberIds.contains(userId) || family.adminIds.contains(userId)) {
+    if (family.memberIds.contains(userId) || family.adminId == userId) {
       return; // Đã là thành viên
     }
 

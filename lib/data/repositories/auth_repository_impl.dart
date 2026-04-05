@@ -25,6 +25,11 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Stream<UserEntity?> authStateChanges() {
+    return _authDataSource.authStateChanges();
+  }
+
+  @override
   Future<void> signOut() {
     return _authDataSource.signOut();
   }

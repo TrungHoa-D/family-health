@@ -4,7 +4,8 @@ import 'package:family_health/presentation/cubit_base/base_cubit_page.dart';
 import 'package:family_health/presentation/resources/app_spacing.dart';
 import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
-import 'package:family_health/presentation/view/pages/meds/meds_cubit.dart';
+import 'package:family_health/domain/entities/medication.dart';
+import 'package:family_health/domain/entities/patient_schedule.dart';
 import 'package:family_health/presentation/view/widgets/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,13 +18,21 @@ import 'components/schedule_section.dart';
 @RoutePage()
 class AddMedicationPage
     extends BaseCubitPage<AddMedicationCubit, AddMedicationState> {
-  const AddMedicationPage({super.key, this.medication});
-  final MedicationModel? medication;
+  const AddMedicationPage({
+    super.key,
+    this.medication,
+    this.schedule,
+  });
+  final Medication? medication;
+  final PatientSchedule? schedule;
 
   @override
   void onInitState(BuildContext context) {
     super.onInitState(context);
-    context.read<AddMedicationCubit>().init(medication: medication);
+    context.read<AddMedicationCubit>().init(
+          medication: medication,
+          schedule: schedule,
+        );
   }
 
   @override

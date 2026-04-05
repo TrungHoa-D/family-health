@@ -5,6 +5,7 @@ import 'package:family_health/presentation/resources/app_spacing.dart';
 import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
 import 'package:family_health/presentation/router/router.dart';
+import 'package:family_health/presentation/view/widgets/app_avatar.dart';
 import 'package:flutter/material.dart';
 
 class ProfileHeaderSection extends StatelessWidget {
@@ -21,27 +22,9 @@ class ProfileHeaderSection extends StatelessWidget {
         Stack(
           alignment: Alignment.bottomRight,
           children: [
-            Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: AppColors.secondary, width: 3),
-              ),
-              child: ClipOval(
-                child: Container(
-                  color: AppColors.surface,
-                  child: Center(
-                    child: Text(
-                      (user?.displayName?.isNotEmpty == true)
-                          ? user!.displayName![0]
-                          : 'U',
-                      style: AppStyles.displayLarge
-                          .copyWith(color: AppColors.primary),
-                    ),
-                  ),
-                ),
-              ),
+            AppAvatar.large(
+              imageUrl: user?.avatarUrl,
+              name: user?.displayName ?? 'U',
             ),
             Container(
               width: 28,

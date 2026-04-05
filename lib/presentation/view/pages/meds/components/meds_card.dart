@@ -59,11 +59,12 @@ class MedsCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                Text(
-                  'meds.member_label'.tr(args: [medication.memberName]),
-                  style: AppStyles.bodyMedium
-                      .copyWith(color: AppColors.textSecondary),
-                ),
+                if (medication.targetUserName != null)
+                  Text(
+                    'meds.member_label'.tr(args: [medication.targetUserName!]),
+                    style: AppStyles.bodyMedium
+                        .copyWith(color: AppColors.textSecondary),
+                  ),
                 const SizedBox(height: AppSpacing.sm),
                 Row(
                   children: [
@@ -75,7 +76,7 @@ class MedsCard extends StatelessWidget {
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
-                        medication.schedule,
+                        medication.scheduleDescription ?? '',
                         style: AppStyles.labelSmall
                             .copyWith(color: AppColors.textSecondary),
                         maxLines: 1,

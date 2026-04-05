@@ -145,7 +145,8 @@ class SettingsCubit extends Cubit<SettingsState> {
     }
   }
 
-  Future<void> updateProfile({required String name, String? phone}) async {
+  Future<void> updateProfile(
+      {required String name, String? phoneNumber}) async {
     final currentUser = state.user;
     if (currentUser == null) {
       return;
@@ -156,7 +157,7 @@ class SettingsCubit extends Cubit<SettingsState> {
     try {
       final updatedUser = currentUser.copyWith(
         displayName: name,
-        phone: phone,
+        phoneNumber: phoneNumber,
       );
 
       await _syncUserUseCase(params: updatedUser);

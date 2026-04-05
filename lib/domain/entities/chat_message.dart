@@ -13,11 +13,11 @@ enum MessageType {
 class ChatMessage with _$ChatMessage {
   const factory ChatMessage({
     required String id,
-    required String senderId,
-    required String familyId,
+    @JsonKey(name: 'family_id') required String familyId,
+    @JsonKey(name: 'sender_id') required String senderId,
     required String content,
+    @JsonKey(name: 'message_type') required String messageType,
     required DateTime timestamp,
-    @Default(MessageType.TEXT) MessageType type,
     @Default([]) List<String> readBy,
   }) = _ChatMessage;
 

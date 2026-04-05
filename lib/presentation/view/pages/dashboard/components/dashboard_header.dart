@@ -25,7 +25,10 @@ class DashboardHeader extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          AppAvatar.medium(imageUrl: userPhotoUrl),
+          AppAvatar.medium(
+            imageUrl: userPhotoUrl,
+            name: userName ?? 'U',
+          ),
           const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Text(

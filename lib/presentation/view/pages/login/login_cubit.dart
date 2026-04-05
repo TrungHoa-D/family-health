@@ -86,7 +86,9 @@ class LoginCubit extends BaseCubit<LoginState> {
   }
 
   Future<void> submitEmailForm(BuildContext context) async {
-    if (!_validateEmailForm()) return;
+    if (!_validateEmailForm()) {
+      return;
+    }
 
     emit(state.copyWith(isSigningIn: true));
     try {

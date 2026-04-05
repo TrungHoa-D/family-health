@@ -14,14 +14,13 @@ enum EventType {
 class MedicalEvent with _$MedicalEvent {
   const factory MedicalEvent({
     required String id,
-    required EventType type,
+    @JsonKey(name: 'family_id') required String familyId,
     required String title,
-    required String targetUserId,
-    required DateTime date,
+    String? description,
+    @JsonKey(name: 'event_type') required String eventType, // VACCINE, CHECKUP, etc.
+    @JsonKey(name: 'start_time') required DateTime startTime,
+    @JsonKey(name: 'end_time') required DateTime endTime,
     required String location,
-    String? note,
-    @Default([]) List<String> attendeeIds,
-    @Default(true) bool isNotificationEnabled,
   }) = _MedicalEvent;
 
   factory MedicalEvent.fromJson(Map<String, dynamic> json) =>

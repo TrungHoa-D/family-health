@@ -35,7 +35,9 @@ class MedicationDetailPage
     return BlocBuilder<MedicationDetailCubit, MedicationDetailState>(
       builder: (context, state) {
         final med = state.medication;
-        if (med == null) return const SizedBox.shrink();
+        if (med == null) {
+          return const SizedBox.shrink();
+        }
 
         return Scaffold(
           backgroundColor: AppColors.background,
@@ -87,7 +89,7 @@ class MedicationDetailPage
                 // Vùng 5 — Action Buttons
                 MedicationActionButtons(
                   onEdit: () {
-                    context.router.push(AddMedicationRoute(medication: med));
+                    context.router.push(AddMedicationRoute(medication: med.toEntity()));
                   },
                   onCopy: () {
                     ScaffoldMessenger.of(context).showSnackBar(

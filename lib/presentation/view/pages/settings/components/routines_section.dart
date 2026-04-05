@@ -12,7 +12,9 @@ class RoutinesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (routines.isEmpty) return const SizedBox.shrink();
+    if (routines.isEmpty) {
+      return const SizedBox.shrink();
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -61,19 +63,35 @@ class _RoutineTile extends StatelessWidget {
 
   IconData _getIconForTitle(String title) {
     final lower = title.toLowerCase();
-    if (lower.contains('sáng')) return Icons.wb_sunny;
-    if (lower.contains('trưa')) return Icons.restaurant;
-    if (lower.contains('tối')) return Icons.restaurant_menu;
-    if (lower.contains('ngủ')) return Icons.dark_mode;
+    if (lower.contains('sáng')) {
+      return Icons.wb_sunny;
+    }
+    if (lower.contains('trưa')) {
+      return Icons.restaurant;
+    }
+    if (lower.contains('tối')) {
+      return Icons.restaurant_menu;
+    }
+    if (lower.contains('ngủ')) {
+      return Icons.dark_mode;
+    }
     return Icons.schedule;
   }
 
   Color _getColorForTitle(String title) {
     final lower = title.toLowerCase();
-    if (lower.contains('sáng')) return Colors.orange;
-    if (lower.contains('trưa')) return AppColors.primary;
-    if (lower.contains('tối')) return Colors.brown;
-    if (lower.contains('ngủ')) return Colors.indigo;
+    if (lower.contains('sáng')) {
+      return Colors.orange;
+    }
+    if (lower.contains('trưa')) {
+      return AppColors.primary;
+    }
+    if (lower.contains('tối')) {
+      return Colors.brown;
+    }
+    if (lower.contains('ngủ')) {
+      return Colors.indigo;
+    }
     return AppColors.textSecondary;
   }
 

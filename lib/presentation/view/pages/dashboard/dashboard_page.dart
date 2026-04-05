@@ -38,9 +38,9 @@ class DashboardPage extends BaseCubitPage<DashboardCubit, DashboardState> {
                 children: [
                   DashboardHeader(
                     userName: state.user?.displayName,
-                    userPhotoUrl: state.user?.photoUrl,
+                    userPhotoUrl: state.user?.avatarUrl,
                     onNotificationTap: () {
-                      // TODO: Navigate to notifications
+                      // TODO(TrungHoa): Navigate to notifications
                     },
                   ),
                   DashboardOverviewCard(

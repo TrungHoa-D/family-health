@@ -6,7 +6,7 @@ class ProfileEditState with _$ProfileEditState implements BaseCubitState {
     @Default(PageStatus.Uninitialized) PageStatus pageStatus,
     String? pageErrorMessage,
     @Default('') String name,
-    @Default('') String phone,
+    @Default('') String phoneNumber,
     @Default(false) bool isSuccess,
   }) = _ProfileEditState;
 
@@ -21,7 +21,7 @@ class ProfileEditState with _$ProfileEditState implements BaseCubitState {
       pageStatus: pageStatus ?? this.pageStatus,
       pageErrorMessage: pageErrorMessage,
       name: name,
-      phone: phone,
+      phoneNumber: phoneNumber,
       isSuccess: isSuccess,
     );
   }

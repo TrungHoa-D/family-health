@@ -35,7 +35,7 @@ class MedicationInfoList extends StatelessWidget {
           icon: Icons.medication,
           iconColor: AppColors.primary,
           label: 'meds.info_dosage'.tr(),
-          value: medication.dosage ?? '',
+          value: medication.dosageStandard,
         ),
         const SizedBox(height: AppSpacing.md),
 
@@ -44,7 +44,7 @@ class MedicationInfoList extends StatelessWidget {
           icon: Icons.schedule,
           iconColor: AppColors.secondary,
           label: 'meds.info_timing'.tr(),
-          value: medication.timingDescription ?? '',
+          value: medication.scheduleDescription ?? '',
         ),
         const SizedBox(height: AppSpacing.md),
 
@@ -53,13 +53,13 @@ class MedicationInfoList extends StatelessWidget {
           icon: Icons.person,
           iconColor: const Color(0xFFA33200),
           label: 'meds.info_user'.tr(),
-          value: medication.targetUserName ?? medication.memberName,
+          value: medication.targetUserName ?? 'N/A',
         ),
         const SizedBox(height: AppSpacing.md),
 
         // Người giám sát
-        _SupervisorRow(
-          supervisorNames: medication.supervisorNames,
+        const _SupervisorRow(
+          supervisorNames: [],
         ),
       ],
     );

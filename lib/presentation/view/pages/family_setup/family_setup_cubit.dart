@@ -42,10 +42,14 @@ class FamilySetupCubit extends BaseCubit<FamilySetupState> {
 
   Future<bool> submitForm() async {
     emit(state.copyWith(isSubmitted: true));
-    if (!state.isFormValid) return false;
+    if (!state.isFormValid) {
+      return false;
+    }
 
     final user = _firebaseAuth.currentUser;
-    if (user == null) return false;
+    if (user == null) {
+      return false;
+    }
 
     emit(state.copyWith(pageStatus: PageStatus.Loading));
 
@@ -56,10 +60,10 @@ class FamilySetupCubit extends BaseCubit<FamilySetupState> {
         final inviteCode = _generateInviteCode();
 
         final family = FamilyGroup(
-          id: familyId,
-          name: state.groupName,
+          familyId: familyId,
+          familyName: state.groupName,
           invitationCode: inviteCode,
-          adminIds: [user.uid],
+          adminId: user.uid,
           memberIds: [user.uid],
           createdAt: DateTime.now(),
         );
@@ -83,7 +87,7 @@ class FamilySetupCubit extends BaseCubit<FamilySetupState> {
           final userEntity = await _userRepository.getUser(user.uid);
           if (userEntity != null) {
             await _userRepository
-                .syncUser(userEntity.copyWith(familyId: family.id));
+                .syncUser(userEntity.copyWith(familyId: family.familyId));
           }
         }
       }

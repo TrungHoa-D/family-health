@@ -409,7 +409,7 @@ class LoginPage extends BaseCubitPage<LoginCubit, LoginState> {
             ),
             recognizer: TapGestureRecognizer()
               ..onTap = () {
-                // TODO: Navigate to Terms of Use URL/Screen
+                // TODO(TrungHoa): Navigate to Terms of Use URL/Screen
               },
           ),
         ],

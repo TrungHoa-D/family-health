@@ -57,7 +57,7 @@ void main() {
 
       expect(result, true);
       verify(mockFamilyRepository.createFamilyGroup(argThat(
-        isA<FamilyGroup>().having((f) => f.name, 'name', 'My Family'),
+        isA<FamilyGroup>().having((f) => f.familyName, 'familyName', 'My Family'),
       ),),).called(1);
     });
 
@@ -66,12 +66,12 @@ void main() {
           .thenAnswer((_) async => {});
       when(mockFamilyRepository.getFamilyByInviteCode('INVITE')).thenAnswer(
           (_) async => FamilyGroup(
-              id: 'fid',
-              name: 'Joinee',
-              invitationCode: 'INVITE',
-              adminIds: [],
-              memberIds: [],
-              createdAt: DateTime.now(),),);
+                familyId: 'fid',
+                familyName: 'Joinee',
+                invitationCode: 'INVITE',
+                adminId: 'admin-id',
+                memberIds: [],
+                createdAt: DateTime.now(),),);
       when(mockUserRepository.getUser('test-uid'))
           .thenAnswer((_) async => const UserEntity(uid: 'test-uid'));
       when(mockUserRepository.syncUser(any)).thenAnswer((_) async => {});

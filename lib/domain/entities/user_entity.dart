@@ -9,8 +9,8 @@ class UserEntity with _$UserEntity {
     required String uid,
     @JsonKey(name: 'display_name') String? displayName,
     String? email,
-    @JsonKey(name: 'avatar_url') String? photoUrl,
-    @JsonKey(name: 'phone_number') String? phone,
+    @JsonKey(name: 'avatar_url') String? avatarUrl,
+    @JsonKey(name: 'phone_number') String? phoneNumber,
     @JsonKey(name: 'ui_preference') String? uiPreference,
     @JsonKey(name: 'family_id') String? familyId,
   }) = _UserEntity;

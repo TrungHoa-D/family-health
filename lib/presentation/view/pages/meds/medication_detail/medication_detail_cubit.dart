@@ -22,10 +22,10 @@ class MedicationDetailCubit extends BaseCubit<MedicationDetailState> {
   }
 
   void deleteMedication() {
-    // TODO: Delete from Firestore
+    // TODO(TrungHoa): Delete from Firestore
   }
 
   void copyMedication() {
-    // TODO: Copy medication to another member
+    // TODO(TrungHoa): Copy medication to another member
   }
 }
