@@ -230,6 +230,22 @@
     "leave_confirm_title": "Leave group?",
     "leave_confirm_desc": "You will no longer receive notifications or see the health status of everyone in this group.",
     "disband_confirm_title": "Disband group?",
-    "disband_confirm_desc": "This action will delete the entire family group. All members will be logged out of the group."
+    "disband_confirm_desc": "This action will delete the entire family group. All members will be signed out from the group."
+  },
+  "family_group": {
+    "title": "Family Group",
+    "header_title": "Family Connection",
+    "header_desc": "To get started, you need to join a family group or create a new one for yourself.",
+    "create_title": "Create New Group",
+    "create_desc": "Start a new family and invite members",
+    "join_title": "Join Group",
+    "join_desc": "Enter an invite code to join a family",
+    "group_name_hint": "Family Name (e.g. Smith Family)",
+    "invite_code_hint": "Invite Code (6 chars)",
+    "create_button": "Create Family Group",
+    "join_button": "Join Now",
+    "error_empty_name": "Please enter a group name",
+    "error_empty_code": "Please enter an invite code",
+    "error_invalid_code": "Invalid or expired invite code"
   }
 }

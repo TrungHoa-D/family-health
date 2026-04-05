@@ -17,6 +17,9 @@ import 'package:family_health/presentation/view/pages/profile_edit/profile_edit_
 import 'package:family_health/presentation/view/pages/settings/settings_page.dart';
 import 'package:family_health/presentation/view/pages/chat/chat_page.dart';
 import 'package:family_health/presentation/view/pages/events/events_page.dart';
+import 'package:family_health/presentation/view/pages/family_group/family_group_page.dart';
+import 'package:family_health/presentation/router/family_guard.dart';
+import 'package:family_health/presentation/router/auth_guard.dart';
 import 'package:family_health/presentation/view/pages/setup_health_profile/setup_health_profile_page.dart';
 import 'package:family_health/presentation/view/pages/splash/splash_page.dart';
 import 'package:flutter/material.dart';
@@ -25,27 +28,35 @@ part 'router.gr.dart';
 
 @AutoRouterConfig(replaceInRouteName: 'Page|Dialog|Screen,Route')
 class AppRouter extends RootStackRouter {
-  AppRouter();
+  AppRouter(this.authGuard, this.familyGuard);
+  final AuthGuard authGuard;
+  final FamilyGuard familyGuard;
 
   @override
   RouteType get defaultRouteType => const RouteType.material();
 
   @override
-  final List<AutoRoute> routes = [
-    AutoRoute(page: SplashRoute.page, initial: true),
-    AutoRoute(page: LoginRoute.page),
-    AutoRoute(page: HomeRoute.page),
-    AutoRoute(page: SetupHealthProfileRoute.page),
-    AutoRoute(page: FamilySetupRoute.page),
-    AutoRoute(page: InterfaceModeSelectionRoute.page),
-    AutoRoute(page: DashboardRoute.page),
-    AutoRoute(page: MedsRoute.page),
-    AutoRoute(page: AddMedicationRoute.page),
-    AutoRoute(page: MedicationDetailRoute.page),
-    AutoRoute(page: ProfileEditRoute.page),
-    AutoRoute(page: FamilyManagementRoute.page),
-    AutoRoute(page: SettingsRoute.page),
-    AutoRoute(page: ChatRoute.page),
-    AutoRoute(page: EventsRoute.page),
-  ];
+  List<AutoRoute> get routes => [
+        AutoRoute(page: SplashRoute.page, initial: true),
+        AutoRoute(page: LoginRoute.page),
+        AutoRoute(page: HomeRoute.page, guards: [authGuard, familyGuard]),
+        AutoRoute(page: SetupHealthProfileRoute.page),
+        AutoRoute(page: FamilySetupRoute.page),
+        AutoRoute(page: InterfaceModeSelectionRoute.page),
+        AutoRoute(page: DashboardRoute.page, guards: [authGuard, familyGuard]),
+        AutoRoute(page: MedsRoute.page, guards: [authGuard, familyGuard]),
+        AutoRoute(
+            page: AddMedicationRoute.page, guards: [authGuard, familyGuard]),
+        AutoRoute(
+            page: MedicationDetailRoute.page,
+            guards: [authGuard, familyGuard]),
+        AutoRoute(page: ProfileEditRoute.page, guards: [authGuard, familyGuard]),
+        AutoRoute(
+            page: FamilyManagementRoute.page,
+            guards: [authGuard, familyGuard]),
+        AutoRoute(page: SettingsRoute.page, guards: [authGuard, familyGuard]),
+        AutoRoute(page: ChatRoute.page, guards: [authGuard, familyGuard]),
+        AutoRoute(page: EventsRoute.page, guards: [authGuard, familyGuard]),
+        AutoRoute(page: FamilyGroupRoute.page),
+      ];
 }

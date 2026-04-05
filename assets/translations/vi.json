@@ -232,5 +232,21 @@
     "leave_confirm_desc": "Bạn sẽ không còn nhận được thông báo và xem được sức khỏe của mọi người trong nhóm này.",
     "disband_confirm_title": "Giải tán nhóm?",
     "disband_confirm_desc": "Hành động này sẽ xóa toàn bộ nhóm gia đình. Tất cả thành viên sẽ bị đăng xuất khỏi nhóm."
+  },
+  "family_group": {
+    "title": "Nhóm gia đình",
+    "header_title": "Kết nối gia đình",
+    "header_desc": "Để bắt đầu, bạn cần tham gia một nhóm gia đình hoặc tự tạo nhóm mới cho riêng mình.",
+    "create_title": "Tạo nhóm mới",
+    "create_desc": "Khởi tạo một gia đình mới và mời thành viên",
+    "join_title": "Tham gia nhóm",
+    "join_desc": "Nhập mã mời để tham gia vào gia đình",
+    "group_name_hint": "Tên gia đình (VD: Gia đình họ Nguyễn)",
+    "invite_code_hint": "Mã mời (6 ký tự)",
+    "create_button": "Tạo nhóm gia đình",
+    "join_button": "Tham gia ngay",
+    "error_empty_name": "Vui lòng nhập tên nhóm",
+    "error_empty_code": "Vui lòng nhập mã mời",
+    "error_invalid_code": "Mã mời không đúng hoặc đã hết hạn"
   }
 }

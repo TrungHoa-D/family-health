@@ -15,6 +15,8 @@ import 'app.dart';
 import 'di/di.dart';
 import 'firebase_options.dart';
 import 'presentation/router/router.dart';
+import 'presentation/router/auth_guard.dart';
+import 'presentation/router/family_guard.dart';
 import 'shared/utils/bloc_observer.dart';
 import 'shared/utils/logger.dart';
 
@@ -53,7 +55,7 @@ Future main() async {
 
     // Persist login: check if user already authenticated
     final bool isLoggedIn = FirebaseAuth.instance.currentUser != null;
-    final AppRouter appRouter = AppRouter();
+    final AppRouter appRouter = AppRouter(getIt<AuthGuard>(), getIt<FamilyGuard>());
     getIt.registerSingleton(appRouter);
 
     // Navigate to Home directly if already logged in
