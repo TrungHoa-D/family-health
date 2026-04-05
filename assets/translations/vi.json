@@ -213,6 +213,23 @@
     "others": "KHÁC",
     "help_center": "Trung tâm trợ giúp",
     "logout": "Đăng xuất",
-    "version": "VITALIS CARE • PHIÊN BẢN {}"
+    "version": "VITALIS CARE • PHIÊN BẢN {}",
+    "invite_code_label": "MÃ MỜI GIA ĐÌNH",
+    "code_copied": "Đã sao chép mã mời"
+  },
+  "family": {
+    "management_title": "Quản lý gia đình",
+    "member_count": "{} thành viên",
+    "members_label": "DANH SÁCH THÀNH VIÊN",
+    "role_admin": "Chủ nhóm",
+    "invite_code_label": "MÃ MỜI GIA ĐÌNH",
+    "copy_code": "Sao chép mã mời",
+    "code_copied": "Đã sao chép mã mời vào bộ nhớ tạm",
+    "leave_group": "Rời khỏi nhóm",
+    "disband_group": "Giải tán nhóm",
+    "leave_confirm_title": "Rời khỏi nhóm?",
+    "leave_confirm_desc": "Bạn sẽ không còn nhận được thông báo và xem được sức khỏe của mọi người trong nhóm này.",
+    "disband_confirm_title": "Giải tán nhóm?",
+    "disband_confirm_desc": "Hành động này sẽ xóa toàn bộ nhóm gia đình. Tất cả thành viên sẽ bị đăng xuất khỏi nhóm."
   }
 }

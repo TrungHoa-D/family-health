@@ -1,14 +1,17 @@
+import 'dart:io';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:family_health/domain/entities/medication.dart';
+import 'package:family_health/domain/entities/patient_schedule.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit_page.dart';
 import 'package:family_health/presentation/resources/app_spacing.dart';
 import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
-import 'package:family_health/domain/entities/medication.dart';
-import 'package:family_health/domain/entities/patient_schedule.dart';
 import 'package:family_health/presentation/view/widgets/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'add_medication_cubit.dart';
 import 'components/ai_scanner_card.dart';
@@ -35,6 +38,15 @@ class AddMedicationPage
         );
   }
 
+  Future<void> _onScanTap(BuildContext context) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null && context.mounted) {
+      context.read<AddMedicationCubit>().scanMedicationImage(File(pickedFile.path));
+    }
+  }
+
   @override
   Widget builder(BuildContext context) {
     return BlocConsumer<AddMedicationCubit, AddMedicationState>(
@@ -52,6 +64,15 @@ class AddMedicationPage
             ),
           );
           context.router.maybePop();
+        }
+
+        if (state.scanError != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.scanError!),
+              backgroundColor: AppColors.error,
+            ),
+          );
         }
       },
       builder: (context, state) {
@@ -101,14 +122,8 @@ class AddMedicationPage
                   Padding(
                     padding: const EdgeInsets.only(bottom: AppSpacing.xl),
                     child: AiScannerCard(
-                      onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('meds.ai_coming_soon'.tr()),
-                            backgroundColor: AppColors.primary,
-                          ),
-                        );
-                      },
+                      isScanning: state.isScanning,
+                      onTap: state.isScanning ? null : () => _onScanTap(context),
                     ),
                   ),
 

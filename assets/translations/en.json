@@ -212,7 +212,23 @@
     "invite_desc": "Share this code so your loved ones can track your health.",
     "others": "OTHERS",
     "help_center": "Help Center",
-    "logout": "Log Out",
-    "version": "VITALIS CARE • VERSION {}"
+    "version": "VITALIS CARE • VERSION {}",
+    "invite_code_label": "FAMILY INVITE CODE",
+    "code_copied": "Invite code copied"
+  },
+  "family": {
+    "management_title": "Family Management",
+    "member_count": "{} members",
+    "members_label": "MEMBER LIST",
+    "role_admin": "Admin",
+    "invite_code_label": "FAMILY INVITE CODE",
+    "copy_code": "Copy Invite Code",
+    "code_copied": "Invite code copied to clipboard",
+    "leave_group": "Leave group",
+    "disband_group": "Disband group",
+    "leave_confirm_title": "Leave group?",
+    "leave_confirm_desc": "You will no longer receive notifications or see the health status of everyone in this group.",
+    "disband_confirm_title": "Disband group?",
+    "disband_confirm_desc": "This action will delete the entire family group. All members will be logged out of the group."
   }
 }

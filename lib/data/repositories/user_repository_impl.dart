@@ -27,6 +27,13 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
+  Future<List<UserEntity>> getUsers(List<String> uids) async {
+    final futures = uids.map((uid) => getUser(uid));
+    final results = await Future.wait(futures);
+    return results.whereType<UserEntity>().toList();
+  }
+
+  @override
   Future<String> uploadAvatar(String uid, File image) async {
     final path = 'avatars/$uid.jpg';
     final url = await _storageDataSource.uploadFile(path, image);

@@ -1,6 +1,7 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:family_health/domain/entities/user_entity.dart';
 import 'package:family_health/domain/usecases/get_user_usecase.dart';
+import 'package:family_health/domain/usecases/get_ai_response_usecase.dart';
 import 'package:family_health/domain/usecases/save_medication_usecase.dart';
 import 'package:family_health/domain/usecases/save_schedule_usecase.dart';
 import 'package:family_health/presentation/base/page_status.dart';
@@ -14,6 +15,7 @@ import 'package:mockito/mockito.dart';
   SaveMedicationUseCase,
   SaveScheduleUseCase,
   GetUserUseCase,
+  GetAIResponseUseCase,
   FirebaseAuth,
   User,
 ])
@@ -24,6 +26,7 @@ void main() {
   late MockSaveMedicationUseCase mockSaveMedicationUseCase;
   late MockSaveScheduleUseCase mockSaveScheduleUseCase;
   late MockGetUserUseCase mockGetUserUseCase;
+  late MockGetAIResponseUseCase mockGetAIResponseUseCase;
   late MockFirebaseAuth mockFirebaseAuth;
   late MockUser mockUser;
 
@@ -31,6 +34,7 @@ void main() {
     mockSaveMedicationUseCase = MockSaveMedicationUseCase();
     mockSaveScheduleUseCase = MockSaveScheduleUseCase();
     mockGetUserUseCase = MockGetUserUseCase();
+    mockGetAIResponseUseCase = MockGetAIResponseUseCase();
     mockFirebaseAuth = MockFirebaseAuth();
     mockUser = MockUser();
 
@@ -41,6 +45,7 @@ void main() {
       mockSaveMedicationUseCase,
       mockSaveScheduleUseCase,
       mockGetUserUseCase,
+      mockGetAIResponseUseCase,
       firebaseAuth: mockFirebaseAuth,
     );
   });

@@ -31,6 +31,11 @@ class FamilyRepositoryImpl implements FamilyRepository {
   }
 
   @override
+  Future<void> deleteFamilyGroup(String id) {
+    return _dataSource.deleteFamilyGroup(id);
+  }
+
+  @override
   Future<void> joinFamilyGroup(String userId, String invitationCode) async {
     final family = await getFamilyByInviteCode(invitationCode);
     if (family == null) {

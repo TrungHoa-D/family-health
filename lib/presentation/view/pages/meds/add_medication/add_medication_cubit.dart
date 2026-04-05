@@ -1,5 +1,9 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:family_health/domain/entities/medication.dart';
 import 'package:family_health/domain/entities/patient_schedule.dart';
+import 'package:family_health/domain/usecases/get_ai_response_usecase.dart';
 import 'package:family_health/domain/usecases/get_user_usecase.dart';
 import 'package:family_health/domain/usecases/save_medication_usecase.dart';
 import 'package:family_health/domain/usecases/save_schedule_usecase.dart';
@@ -18,7 +22,8 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
   AddMedicationCubit(
     this._saveMedicationUseCase,
     this._saveScheduleUseCase,
-    this._getUserUseCase, {
+    this._getUserUseCase,
+    this._getAIResponseUseCase, {
     FirebaseAuth? firebaseAuth,
   })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
         super(const AddMedicationState());
@@ -26,6 +31,7 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
   final SaveMedicationUseCase _saveMedicationUseCase;
   final SaveScheduleUseCase _saveScheduleUseCase;
   final GetUserUseCase _getUserUseCase;
+  final GetAIResponseUseCase _getAIResponseUseCase;
   final FirebaseAuth _firebaseAuth;
 
   void init({Medication? medication, PatientSchedule? schedule}) {
@@ -88,6 +94,50 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
 
   void selectSupervisor(String value) {
     emit(state.copyWith(supervisor: value));
+  }
+
+  Future<void> scanMedicationImage(File image) async {
+    emit(state.copyWith(isScanning: true, scanError: null));
+
+    try {
+      const prompt = '''
+        Phân tích ảnh nhãn thuốc hoặc đơn thuốc được cung cấp.
+        Trích xuất thông tin dưới dạng JSON như sau:
+        {
+          "name": "Tên thuốc chính xác",
+          "dosage": "Liều lượng (ví dụ: 500mg, 1 viên)",
+          "unit": "Đơn vị (viên, gói, ml)",
+          "frequency": "Số lần mỗi ngày (nếu có)",
+          "instructions": "Hướng dẫn sử dụng thêm (ví dụ: sau ăn)"
+        }
+        Nếu không chắc chắn ở trường nào, hãy để giá trị null. 
+        CHỈ trả về chuỗi JSON, không giải thích thêm.
+      ''';
+
+      final response = await _getAIResponseUseCase(
+        params: GetAIResponseParams(prompt: prompt, image: image),
+      );
+
+      // Clean response (remove markdown blocks if present)
+      final cleanJson =
+          response.replaceAll('```json', '').replaceAll('```', '').trim();
+      final Map<String, dynamic> data = jsonDecode(cleanJson);
+
+      emit(
+        state.copyWith(
+          isScanning: false,
+          drugName: data['name'] ?? state.drugName,
+          dosage: data['dosage'] ?? state.dosage,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          isScanning: false,
+          scanError: 'Không thể phân tích ảnh: ${e.toString()}',
+        ),
+      );
+    }
   }
 
   bool validate() {

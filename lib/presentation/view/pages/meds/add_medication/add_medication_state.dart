@@ -15,6 +15,8 @@ class AddMedicationState with _$AddMedicationState implements BaseCubitState {
     String? drugNameError,
     String? dosageError,
     @Default(false) bool isSaved,
+    @Default(false) bool isScanning,
+    String? scanError,
   }) = _AddMedicationState;
 
   const AddMedicationState._();

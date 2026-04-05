@@ -6,8 +6,9 @@ import 'package:flutter/material.dart';
 
 /// Card quét đơn thuốc bằng AI — dashed border, icon camera
 class AiScannerCard extends StatelessWidget {
-  const AiScannerCard({super.key, this.onTap});
+  const AiScannerCard({super.key, this.onTap, this.isScanning = false});
   final VoidCallback? onTap;
+  final bool isScanning;
 
   @override
   Widget build(BuildContext context) {
@@ -39,11 +40,19 @@ class AiScannerCard extends StatelessWidget {
                   color: AppColors.primary,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
-                  Icons.photo_camera,
-                  color: AppColors.white,
-                  size: 40,
-                ),
+                child: isScanning
+                    ? const Padding(
+                        padding: EdgeInsets.all(AppSpacing.lg),
+                        child: CircularProgressIndicator(
+                          color: AppColors.white,
+                          strokeWidth: 3,
+                        ),
+                      )
+                    : const Icon(
+                        Icons.photo_camera,
+                        color: AppColors.white,
+                        size: 40,
+                      ),
               ),
               const SizedBox(height: AppSpacing.sm),
               Text(

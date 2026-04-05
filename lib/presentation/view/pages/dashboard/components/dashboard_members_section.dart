@@ -47,7 +47,7 @@ class DashboardMembersSection extends StatelessWidget {
           ),
         ),
         SizedBox(
-          height: 140,
+          height: 170,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),

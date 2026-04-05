@@ -44,6 +44,10 @@ class FirebaseFirestoreDataSource {
     return doc.data();
   }
 
+  Future<void> deleteFamilyGroup(String id) async {
+    await _firestore.collection('family_groups').doc(id).delete();
+  }
+
   Future<void> saveHealthProfile(
     String userId,
     Map<String, dynamic> data,
