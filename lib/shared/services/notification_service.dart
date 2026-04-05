@@ -25,17 +25,29 @@ class NotificationService {
       requestSoundPermission: true,
     );
 
+    const WindowsInitializationSettings initializationSettingsWindows =
+        WindowsInitializationSettings(
+      appName: 'Family Health',
+      appUserModelId: 'com.trunghoa.family_health',
+      guid: 'E8E22534-C7CA-4AEA-A3B6-2C7C3DCD9B0F',
+    );
+
     const InitializationSettings initializationSettings =
         InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsDarwin,
       macOS: initializationSettingsDarwin,
+      windows: initializationSettingsWindows,
     );
 
-    await _notificationsPlugin.initialize(
-      initializationSettings,
-      onDidReceiveNotificationResponse: _onNotificationResponse,
-    );
+    try {
+      await _notificationsPlugin.initialize(
+        initializationSettings,
+        onDidReceiveNotificationResponse: _onNotificationResponse,
+      );
+    } catch (e) {
+      debugPrint('Error initializing local notifications: $e');
+    }
 
     // Create notification channel for Android
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
