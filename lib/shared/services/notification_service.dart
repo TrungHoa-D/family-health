@@ -4,6 +4,8 @@ import 'package:injectable/injectable.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter/foundation.dart';
+import 'package:family_health/domain/entities/patient_schedule.dart';
+import 'package:family_health/domain/entities/medical_event.dart';
 
 @singleton
 class NotificationService {
@@ -139,5 +141,76 @@ class NotificationService {
 
   Future<void> cancelAll() async {
     await _notificationsPlugin.cancelAll();
+  }
+
+  // --- Helpers for Family Health ---
+
+  static const Map<String, ({int hour, int minute})> anchorTimes = {
+    'Sau ăn sáng': (hour: 8, minute: 30),
+    'Sau ăn trưa': (hour: 12, minute: 30),
+    'Sau ăn tối': (hour: 19, minute: 30),
+    'Trước đi ngủ': (hour: 21, minute: 30),
+  };
+
+  DateTime _getDateTimeFromAnchor(String anchor, int offsetMinutes, int dayOffset) {
+    final now = DateTime.now();
+    final targetDay = now.add(Duration(days: dayOffset));
+    
+    final time = anchorTimes[anchor] ?? (hour: 8, minute: 0);
+    
+    final baseTime = DateTime(
+      targetDay.year,
+      targetDay.month,
+      targetDay.day,
+      time.hour,
+      time.minute,
+    ).add(Duration(minutes: offsetMinutes));
+    
+    return baseTime;
+  }
+
+  Future<void> scheduleMedicationReminders(PatientSchedule schedule) async {
+    final anchor = schedule.timing['anchor_event'] as String? ?? 'Sau ăn sáng';
+    final offset = (schedule.timing['offset'] as num?)?.toInt() ?? 30;
+
+    // Schedule for next 7 days
+    for (int i = 0; i < 7; i++) {
+        final scheduledTime = _getDateTimeFromAnchor(anchor, offset, i);
+        if (scheduledTime.isBefore(DateTime.now())) continue;
+
+        // Create a unique ID for this instance: base hash + day offset
+        final id = schedule.id.hashCode + i;
+        
+        await scheduleNotification(
+          id: id,
+          title: '💊 Nhắc nhở uống thuốc',
+          body: '${schedule.targetUserId == "myself" ? "Bạn" : "Bố/Mẹ"} có liều thuốc ${schedule.medName} (${schedule.dosage})',
+          scheduledDate: scheduledTime,
+          payload: 'med_${schedule.id}',
+        );
+    }
+  }
+
+  Future<void> scheduleEventReminder(MedicalEvent event) async {
+    // Schedule 30 mins before event
+    final reminderTime = event.startTime.subtract(const Duration(minutes: 30));
+    
+    if (reminderTime.isBefore(DateTime.now())) return;
+
+    await scheduleNotification(
+      id: event.id.hashCode,
+      title: '📅 Nhắc nhở sự kiện',
+      body: 'Sắp đến giờ hẹn: ${event.title} tại ${event.location ?? "Địa điểm chưa xác định"}',
+      scheduledDate: reminderTime,
+      payload: 'event_${event.id}',
+    );
+  }
+
+  Future<void> cancelMedicationReminders(String scheduleId) async {
+    // Cancel all IDs in the range [hashCode, hashCode + 7]
+    final baseId = scheduleId.hashCode;
+    for (int i = 0; i < 7; i++) {
+      await cancelNotification(baseId + i);
+    }
   }
 }

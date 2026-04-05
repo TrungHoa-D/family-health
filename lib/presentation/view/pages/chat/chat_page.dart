@@ -61,7 +61,11 @@ class _ChatViewState extends State<ChatView> {
                 padding: const EdgeInsets.only(top: AppSpacing.md, bottom: 90),
                 itemCount: state.messages.length,
                 itemBuilder: (context, index) {
-                  return ChatBubble(message: state.messages[index]);
+                  final message = state.messages[index];
+                  return ChatBubble(
+                    message: message,
+                    isMe: message.senderId == state.currentUserId,
+                  );
                 },
               ),
 

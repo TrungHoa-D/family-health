@@ -7,6 +7,7 @@ class HomeState with _$HomeState implements BaseCubitState {
     @Default(0) int currentTabIndex,
     String? pageErrorMessage,
     UserEntity? user,
+    HomeStats? todayStats,
   }) = _HomeState;
 
   const HomeState._();

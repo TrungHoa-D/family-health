@@ -1,78 +1,107 @@
+import 'dart:async';
+
+import 'package:family_health/domain/entities/chat_message.dart';
+import 'package:family_health/domain/usecases/get_user_usecase.dart';
+import 'package:family_health/domain/usecases/send_message_usecase.dart';
+import 'package:family_health/domain/usecases/watch_chat_messages_usecase.dart';
 import 'package:family_health/presentation/base/page_status.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit.dart';
 import 'package:family_health/presentation/view/pages/chat/chat_state.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:injectable/injectable.dart';
 
 @injectable
 class ChatCubit extends BaseCubit<ChatState> {
-  ChatCubit() : super(const ChatState()) {
-    _loadMockMessages();
+  ChatCubit(
+    this._watchChatMessagesUseCase,
+    this._sendMessageUseCase,
+    this._getUserUseCase, {
+    FirebaseAuth? firebaseAuth,
+  })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
+        super(const ChatState()) {
+    _init();
   }
 
-  void _loadMockMessages() {
+  final WatchChatMessagesUseCase _watchChatMessagesUseCase;
+  final SendMessageUseCase _sendMessageUseCase;
+  final GetUserUseCase _getUserUseCase;
+  final FirebaseAuth _firebaseAuth;
+
+  StreamSubscription? _messagesSubscription;
+
+  Future<void> _init() async {
     emit(state.copyWith(pageStatus: PageStatus.Loading));
-    final now = DateTime.now();
-    final mockMessages = [
-      ChatMessageModel(
-        id: '1',
-        content: 'Bố đã uống thuốc huyết áp rồi nhé',
-        time: DateTime(now.year, now.month, now.day, 8, 30),
-        senderType: MessageSenderType.otherMember,
-        senderName: 'Bố',
-        avatarUrl: 'B',
-      ),
-      ChatMessageModel(
-        id: '2',
-        content: 'Tốt lắm Bố ạ! 😊',
-        time: DateTime(now.year, now.month, now.day, 8, 32),
-        senderType: MessageSenderType.me,
-      ),
-      ChatMessageModel(
-        id: '3',
-        content: 'Nhịp tim của Bố ổn định\nĐã cập nhật lúc 09:00 AM',
-        time: DateTime(now.year, now.month, now.day, 9, 00),
-        senderType: MessageSenderType.systemAi,
-      ),
-      ChatMessageModel(
-        id: '4',
-        content:
-            'Con vừa kiểm tra chỉ số tim mạch của bố trên app. Mọi thứ đều rất tuyệt vời.',
-        time: DateTime(now.year, now.month, now.day, 9, 05),
-        senderType: MessageSenderType.me,
-      ),
-      ChatMessageModel(
-        id: '5',
-        content:
-            'Tuyệt quá! Trưa nay chị sẽ ghé qua nấu cơm cho Bố nhé. Có ai dặn mua gì không?',
-        time: DateTime(now.year, now.month, now.day, 9, 12),
-        senderType: MessageSenderType.otherMember,
-        senderName: 'Chị Lan',
-        avatarUrl: 'L',
-      ),
-    ];
 
-    emit(state.copyWith(
-      messages: mockMessages,
-      pageStatus: PageStatus.Loaded,
-    ));
+    try {
+      final user = _firebaseAuth.currentUser;
+      if (user == null) return;
+
+      final userEntity = await _getUserUseCase.call(params: user.uid);
+      final familyId = userEntity?.familyId;
+
+      if (familyId == null) {
+        emit(state.copyWith(
+          pageStatus: PageStatus.Error,
+          pageErrorMessage: 'Không tìm thấy nhóm gia đình',
+        ));
+        return;
+      }
+
+      emit(state.copyWith(
+        currentFamilyId: familyId,
+        currentUserId: user.uid,
+      ));
+
+      _messagesSubscription?.cancel();
+      final messageStream = await _watchChatMessagesUseCase.call(params: familyId);
+      _messagesSubscription = messageStream.listen((messages) {
+        // Firestore descending: true -> latest first. 
+        // ListView.builder handles it or we sort ascending for normal chat view?
+        // Usually chat displays oldest at top, latest at bottom.
+        final sortedMessages = List<ChatMessage>.from(messages)
+          ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
+
+        emit(state.copyWith(
+          messages: sortedMessages,
+          pageStatus: PageStatus.Loaded,
+        ));
+      });
+    } catch (e) {
+      emit(state.copyWith(
+        pageStatus: PageStatus.Error,
+        pageErrorMessage: e.toString(),
+      ));
+    }
   }
 
-  void sendMessage(String text) {
-    if (text.trim().isEmpty) {
+  Future<void> sendMessage(String text) async {
+    if (text.trim().isEmpty || state.currentFamilyId == null || state.currentUserId == null) {
       return;
     }
 
-    final newMessage = ChatMessageModel(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      content: text,
-      time: DateTime.now(),
-      senderType: MessageSenderType.me,
-    );
+    try {
+      final userEntity = await _getUserUseCase.call(params: state.currentUserId!);
+      
+      final message = ChatMessage(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        familyId: state.currentFamilyId!,
+        senderId: state.currentUserId!,
+        senderName: userEntity?.displayName ?? 'Thành viên',
+        senderAvatarUrl: userEntity?.avatarUrl,
+        content: text,
+        messageType: 'TEXT',
+        timestamp: DateTime.now(),
+      );
 
-    emit(
-      state.copyWith(
-        messages: [...state.messages, newMessage],
-      ),
-    );
+      await _sendMessageUseCase.call(params: message);
+    } catch (e) {
+      // Handle error (maybe show snackbar)
+    }
+  }
+
+  @override
+  Future<void> close() {
+    _messagesSubscription?.cancel();
+    return super.close();
   }
 }

@@ -1,20 +1,21 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:family_health/domain/entities/chat_message.dart';
 import 'package:family_health/presentation/resources/app_spacing.dart';
 import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
-import 'package:family_health/presentation/view/pages/chat/chat_state.dart';
 import 'package:flutter/material.dart';
 
 class ChatBubble extends StatelessWidget {
-  const ChatBubble({super.key, required this.message});
-  final ChatMessageModel message;
+  const ChatBubble({super.key, required this.message, required this.isMe});
+  final ChatMessage message;
+  final bool isMe;
 
   @override
   Widget build(BuildContext context) {
-    if (message.senderType == MessageSenderType.systemAi) {
+    if (message.senderId == 'system_ai') {
       return _SystemAiBubble(message: message);
     }
-    if (message.senderType == MessageSenderType.me) {
+    if (isMe) {
       return _MyBubble(message: message);
     }
     return _OtherMemberBubble(message: message);
@@ -23,7 +24,7 @@ class ChatBubble extends StatelessWidget {
 
 class _SystemAiBubble extends StatelessWidget {
   const _SystemAiBubble({required this.message});
-  final ChatMessageModel message;
+  final ChatMessage message;
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +103,7 @@ class _SystemAiBubble extends StatelessWidget {
 
 class _MyBubble extends StatelessWidget {
   const _MyBubble({required this.message});
-  final ChatMessageModel message;
+  final ChatMessage message;
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +144,7 @@ class _MyBubble extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                DateFormat('hh:mm a').format(message.time),
+                DateFormat('hh:mm a').format(message.timestamp),
                 style: AppStyles.bodySmall
                     .copyWith(color: AppColors.textSecondary, fontSize: 10),
               ),
@@ -163,7 +164,7 @@ class _MyBubble extends StatelessWidget {
 
 class _OtherMemberBubble extends StatelessWidget {
   const _OtherMemberBubble({required this.message});
-  final ChatMessageModel message;
+  final ChatMessage message;
 
   @override
   Widget build(BuildContext context) {
@@ -187,7 +188,7 @@ class _OtherMemberBubble extends StatelessWidget {
             ),
             child: Center(
               child: Text(
-                message.avatarUrl ?? 'U',
+                message.senderAvatarUrl ?? message.senderName.substring(0, 1),
                 style: AppStyles.titleSmall.copyWith(
                   color: AppColors.primary,
                   fontWeight: FontWeight.bold,
@@ -203,7 +204,7 @@ class _OtherMemberBubble extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(left: 4, bottom: 4),
                   child: Text(
-                    message.senderName?.toUpperCase() ?? 'MEMBER',
+                    message.senderName.toUpperCase(),
                     style: AppStyles.labelSmall.copyWith(
                       color: AppColors.textSecondary,
                       fontWeight: FontWeight.bold,
@@ -238,7 +239,7 @@ class _OtherMemberBubble extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(left: 4),
                   child: Text(
-                    DateFormat('hh:mm a').format(message.time),
+                    DateFormat('hh:mm a').format(message.timestamp),
                     style: AppStyles.bodySmall
                         .copyWith(color: AppColors.textSecondary, fontSize: 10),
                   ),

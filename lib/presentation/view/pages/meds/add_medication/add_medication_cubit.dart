@@ -10,6 +10,7 @@ import 'package:family_health/domain/usecases/save_schedule_usecase.dart';
 import 'package:family_health/presentation/base/page_status.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit_state.dart';
+import 'package:family_health/shared/services/notification_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
@@ -23,7 +24,8 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
     this._saveMedicationUseCase,
     this._saveScheduleUseCase,
     this._getUserUseCase,
-    this._getAIResponseUseCase, {
+    this._getAIResponseUseCase,
+    this._notificationService, {
     FirebaseAuth? firebaseAuth,
   })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
         super(const AddMedicationState());
@@ -32,6 +34,7 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
   final SaveScheduleUseCase _saveScheduleUseCase;
   final GetUserUseCase _getUserUseCase;
   final GetAIResponseUseCase _getAIResponseUseCase;
+  final NotificationService _notificationService;
   final FirebaseAuth _firebaseAuth;
 
   void init({Medication? medication, PatientSchedule? schedule}) {
@@ -175,6 +178,8 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
       return;
     }
 
+    await _notificationService.requestPermissions();
+
     emit(state.copyWith(pageStatus: PageStatus.Loading));
 
     try {
@@ -221,6 +226,12 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
       );
 
       await _saveScheduleUseCase.call(params: schedule);
+
+      // 3. Schedule Local Notifications
+      if (state.isEditing) {
+        await _notificationService.cancelMedicationReminders(schedule.id);
+      }
+      await _notificationService.scheduleMedicationReminders(schedule);
 
       emit(state.copyWith(pageStatus: PageStatus.Loaded, isSaved: true));
     } catch (e) {

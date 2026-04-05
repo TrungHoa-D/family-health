@@ -15,6 +15,8 @@ class ChatMessage with _$ChatMessage {
     required String id,
     @JsonKey(name: 'family_id') required String familyId,
     @JsonKey(name: 'sender_id') required String senderId,
+    @JsonKey(name: 'sender_name') required String senderName,
+    @JsonKey(name: 'sender_avatar_url') String? senderAvatarUrl,
     required String content,
     @JsonKey(name: 'message_type') required String messageType,
     required DateTime timestamp,

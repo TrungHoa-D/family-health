@@ -6,6 +6,7 @@ import 'package:family_health/domain/usecases/save_medication_usecase.dart';
 import 'package:family_health/domain/usecases/save_schedule_usecase.dart';
 import 'package:family_health/presentation/base/page_status.dart';
 import 'package:family_health/presentation/view/pages/meds/add_medication/add_medication_cubit.dart';
+import 'package:family_health/shared/services/notification_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -18,6 +19,7 @@ import 'package:mockito/mockito.dart';
   GetAIResponseUseCase,
   FirebaseAuth,
   User,
+  NotificationService,
 ])
 import 'add_medication_cubit_test.mocks.dart';
 
@@ -29,6 +31,7 @@ void main() {
   late MockGetAIResponseUseCase mockGetAIResponseUseCase;
   late MockFirebaseAuth mockFirebaseAuth;
   late MockUser mockUser;
+  late MockNotificationService mockNotificationService;
 
   setUp(() {
     mockSaveMedicationUseCase = MockSaveMedicationUseCase();
@@ -37,6 +40,7 @@ void main() {
     mockGetAIResponseUseCase = MockGetAIResponseUseCase();
     mockFirebaseAuth = MockFirebaseAuth();
     mockUser = MockUser();
+    mockNotificationService = MockNotificationService();
 
     when(mockFirebaseAuth.currentUser).thenReturn(mockUser);
     when(mockUser.uid).thenReturn('test-uid');
@@ -46,6 +50,7 @@ void main() {
       mockSaveScheduleUseCase,
       mockGetUserUseCase,
       mockGetAIResponseUseCase,
+      mockNotificationService,
       firebaseAuth: mockFirebaseAuth,
     );
   });
