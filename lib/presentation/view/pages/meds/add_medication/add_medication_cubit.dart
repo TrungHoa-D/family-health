@@ -101,15 +101,18 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
 
     try {
       const prompt = '''
-        Phân tích ảnh nhãn thuốc hoặc đơn thuốc được cung cấp.
-        Trích xuất thông tin dưới dạng JSON như sau:
+        Bạn là một chuyên gia y tế AI. Hãy phân tích ảnh nhãn thuốc hoặc đơn thuốc được cung cấp.
+        Trích xuất thông tin chính xác và trả về DƯỚI DẠNG JSON duy nhất như sau:
         {
-          "name": "Tên thuốc chính xác",
+          "name": "Tên thuốc",
           "dosage": "Liều lượng (ví dụ: 500mg, 1 viên)",
           "unit": "Đơn vị (viên, gói, ml)",
-          "frequency": "Số lần mỗi ngày (nếu có)",
-          "instructions": "Hướng dẫn sử dụng thêm (ví dụ: sau ăn)"
+          "frequency": "Số lần mỗi ngày (ví dụ: 2 lần/ngày)",
+          "instructions": "Chỉ dẫn (ví dụ: Sau khi ăn sáng, Trước khi đi ngủ)",
+          "anchor_event": "Sự kiện mốc (chọn 1: Sau ăn sáng, Sau ăn trưa, Sau ăn tối, Trước đi ngủ)",
+          "offset_minutes": 30
         }
+        Nếu không có thông tin mốc thời gian rõ ràng, hãy mặc định anchor_event là "Sau ăn sáng".
         Nếu không chắc chắn ở trường nào, hãy để giá trị null. 
         CHỈ trả về chuỗi JSON, không giải thích thêm.
       ''';
@@ -128,6 +131,10 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
           isScanning: false,
           drugName: data['name'] ?? state.drugName,
           dosage: data['dosage'] ?? state.dosage,
+          frequency: data['frequency'] ?? state.frequency,
+          instructions: data['instructions'] ?? state.instructions,
+          anchorTime: data['anchor_event'] ?? state.anchorTime,
+          offset: 'Sau ${data['offset_minutes'] ?? 30}p',
         ),
       );
     } catch (e) {

@@ -1,34 +1,37 @@
+import 'package:family_health/domain/entities/medical_event.dart';
 import 'package:family_health/presentation/resources/app_spacing.dart';
 import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
-import 'package:family_health/presentation/view/pages/events/events_state.dart';
 import 'package:family_health/presentation/view/widgets/app_card.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class EventCard extends StatelessWidget {
-  const EventCard({super.key, required this.event});
-  final EventModel event;
+  const EventCard({super.key, required this.event, this.onTap});
+  final MedicalEvent event;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     Color eventColor;
     IconData eventIcon;
 
-    switch (event.type) {
-      case EventType.vaccine:
+    final type = _getEventType(event.eventType);
+
+    switch (type) {
+      case EventType.VACCINE:
         eventColor = AppColors.primary;
         eventIcon = Icons.vaccines;
         break;
-      case EventType.dentistry:
+      case EventType.DENTAL:
         eventColor = Colors.orange;
         eventIcon = Icons.health_and_safety;
         break;
-      case EventType.checkup:
+      case EventType.CHECKUP:
         eventColor = AppColors.success;
         eventIcon = Icons.medical_services;
         break;
-      case EventType.other:
+      case EventType.OTHER:
         eventColor = Colors.purple;
         eventIcon = Icons.event_note;
         break;
@@ -36,78 +39,88 @@ class EventCard extends StatelessWidget {
 
     return SizedBox(
       width: 280,
-      child: AppCard(
-        margin: const EdgeInsets.only(right: AppSpacing.md),
-        padding: const EdgeInsets.all(AppSpacing.md),
-        child: Row(
-          children: [
-            // Icon Circle
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: eventColor.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
+      child: GestureDetector(
+        onTap: onTap,
+        child: AppCard(
+          margin: const EdgeInsets.only(right: AppSpacing.md),
+          padding: const EdgeInsets.all(AppSpacing.md),
+          child: Row(
+            children: [
+              // Icon Circle
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: eventColor.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(eventIcon, color: eventColor, size: 24),
               ),
-              child: Icon(eventIcon, color: eventColor, size: 24),
-            ),
-            const SizedBox(width: AppSpacing.md),
-            // Content
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    event.title,
-                    style: AppStyles.titleMedium,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.schedule,
-                        size: 14,
-                        color: AppColors.textSecondary,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        DateFormat('HH:mm').format(event.time),
-                        style: AppStyles.bodySmall.copyWith(
+              const SizedBox(width: AppSpacing.md),
+              // Content
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      event.title,
+                      style: AppStyles.titleMedium,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.schedule,
+                          size: 14,
                           color: AppColors.textSecondary,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 11,
                         ),
-                      ),
-                      const SizedBox(width: AppSpacing.sm),
-                      const Icon(
-                        Icons.location_on,
-                        size: 14,
-                        color: AppColors.textSecondary,
-                      ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          event.location,
+                        const SizedBox(width: 4),
+                        Text(
+                          DateFormat('HH:mm').format(event.startTime),
                           style: AppStyles.bodySmall.copyWith(
                             color: AppColors.textSecondary,
                             fontWeight: FontWeight.w500,
                             fontSize: 11,
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        const SizedBox(width: AppSpacing.sm),
+                        const Icon(
+                          Icons.location_on,
+                          size: 14,
+                          color: AppColors.textSecondary,
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            event.location,
+                            style: AppStyles.bodySmall.copyWith(
+                              color: AppColors.textSecondary,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 11,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  EventType _getEventType(String type) {
+    return EventType.values.firstWhere(
+      (e) => e.name.toUpperCase() == type.toUpperCase(),
+      orElse: () => EventType.OTHER,
     );
   }
 }

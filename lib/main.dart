@@ -17,6 +17,8 @@ import 'firebase_options.dart';
 import 'presentation/router/router.dart';
 import 'presentation/router/auth_guard.dart';
 import 'presentation/router/family_guard.dart';
+import 'shared/services/auto_scheduler_service.dart';
+import 'shared/services/notification_service.dart';
 import 'shared/utils/bloc_observer.dart';
 import 'shared/utils/logger.dart';
 
@@ -53,6 +55,9 @@ Future main() async {
     );
     await configureDependencies();
 
+    // Initialize Notification Service
+    await getIt<NotificationService>().init();
+
     // Persist login: check if user already authenticated
     final bool isLoggedIn = FirebaseAuth.instance.currentUser != null;
     final AppRouter appRouter = AppRouter(getIt<AuthGuard>(), getIt<FamilyGuard>());
@@ -60,6 +65,7 @@ Future main() async {
 
     // Navigate to Home directly if already logged in
     if (isLoggedIn) {
+      getIt<AutoSchedulerService>().start();
       appRouter.replaceAll([const HomeRoute()]);
     }
     SystemChrome.setPreferredOrientations([

@@ -47,10 +47,14 @@ class DashboardCubit extends BaseCubit<DashboardState> {
             ),
           );
 
-          final totalCount = schedules.length;
-          final takenCount = logs.where((log) => log.status == 'TAKEN').length;
-          final missedCount = logs.where((log) => log.status == 'MISSED').length;
-          final waitingCount = totalCount - logs.length;
+          // Lọc lịch trình dành riêng cho người dùng này
+          final mySchedules = schedules.where((s) => s.targetUserId == user.uid).toList();
+          final myLogs = logs.where((l) => mySchedules.any((s) => s.id == l.scheduleId)).toList();
+
+          final totalCount = mySchedules.length;
+          final takenCount = myLogs.where((log) => log.status == 'TAKEN').length;
+          final missedCount = myLogs.where((log) => log.status == 'MISSED').length;
+          final waitingCount = totalCount - myLogs.length;
           final progress = totalCount > 0 ? takenCount / totalCount : 0.0;
 
           emit(state.copyWith(

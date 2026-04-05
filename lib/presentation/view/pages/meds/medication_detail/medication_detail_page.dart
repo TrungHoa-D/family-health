@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:family_health/di/di.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit_page.dart';
 import 'package:family_health/presentation/resources/app_spacing.dart';
 import 'package:family_health/presentation/resources/colors.dart';
@@ -9,7 +10,9 @@ import 'package:family_health/presentation/view/pages/meds/meds_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'ai_chat_cubit.dart';
 import 'components/ai_assistant_card.dart';
+import 'components/ai_chat_bottom_sheet.dart';
 import 'components/medication_action_buttons.dart';
 import 'components/medication_hero_section.dart';
 import 'components/medication_info_list.dart';
@@ -72,10 +75,13 @@ class MedicationDetailPage
                 AiAssistantCard(
                   medicationName: med.name,
                   onAskNow: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('meds.ai_coming_soon'.tr()),
-                        backgroundColor: AppColors.primary,
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (_) => BlocProvider(
+                        create: (context) => getIt<AIChatCubit>(),
+                        child: AiChatBottomSheet(medicationName: med.name),
                       ),
                     );
                   },

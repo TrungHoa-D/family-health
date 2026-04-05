@@ -4,16 +4,24 @@ import 'package:family_health/presentation/cubit_base/base_cubit_page.dart';
 import 'package:family_health/presentation/resources/app_spacing.dart';
 import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
+import 'package:family_health/presentation/router/router.dart';
 import 'package:family_health/presentation/view/pages/events/components/calendar_strip.dart';
 import 'package:family_health/presentation/view/pages/events/components/event_card.dart';
 import 'package:family_health/presentation/view/pages/events/events_cubit.dart';
 import 'package:family_health/presentation/view/pages/events/events_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 @RoutePage()
 class EventsPage extends BaseCubitPage<EventsCubit, EventsState> {
   const EventsPage({super.key});
+
+  @override
+  void onInitState(BuildContext context) {
+    super.onInitState(context);
+    context.read<EventsCubit>().init();
+  }
 
   @override
   Widget builder(BuildContext context) {
@@ -62,7 +70,7 @@ class EventsView extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'events.title'.tr(),
+                            'Sự kiện',
                             style: AppStyles.displayLarge
                                 .copyWith(fontWeight: FontWeight.w900),
                           ),
@@ -70,11 +78,7 @@ class EventsView extends StatelessWidget {
                       ),
                       // Add FAB equivalent
                       GestureDetector(
-                        onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('events.coming_soon'.tr())),
-                          );
-                        },
+                        onTap: () => context.router.push(AddEventRoute()),
                         child: Container(
                           width: 56,
                           height: 56,
@@ -131,7 +135,7 @@ class EventsView extends StatelessWidget {
                             if (state.selectedDate.day == now.day &&
                                 state.selectedDate.month == now.month &&
                                 state.selectedDate.year == now.year) {
-                              return 'events.today'.tr();
+                              return 'Hôm nay';
                             }
                             final String titleDayOfWeek =
                                 state.selectedDate.weekday == DateTime.sunday
@@ -161,8 +165,10 @@ class EventsView extends StatelessWidget {
                           const EdgeInsets.symmetric(horizontal: AppSpacing.md),
                       itemCount: state.selectedDateEvents.length,
                       itemBuilder: (context, index) {
+                        final event = state.selectedDateEvents[index];
                         return EventCard(
-                          event: state.selectedDateEvents[index],
+                          event: event,
+                          onTap: () => context.router.push(AddEventRoute(event: event)),
                         );
                       },
                     ),
@@ -224,7 +230,11 @@ class EventsView extends StatelessWidget {
                           const EdgeInsets.symmetric(horizontal: AppSpacing.md),
                       itemCount: state.upcomingEvents.length,
                       itemBuilder: (context, index) {
-                        return EventCard(event: state.upcomingEvents[index]);
+                        final event = state.upcomingEvents[index];
+                        return EventCard(
+                          event: event,
+                          onTap: () => context.router.push(AddEventRoute(event: event)),
+                        );
                       },
                     ),
                   ),

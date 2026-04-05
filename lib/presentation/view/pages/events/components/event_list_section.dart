@@ -1,14 +1,16 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:family_health/domain/entities/medical_event.dart';
 import 'package:family_health/presentation/resources/app_spacing.dart';
 import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
 import 'package:family_health/presentation/view/pages/events/components/event_card.dart';
-import 'package:family_health/presentation/view/pages/events/events_state.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class EventListSection extends StatelessWidget {
-  const EventListSection({super.key, required this.events});
-  final List<EventModel> events;
+  const EventListSection({super.key, required this.events, this.onEventTap});
+  final List<MedicalEvent> events;
+  final Function(MedicalEvent)? onEventTap;
 
   @override
   Widget build(BuildContext context) {
@@ -26,15 +28,19 @@ class EventListSection extends StatelessWidget {
     }
 
     // Grouping events
-    final Map<String, List<EventModel>> groupedEvents = {};
+    final Map<String, List<MedicalEvent>> groupedEvents = {};
     for (final event in events) {
-      final date = DateTime(event.time.year, event.time.month, event.time.day);
+      final date = DateTime(
+        event.startTime.year,
+        event.startTime.month,
+        event.startTime.day,
+      );
       final now = DateTime.now();
       final today = DateTime(now.year, now.month, now.day);
 
       String key;
       if (date == today) {
-        key = 'events.today'.tr(); // "Hôm nay"
+        key = 'Hôm nay';
       } else {
         final String dau = DateFormat('EEEE', 'vi_VN').format(date);
         final String cuoi = DateFormat('dd/MM').format(date);
@@ -71,7 +77,10 @@ class EventListSection extends StatelessWidget {
               ],
             ),
             const SizedBox(height: AppSpacing.md),
-            ...entry.value.map((event) => EventCard(event: event)),
+            ...entry.value.map((event) => EventCard(
+                  event: event,
+                  onTap: () => onEventTap?.call(event),
+                )),
             const SizedBox(height: AppSpacing.lg),
           ],
         );

@@ -8,6 +8,8 @@ class AddMedicationState with _$AddMedicationState implements BaseCubitState {
     @Default(false) bool isEditing,
     @Default('') String drugName,
     @Default('') String dosage,
+    @Default('') String frequency,
+    @Default('') String instructions,
     @Default('Bố') String selectedUser,
     @Default('Sau ăn sáng') String anchorTime,
     @Default('Sau 30p') String offset,
