@@ -19,6 +19,11 @@ class HomePage extends BaseCubitPage<HomeCubit, HomeState> {
   }
 
   @override
+  void onErrorPressed(BuildContext context) {
+    context.read<HomeCubit>().loadData();
+  }
+
+  @override
   Widget builder(BuildContext context) {
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {

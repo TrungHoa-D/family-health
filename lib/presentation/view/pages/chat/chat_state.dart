@@ -12,6 +12,7 @@ class ChatState with _$ChatState implements BaseCubitState {
     String? pageErrorMessage,
     @Default([]) List<ChatMessage> messages,
     @Default(3) int onlineMembers,
+    @Default(true) bool hasFamilyGroup,
     String? currentFamilyId,
     String? currentUserId,
   }) = _ChatState;

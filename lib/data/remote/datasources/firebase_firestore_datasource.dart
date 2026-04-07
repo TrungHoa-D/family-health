@@ -18,6 +18,10 @@ class FirebaseFirestoreDataSource {
     return doc.data();
   }
 
+  Stream<Map<String, dynamic>?> watchUser(String uid) {
+    return _firestore.collection('users').doc(uid).snapshots().map((doc) => doc.data());
+  }
+
   // --- Family Group Methods ---
   Future<void> createFamilyGroup(String id, Map<String, dynamic> data) async {
     await _firestore.collection('family_groups').doc(id).set(data);

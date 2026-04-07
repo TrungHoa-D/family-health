@@ -27,6 +27,16 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
+  Stream<UserEntity?> watchUser(String uid) {
+    return _firestoreDataSource.watchUser(uid).map((data) {
+      if (data != null) {
+        return UserEntity.fromJson({...data, 'uid': uid});
+      }
+      return null;
+    });
+  }
+
+  @override
   Future<List<UserEntity>> getUsers(List<String> uids) async {
     final futures = uids.map((uid) => getUser(uid));
     final results = await Future.wait(futures);

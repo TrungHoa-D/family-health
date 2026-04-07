@@ -1,4 +1,3 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:family_health/presentation/resources/app_spacing.dart';
 import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
@@ -79,7 +78,8 @@ class SimplifiedHomeView extends StatelessWidget {
                   children: [
                     Text(
                       'Tiến độ uống thuốc',
-                      style: AppStyles.titleMedium.copyWith(fontWeight: FontWeight.bold),
+                      style: AppStyles.titleMedium
+                          .copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: AppSpacing.md),
                     ClipRRect(
@@ -88,7 +88,8 @@ class SimplifiedHomeView extends StatelessWidget {
                         value: progress,
                         minHeight: 20,
                         backgroundColor: AppColors.border,
-                        valueColor: const AlwaysStoppedAnimation<Color>(AppColors.success),
+                        valueColor: const AlwaysStoppedAnimation<Color>(
+                            AppColors.success),
                       ),
                     ),
                     const SizedBox(height: AppSpacing.sm),

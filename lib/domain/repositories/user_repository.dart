@@ -7,4 +7,5 @@ abstract class UserRepository {
   Future<List<UserEntity>> getUsers(List<String> uids);
   Future<void> updateUIPreference(String uid, String preference);
   Future<String> uploadAvatar(String uid, File image);
+  Stream<UserEntity?> watchUser(String uid);
 }

@@ -41,8 +41,8 @@ class ChatCubit extends BaseCubit<ChatState> {
 
       if (familyId == null) {
         emit(state.copyWith(
-          pageStatus: PageStatus.Error,
-          pageErrorMessage: 'Không tìm thấy nhóm gia đình',
+          pageStatus: PageStatus.Loaded,
+          hasFamilyGroup: false,
         ));
         return;
       }
@@ -50,6 +50,7 @@ class ChatCubit extends BaseCubit<ChatState> {
       emit(state.copyWith(
         currentFamilyId: familyId,
         currentUserId: user.uid,
+        hasFamilyGroup: true,
       ));
 
       _messagesSubscription?.cancel();

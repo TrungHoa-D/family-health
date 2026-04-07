@@ -53,33 +53,63 @@ class _ChatViewState extends State<ChatView> {
         return Scaffold(
           backgroundColor: AppColors.background,
           appBar: ChatHeader(onlineMembers: state.onlineMembers),
-          body: Stack(
-            children: [
-              // Chat List
-              ListView.builder(
-                controller: _scrollController,
-                padding: const EdgeInsets.only(top: AppSpacing.md, bottom: 90),
-                itemCount: state.messages.length,
-                itemBuilder: (context, index) {
-                  final message = state.messages[index];
-                  return ChatBubble(
-                    message: message,
-                    isMe: message.senderId == state.currentUserId,
-                  );
-                },
-              ),
+          body: state.hasFamilyGroup
+              ? Stack(
+                  children: [
+                    // Chat List
+                    ListView.builder(
+                      controller: _scrollController,
+                      padding:
+                          const EdgeInsets.only(top: AppSpacing.md, bottom: 90),
+                      itemCount: state.messages.length,
+                      itemBuilder: (context, index) {
+                        final message = state.messages[index];
+                        return ChatBubble(
+                          message: message,
+                          isMe: message.senderId == state.currentUserId,
+                        );
+                      },
+                    ),
 
-              // Input Field Positioned at bottom
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: ChatInputField(
-                  onSend: (text) => context.read<ChatCubit>().sendMessage(text),
+                    // Input Field Positioned at bottom
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: ChatInputField(
+                        onSend: (text) =>
+                            context.read<ChatCubit>().sendMessage(text),
+                      ),
+                    ),
+                  ],
+                )
+              : Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppSpacing.xl),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.group_off_outlined,
+                          size: 80,
+                          color: AppColors.textSecondary,
+                        ),
+                        const SizedBox(height: AppSpacing.md),
+                        Text(
+                          'Bạn chưa tham gia nhóm gia đình nào',
+                          style: Theme.of(context).textTheme.titleLarge,
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        const Text(
+                          'Hãy quét mã QR hoặc nhập mã mời từ người thân để bắt đầu trò chuyện.',
+                          style: TextStyle(color: AppColors.textSecondary),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-            ],
-          ),
         );
       },
     );
