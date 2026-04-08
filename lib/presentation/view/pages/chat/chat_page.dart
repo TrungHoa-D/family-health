@@ -52,7 +52,10 @@ class _ChatViewState extends State<ChatView> {
       builder: (context, state) {
         return Scaffold(
           backgroundColor: AppColors.background,
-          appBar: ChatHeader(onlineMembers: state.onlineMembers),
+          appBar: ChatHeader(
+            onlineMembers: state.onlineMembers,
+            groupName: state.familyGroupName,
+          ),
           body: state.hasFamilyGroup
               ? Stack(
                   children: [

@@ -2,8 +2,8 @@ import 'package:family_health/domain/entities/family_group.dart';
 import 'package:family_health/domain/entities/user_entity.dart';
 import 'package:family_health/domain/repositories/family_repository_interface.dart';
 import 'package:family_health/domain/repositories/user_repository.dart';
+import 'package:family_health/domain/usecases/fetch_family_usecase.dart';
 import 'package:family_health/domain/usecases/get_family_members_usecase.dart';
-import 'package:family_health/domain/usecases/get_family_usecase.dart';
 import 'package:family_health/presentation/base/page_status.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit_state.dart';
@@ -17,14 +17,14 @@ part 'family_management_state.dart';
 @injectable
 class FamilyManagementCubit extends BaseCubit<FamilyManagementState> {
   FamilyManagementCubit(
-    this._getFamilyUseCase,
+    this._fetchFamilyUseCase,
     this._getFamilyMembersUseCase,
     this._familyRepository,
     this._userRepository,
     this._firebaseAuth,
   ) : super(const FamilyManagementState());
 
-  final GetFamilyUseCase _getFamilyUseCase;
+  final FetchFamilyUseCase _fetchFamilyUseCase;
   final GetFamilyMembersUseCase _getFamilyMembersUseCase;
   final FamilyRepository _familyRepository;
   final UserRepository _userRepository;
@@ -48,7 +48,7 @@ class FamilyManagementCubit extends BaseCubit<FamilyManagementState> {
         return;
       }
 
-      final family = await _getFamilyUseCase.call(params: familyId);
+      final family = await _fetchFamilyUseCase.call(params: familyId);
       if (family == null) throw Exception('Không tìm thấy dữ liệu gia đình.');
 
       final members =

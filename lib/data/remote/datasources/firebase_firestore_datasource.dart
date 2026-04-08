@@ -155,8 +155,8 @@ class FirebaseFirestoreDataSource {
     return _firestore
         .collection('chats')
         .where('family_id', isEqualTo: familyId)
-        .orderBy('timestamp', descending: true)
-        .limit(50)
+        // .orderBy('timestamp', descending: true) // Requires composite index on Firestore
+        // .limit(50)
         .snapshots()
         .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
   }

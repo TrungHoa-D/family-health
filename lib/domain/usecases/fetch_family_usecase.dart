@@ -4,8 +4,8 @@ import 'package:family_health/domain/usecases/use_case.dart';
 import 'package:injectable/injectable.dart';
 
 @injectable
-class GetFamilyUseCase extends UseCase<FamilyGroup?, String> {
-  GetFamilyUseCase(this._repository);
+class FetchFamilyUseCase extends UseCase<FamilyGroup?, String> {
+  FetchFamilyUseCase(this._repository);
   final FamilyRepository _repository;
 
   @override

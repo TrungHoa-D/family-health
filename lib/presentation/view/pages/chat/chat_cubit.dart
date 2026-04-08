@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:family_health/domain/entities/chat_message.dart';
+import 'package:family_health/domain/usecases/fetch_family_usecase.dart';
 import 'package:family_health/domain/usecases/get_user_usecase.dart';
 import 'package:family_health/domain/usecases/send_message_usecase.dart';
 import 'package:family_health/domain/usecases/watch_chat_messages_usecase.dart';
@@ -15,7 +16,8 @@ class ChatCubit extends BaseCubit<ChatState> {
   ChatCubit(
     this._watchChatMessagesUseCase,
     this._sendMessageUseCase,
-    this._getUserUseCase, {
+    this._getUserUseCase,
+    this._fetchFamilyUseCase, {
     FirebaseAuth? firebaseAuth,
   })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
         super(const ChatState()) {
@@ -25,6 +27,7 @@ class ChatCubit extends BaseCubit<ChatState> {
   final WatchChatMessagesUseCase _watchChatMessagesUseCase;
   final SendMessageUseCase _sendMessageUseCase;
   final GetUserUseCase _getUserUseCase;
+  final FetchFamilyUseCase _fetchFamilyUseCase;
   final FirebaseAuth _firebaseAuth;
 
   StreamSubscription? _messagesSubscription;
@@ -47,24 +50,31 @@ class ChatCubit extends BaseCubit<ChatState> {
         return;
       }
 
+      final familyGroup = await _fetchFamilyUseCase.call(params: familyId);
+
       emit(state.copyWith(
         currentFamilyId: familyId,
         currentUserId: user.uid,
         hasFamilyGroup: true,
+        familyGroupName: familyGroup?.familyName,
       ));
 
       _messagesSubscription?.cancel();
       final messageStream = await _watchChatMessagesUseCase.call(params: familyId);
       _messagesSubscription = messageStream.listen((messages) {
-        // Firestore descending: true -> latest first. 
-        // ListView.builder handles it or we sort ascending for normal chat view?
-        // Usually chat displays oldest at top, latest at bottom.
+        if (isClosed) return;
         final sortedMessages = List<ChatMessage>.from(messages)
           ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
 
         emit(state.copyWith(
           messages: sortedMessages,
           pageStatus: PageStatus.Loaded,
+        ));
+      }, onError: (e) {
+        if (isClosed) return;
+        emit(state.copyWith(
+          pageStatus: PageStatus.Error,
+          pageErrorMessage: 'Có lỗi xảy ra, có thể đang thiếu Index trên Firestore.',
         ));
       });
     } catch (e) {

@@ -114,6 +114,7 @@ class HomeCubit extends BaseCubit<HomeState> {
       if (state.user != null) {
         if (!isClosed) emit(state.copyWith(
           user: state.user!.copyWith(uiPreference: 'standard'),
+          currentTabIndex: 0,
         ));
       }
     } catch (e) {

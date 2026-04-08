@@ -15,6 +15,7 @@ class ChatState with _$ChatState implements BaseCubitState {
     @Default(true) bool hasFamilyGroup,
     String? currentFamilyId,
     String? currentUserId,
+    String? familyGroupName,
   }) = _ChatState;
 
   const ChatState._();

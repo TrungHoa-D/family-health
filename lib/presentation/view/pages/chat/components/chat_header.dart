@@ -6,8 +6,14 @@ import 'package:family_health/presentation/view/widgets/app_avatar.dart';
 import 'package:flutter/material.dart';
 
 class ChatHeader extends StatelessWidget implements PreferredSizeWidget {
-  const ChatHeader({super.key, required this.onlineMembers});
+  const ChatHeader({
+    super.key,
+    required this.onlineMembers,
+    this.groupName,
+  });
+
   final int onlineMembers;
+  final String? groupName;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +42,7 @@ class ChatHeader extends StatelessWidget implements PreferredSizeWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        'chat.group_name'.tr(),
+                        groupName ?? 'chat.group_name'.tr(),
                         style: AppStyles.titleMedium
                             .copyWith(fontWeight: FontWeight.w900),
                       ),
