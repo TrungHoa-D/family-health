@@ -90,13 +90,20 @@ class AppDialogService implements DialogService {
     VoidCallback? onConfirmBtnTap,
     VoidCallback? onCancelBtnTap,
   }) async {
-    final result = await show(
+    bool isConfirmed = false;
+    await show(
       message: message,
       type: AppAlertType.confirm,
-      onConfirmBtnTap: onConfirmBtnTap,
-      onCancelBtnTap: onCancelBtnTap,
+      onConfirmBtnTap: () {
+        isConfirmed = true;
+        if (onConfirmBtnTap != null) onConfirmBtnTap();
+      },
+      onCancelBtnTap: () {
+        isConfirmed = false;
+        if (onCancelBtnTap != null) onCancelBtnTap();
+      },
     );
-    return result == true;
+    return isConfirmed;
   }
 
   @override

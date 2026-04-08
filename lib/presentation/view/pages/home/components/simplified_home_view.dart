@@ -10,14 +10,14 @@ class SimplifiedHomeView extends StatelessWidget {
     required this.progress,
     required this.onTakenMedication,
     required this.onEmergencyCall,
-    required this.onOpenSettings,
+    required this.onExitSimplifiedMode,
   });
 
   final String? userName;
   final double progress; // 0.0 to 1.0
   final VoidCallback onTakenMedication;
   final VoidCallback onEmergencyCall;
-  final VoidCallback onOpenSettings;
+  final VoidCallback onExitSimplifiedMode;
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +53,8 @@ class SimplifiedHomeView extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.settings_outlined, size: 32),
-                    onPressed: onOpenSettings,
+                    icon: const Icon(Icons.logout, size: 32, color: AppColors.textSecondary),
+                    onPressed: onExitSimplifiedMode,
                   ),
                 ],
               ),

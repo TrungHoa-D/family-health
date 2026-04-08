@@ -29,7 +29,7 @@ class HomePage extends BaseCubitPage<HomeCubit, HomeState> {
       builder: (context, state) {
         final uiPreference = state.user?.uiPreference ?? 'standard';
 
-        if (uiPreference == 'simplified') {
+        if (uiPreference == 'simplified' && state.currentTabIndex == 0) {
           return SimplifiedHomeView(
             userName: state.user?.displayName,
             progress: state.todayStats?.completionPercentage ?? 0.0,
@@ -66,7 +66,8 @@ class HomePage extends BaseCubitPage<HomeCubit, HomeState> {
                 ),
               );
             },
-            onOpenSettings: () => context.read<HomeCubit>().changeTab(4),
+            onExitSimplifiedMode: () =>
+                context.read<HomeCubit>().exitSimplifiedMode(),
           );
         }
 

@@ -38,9 +38,11 @@ class SettingsCubit extends BaseCubit<SettingsState> {
     emit(state.copyWith(pageStatus: PageStatus.Loading));
     try {
       final authUser = await _checkAuthStatusUseCase(params: null);
+      if (isClosed) return;
       if (authUser != null) {
         // Load User Info
         final userData = await _getUserUseCase(params: authUser.uid);
+        if (isClosed) return;
         if (userData != null) {
           emit(state.copyWith(user: userData));
         }
@@ -48,6 +50,7 @@ class SettingsCubit extends BaseCubit<SettingsState> {
         // Load Health Profile
         final healthProfile =
             await _getHealthProfileUseCase(params: authUser.uid);
+        if (isClosed) return;
         if (healthProfile != null) {
           emit(state.copyWith(
             medicalRecord: healthProfile,
@@ -66,6 +69,7 @@ class SettingsCubit extends BaseCubit<SettingsState> {
       }
     } catch (e) {
       logger.e('Failed to refresh data: $e');
+      if (isClosed) return;
       emit(state.copyWith(
         pageStatus: PageStatus.Error,
         pageErrorMessage: e.toString(),
@@ -74,6 +78,7 @@ class SettingsCubit extends BaseCubit<SettingsState> {
   }
 
   void _updateRoutinesFromHealthProfile(HealthProfile profile) {
+    if (isClosed) return;
     emit(
       state.copyWith(
         routines: [
@@ -103,6 +108,7 @@ class SettingsCubit extends BaseCubit<SettingsState> {
   }
 
   void _loadMockData() {
+    if (isClosed) return;
     emit(
       state.copyWith(
         medicalRecord: HealthProfile(
@@ -151,6 +157,7 @@ class SettingsCubit extends BaseCubit<SettingsState> {
       final authUser = await _checkAuthStatusUseCase(params: null);
       if (authUser != null) {
         final userData = await _getUserUseCase(params: authUser.uid);
+        if (isClosed) return;
         if (userData != null) {
           emit(state.copyWith(user: userData));
         }
@@ -179,11 +186,12 @@ class SettingsCubit extends BaseCubit<SettingsState> {
 
       // Reload user data
       await _loadUserData();
+      if (isClosed) return;
 
       emit(state.copyWith(isUpdatingProfile: false));
     } catch (e) {
       logger.e('Failed to update profile: $e');
-      emit(state.copyWith(isUpdatingProfile: false));
+      if (!isClosed) emit(state.copyWith(isUpdatingProfile: false));
     }
   }
 
@@ -191,10 +199,10 @@ class SettingsCubit extends BaseCubit<SettingsState> {
     emit(state.copyWith(isLoggingOut: true));
     try {
       await _signOutUseCase(params: null);
-      emit(state.copyWith(isLoggingOut: false, isLoggedOut: true));
+      if (!isClosed) emit(state.copyWith(isLoggingOut: false, isLoggedOut: true));
     } catch (e) {
       logger.e('Logout failed: $e');
-      emit(state.copyWith(isLoggingOut: false));
+      if (!isClosed) emit(state.copyWith(isLoggingOut: false));
     }
   }
 
@@ -202,20 +210,20 @@ class SettingsCubit extends BaseCubit<SettingsState> {
     final uid = state.user?.uid;
     if (uid == null) return;
 
+    // Cập nhật state cục bộ để UI phản hồi ngay lập tức
+    if (state.user != null) {
+      emit(state.copyWith(
+        user: state.user!.copyWith(uiPreference: mode),
+      ));
+    }
+
     try {
       await _updateUIPreferenceUseCase.call(
         params: UpdateUIPreferenceParams(uid: uid, preference: mode),
       );
-
-      // Cập nhật state cục bộ để UI phản hồi ngay lập tức
-      if (state.user != null) {
-        emit(state.copyWith(
-          user: state.user!.copyWith(uiPreference: mode),
-        ));
-      }
     } catch (e) {
       logger.e('Failed to update UI mode: $e');
-      emit(state.copyWith(pageErrorMessage: e.toString()));
+      if (!isClosed) emit(state.copyWith(pageErrorMessage: e.toString()));
     }
   }
 }

@@ -248,5 +248,8 @@
     "error_empty_name": "Vui lòng nhập tên nhóm",
     "error_empty_code": "Vui lòng nhập mã mời",
     "error_invalid_code": "Mã mời không đúng hoặc đã hết hạn"
+  },
+  "simplified": {
+    "exit_confirm": "Bạn có chắc chắn muốn thoát khỏi chế độ tối giản và quay trở lại màn hình tiêu chuẩn?"
   }
 }

@@ -247,5 +247,8 @@
     "error_empty_name": "Please enter a group name",
     "error_empty_code": "Please enter an invite code",
     "error_invalid_code": "Invalid or expired invite code"
+  },
+  "simplified": {
+    "exit_confirm": "Are you sure you want to exit simplified mode and return to the standard interface?"
   }
 }
