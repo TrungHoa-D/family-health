@@ -6,15 +6,13 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'settings_state.freezed.dart';
 
-class DailyRoutine {
-  const DailyRoutine({
-    required this.title,
-    required this.subtitle,
-    required this.time,
-  });
-  final String title;
-  final String subtitle;
-  final String time;
+@freezed
+class DailyRoutine with _$DailyRoutine {
+  const factory DailyRoutine({
+    required String title,
+    required String subtitle,
+    required String time,
+  }) = _DailyRoutine;
 }
 
 @freezed

@@ -1,17 +1,15 @@
-part of 'home_cubit.dart';
+part of 'edit_routines_cubit.dart';
 
 @freezed
-class HomeState with _$HomeState implements BaseCubitState {
-  const factory HomeState({
+class EditRoutinesState with _$EditRoutinesState implements BaseCubitState {
+  const factory EditRoutinesState({
     @Default(PageStatus.Uninitialized) PageStatus pageStatus,
-    @Default(0) int currentTabIndex,
     String? pageErrorMessage,
-    UserEntity? user,
-    HomeStats? todayStats,
-    @Default([]) List<PatientSchedule> simplifiedMeds,
-  }) = _HomeState;
+    @Default([]) List<DailyRoutine> routines,
+    @Default(false) bool isSaved,
+  }) = _EditRoutinesState;
 
-  const HomeState._();
+  const EditRoutinesState._();
 
   @override
   BaseCubitState copyWithState({

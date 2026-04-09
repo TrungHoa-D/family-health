@@ -51,13 +51,19 @@ class DashboardPage extends BaseCubitPage<DashboardCubit, DashboardState> {
                     missedCount: state.missedCount,
                   ),
                   DashboardAlertSection(
-                    alerts: [
-                      DashboardAlertItem(
-                        personName: 'home.father'.tr(),
-                        actionName: 'home.blood_pressure'.tr(),
-                        minutesLate: 23,
-                      ),
-                    ],
+                    alerts: state.alerts
+                        .map((a) => DashboardAlertItem(
+                              personName: a.userName,
+                              actionName: a.medName,
+                              minutesLate: a.delayMinutes,
+                              onRemind: () {
+                                // TODO: Logic gửi notification nhắc nhở
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Đã gửi nhắc nhở cho ${a.userName}'.tr())),
+                                );
+                              },
+                            ))
+                        .toList(),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   DashboardMembersSection(

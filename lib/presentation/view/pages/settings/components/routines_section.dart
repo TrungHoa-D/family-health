@@ -4,6 +4,8 @@ import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
 import 'package:family_health/presentation/view/pages/settings/settings_state.dart';
 import 'package:family_health/presentation/view/widgets/app_card.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:family_health/presentation/router/router.dart';
 import 'package:flutter/material.dart';
 
 class RoutinesSection extends StatelessWidget {
@@ -24,13 +26,27 @@ class RoutinesSection extends StatelessWidget {
             horizontal: AppSpacing.md,
             vertical: AppSpacing.sm,
           ),
-          child: Text(
-            'settings.routines'.tr(),
-            style: AppStyles.labelSmall.copyWith(
-              color: AppColors.textSecondary,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1.5,
-            ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'settings.routines'.tr(),
+                style: AppStyles.labelSmall.copyWith(
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.5,
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  context.router.push(EditRoutinesRoute(initialRoutines: routines));
+                },
+                child: Text(
+                  'common.edit'.tr(),
+                  style: AppStyles.labelLarge.copyWith(color: AppColors.primary),
+                ),
+              ),
+            ],
           ),
         ),
         AppCard(

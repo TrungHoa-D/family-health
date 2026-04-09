@@ -194,6 +194,14 @@
     "input_placeholder": "Nhập tin nhắn...",
     "details": "Chi tiết"
   },
+  "ai_chat": {
+    "title": "Trợ lý Y khoa AI",
+    "subtitle": "Trực tuyến • Sẵn sàng hỗ trợ",
+    "typing": "AI đang suy nghĩ...",
+    "empty_history": "Bắt đầu trò chuyện với trợ lý AI của bạn",
+    "hint": "Hỏi về sức khỏe, thuốc hoặc triệu chứng...",
+    "disclaimer": "Thông tin AI cung cấp chỉ mang tính chất tham khảo và có thể không hoàn toàn chính xác. Vui lòng hỏi ý kiến bác sĩ cho các vấn đề y tế."
+  },
   "settings": {
     "edit_profile": "Chỉnh sửa hồ sơ",
     "edit_profile_title": "Chỉnh sửa hồ sơ",
@@ -206,6 +214,8 @@
     "height": "CHIỀU CAO",
     "weight": "CÂN NẶNG",
     "routines": "NHỊP SINH HOẠT",
+    "edit_routines": "Chỉnh sửa nhịp sinh hoạt",
+    "edit_routines_desc": "Hãy chọn giờ phù hợp với sinh hoạt của gia đình bạn.",
     "family": "GIA ĐÌNH",
     "manage_family": "Quản lý thành viên",
     "connected_members": "{} người đang kết nối",
@@ -216,7 +226,9 @@
     "logout": "Đăng xuất",
     "version": "VITALIS CARE • PHIÊN BẢN {}",
     "invite_code_label": "MÃ MỜI GIA ĐÌNH",
-    "code_copied": "Đã sao chép mã mời"
+    "code_copied": "Đã sao chép mã mời",
+    "edit": "Chỉnh sửa",
+    "confirm": "Xác nhận"
   },
   "family": {
     "management_title": "Quản lý gia đình",
@@ -250,6 +262,22 @@
     "error_invalid_code": "Mã mời không đúng hoặc đã hết hạn"
   },
   "simplified": {
+    "welcome": "Chào {}!",
+    "how_are_you": "Hôm nay bạn thế nào?",
+    "med_progress": "Tiến độ uống thuốc",
+    "completion": "{}% Hoàn thành",
+    "taken_btn": "ĐÃ UỐNG THUỐC",
+    "taken_subtitle": "Ghi nhận liều thuốc vừa uống",
+    "emergency_btn": "GỌI KHẨN CẤP",
+    "chat_btn": "NHẮN TIN",
+    "ai_chat_btn": "TRỢ LÝ AI",
+    "today_schedule": "Lịch uống thuốc hôm nay",
+    "no_meds": "Hôm nay không có liều thuốc nào",
+    "taken_confirm": "Bạn đã uống thuốc rồi đúng không?",
+    "not_yet": "Chưa",
+    "yes_done": "Đúng vậy",
+    "recorded": "Đã ghi nhận!",
+    "calling": "Đang gọi cho người thân...",
     "exit_confirm": "Bạn có chắc chắn muốn thoát khỏi chế độ tối giản và quay trở lại màn hình tiêu chuẩn?"
   }
 }

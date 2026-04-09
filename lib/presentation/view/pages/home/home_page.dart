@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:family_health/presentation/router/router.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit_page.dart';
 import 'package:family_health/presentation/view/pages/home/home_cubit.dart';
@@ -33,26 +34,27 @@ class HomePage extends BaseCubitPage<HomeCubit, HomeState> {
           return SimplifiedHomeView(
             userName: state.user?.displayName,
             progress: state.todayStats?.completionPercentage ?? 0.0,
+            meds: state.simplifiedMeds,
             onTakenMedication: () {
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
                   title: Text('common.confirm'.tr()),
-                  content: Text('Bạn đã uống thuốc rồi đúng không?'.tr()),
+                  content: Text('simplified.taken_confirm'.tr()),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: Text('Chưa'.tr()),
+                      child: Text('simplified.not_yet'.tr()),
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        // TODO: Gọi UseCase ghi nhận log
+                        context.read<HomeCubit>().markNearestDoseAsTaken();
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Đã ghi nhận!'.tr())),
+                          SnackBar(content: Text('simplified.recorded'.tr())),
                         );
                       },
-                      child: Text('Đúng vậy'.tr()),
+                      child: Text('simplified.yes_done'.tr()),
                     ),
                   ],
                 ),
@@ -60,11 +62,17 @@ class HomePage extends BaseCubitPage<HomeCubit, HomeState> {
             },
             onEmergencyCall: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Đang gọi cho người thân...'),
+                SnackBar(
+                  content: Text('simplified.calling'.tr()),
                   backgroundColor: Colors.redAccent,
                 ),
               );
+            },
+            onChatTap: () {
+              context.router.push(const ChatRoute());
+            },
+            onAiChatTap: () {
+              context.router.push(const AIChatSupportRoute());
             },
             onExitSimplifiedMode: () =>
                 context.read<HomeCubit>().exitSimplifiedMode(),

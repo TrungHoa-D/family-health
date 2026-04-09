@@ -3,11 +3,15 @@ import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 
 import 'package:family_health/domain/entities/home_stats.dart';
+import 'package:family_health/domain/entities/patient_schedule.dart';
 import 'package:family_health/domain/entities/user_entity.dart';
 import 'package:family_health/domain/repositories/auth_repository.dart';
+import 'package:family_health/domain/entities/medication_log.dart';
+import 'package:family_health/domain/usecases/add_medication_log_usecase.dart';
 import 'package:family_health/domain/usecases/get_today_stats_usecase.dart';
 import 'package:family_health/domain/usecases/sign_out_usecase.dart';
 import 'package:family_health/domain/usecases/update_ui_preference_usecase.dart';
+import 'package:family_health/domain/usecases/watch_family_schedules_usecase.dart';
 import 'package:family_health/domain/usecases/watch_user_usecase.dart';
 import 'package:family_health/presentation/base/page_status.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit.dart';
@@ -27,6 +31,8 @@ class HomeCubit extends BaseCubit<HomeState> {
     this._getTodayStatsUseCase,
     this._watchUserUseCase,
     this._updateUIPreferenceUseCase,
+    this._watchFamilySchedulesUseCase,
+    this._addMedicationLogUseCase,
   ) : super(const HomeState());
 
   final AuthRepository _authRepository;
@@ -34,8 +40,11 @@ class HomeCubit extends BaseCubit<HomeState> {
   final GetTodayStatsUseCase _getTodayStatsUseCase;
   final WatchUserUseCase _watchUserUseCase;
   final UpdateUIPreferenceUseCase _updateUIPreferenceUseCase;
+  final WatchFamilySchedulesUseCase _watchFamilySchedulesUseCase;
+  final AddMedicationLogUseCase _addMedicationLogUseCase;
 
   StreamSubscription? _userSubscription;
+  StreamSubscription? _medsSubscription;
 
   Future<void> loadData() async {
     final UserEntity? authUser = _authRepository.getCurrentUser();
@@ -48,6 +57,19 @@ class HomeCubit extends BaseCubit<HomeState> {
         HomeStats? stats;
         if (user?.familyId != null) {
           stats = await _getTodayStatsUseCase.call(params: user!.familyId!);
+        }
+
+        if (user?.uiPreference == 'simplified' && user?.familyId != null) {
+          _medsSubscription?.cancel();
+          _medsSubscription = _watchFamilySchedulesUseCase
+              .call(user!.familyId!)
+              .listen((schedules) {
+            final userSchedules =
+                schedules.where((s) => s.targetUserId == user.uid).toList();
+            if (!isClosed) {
+              emit(state.copyWith(simplifiedMeds: userSchedules));
+            }
+          });
         }
 
         if (isClosed) return;
@@ -123,6 +145,27 @@ class HomeCubit extends BaseCubit<HomeState> {
     }
   }
 
+  Future<void> markNearestDoseAsTaken() async {
+    if (state.simplifiedMeds.isEmpty) return;
+
+    final nearest = state.simplifiedMeds.first; // For MVP, we take the first one
+    final log = MedicationLog(
+      logId: DateTime.now().millisecondsSinceEpoch.toString(),
+      familyId: state.user?.familyId ?? '',
+      scheduleId: nearest.id,
+      scheduledTime: DateTime.now(), // approximation
+      status: 'TAKEN',
+      takenTime: DateTime.now(),
+    );
+
+    try {
+      await _addMedicationLogUseCase.call(params: log);
+      // Stats will be updated via the stream in loadData
+    } catch (e) {
+      logger.e('Failed to mark dose as taken: $e');
+    }
+  }
+
   Future<void> signOut() async {
     try {
       showLoading();
@@ -137,6 +180,7 @@ class HomeCubit extends BaseCubit<HomeState> {
   @override
   Future<void> close() {
     _userSubscription?.cancel();
+    _medsSubscription?.cancel();
     return super.close();
   }
 }

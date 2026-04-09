@@ -33,59 +33,73 @@ class ChatHeader extends StatelessWidget implements PreferredSizeWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  const AppAvatar.small(),
-                  const SizedBox(width: AppSpacing.sm),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        groupName ?? 'chat.group_name'.tr(),
-                        style: AppStyles.titleMedium
-                            .copyWith(fontWeight: FontWeight.w900),
-                      ),
-                      Row(
-                        children: [
-                          Container(
-                            width: 6,
-                            height: 6,
-                            decoration: const BoxDecoration(
-                              color: AppColors.success,
-                              shape: BoxShape.circle,
-                            ),
+              Expanded(
+                child: Row(
+                  children: [
+                    if (Navigator.canPop(context))
+                      Padding(
+                        padding: const EdgeInsets.only(right: AppSpacing.sm),
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.arrow_back_ios_new_rounded,
+                            size: 20,
+                            color: AppColors.textPrimary,
                           ),
-                          const SizedBox(width: 4),
+                          onPressed: () => Navigator.of(context).maybePop(),
+                        ),
+                      ),
+                    const AppAvatar.small(),
+                    const SizedBox(width: AppSpacing.md),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
                           Text(
-                            'chat.online_status'
-                                .tr(args: [onlineMembers.toString()]),
-                            style: AppStyles.labelSmall.copyWith(
-                              color: AppColors.success,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 10,
-                            ),
+                            groupName ?? 'chat.group_name'.tr(),
+                            style: AppStyles.titleMedium
+                                .copyWith(fontWeight: FontWeight.w900),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Row(
+                            children: [
+                              Container(
+                                width: 6,
+                                height: 6,
+                                decoration: const BoxDecoration(
+                                  color: AppColors.success,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              Flexible(
+                                child: Text(
+                                  'chat.online_status'
+                                      .tr(args: [onlineMembers.toString()]),
+                                  style: AppStyles.labelSmall.copyWith(
+                                    color: AppColors.success,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 10,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(
-                      Icons.info_outline,
-                      color: AppColors.textSecondary,
                     ),
-                    onPressed: () {},
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.emergency, color: AppColors.primary),
-                    onPressed: () {},
-                  ),
-                ],
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: const Icon(
+                  Icons.info_outline,
+                  color: AppColors.textSecondary,
+                ),
+                onPressed: () {},
               ),
             ],
           ),

@@ -35,6 +35,14 @@ abstract class AppStyles {
     fontFamily: _fontFamily,
   );
 
+  /// 18sp Bold — Secondary headlines
+  static const headlineSmall = TextStyle(
+    fontWeight: FontWeight.w700,
+    fontSize: 18,
+    height: 1.3,
+    fontFamily: _fontFamily,
+  );
+
   // ─── Title ───────────────────────────────────────
   /// 18sp Bold — Drug name in detail
   static const titleXLarge = TextStyle(

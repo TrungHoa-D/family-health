@@ -187,4 +187,42 @@ class FirebaseFirestoreDataSource {
 
     return query.docs.map((doc) => doc.data()).toList();
   }
+
+  // --- AI Chat History Methods ---
+  Future<void> saveAIChatMessage(String id, Map<String, dynamic> data) async {
+    final docId = id.isEmpty ? generateId('ai_chat_history') : id;
+    final finalData = {...data, 'id': docId};
+    await _firestore.collection('ai_chat_history').doc(docId).set(
+          finalData,
+          SetOptions(merge: true),
+        );
+  }
+
+  Stream<List<Map<String, dynamic>>> watchAIChatMessages(String userId) {
+    return _firestore
+        .collection('ai_chat_history')
+        .where('user_id', isEqualTo: userId)
+        .snapshots()
+        .map((snapshot) {
+      final docs = snapshot.docs.map((doc) {
+        final data = doc.data();
+        return {
+          ...data,
+          'id': doc.id,
+        };
+      }).toList();
+
+      // Sắp xếp thủ công theo timestamp để tránh lỗi Index
+      docs.sort((a, b) {
+        final tsA = a['timestamp'];
+        final tsB = b['timestamp'];
+        if (tsA is Timestamp && tsB is Timestamp) {
+          return tsA.compareTo(tsB);
+        }
+        return 0;
+      });
+
+      return docs;
+    });
+  }
 }

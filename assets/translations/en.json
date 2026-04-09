@@ -194,6 +194,14 @@
     "input_placeholder": "Type a message...",
     "details": "Details"
   },
+  "ai_chat": {
+    "title": "AI Medical Assistant",
+    "subtitle": "Online • Ready to support",
+    "typing": "AI is thinking...",
+    "empty_history": "Start chatting with your AI assistant",
+    "hint": "Ask about health, meds, or symptoms...",
+    "disclaimer": "AI-generated info is for reference only and may not be perfectly accurate. Please consult a doctor for medical issues."
+  },
   "settings": {
     "edit_profile": "Edit Profile",
     "edit_profile_title": "Edit Profile",
@@ -206,6 +214,8 @@
     "height": "HEIGHT",
     "weight": "WEIGHT",
     "routines": "DAILY ROUTINE",
+    "edit_routines": "Edit Daily Routine",
+    "edit_routines_desc": "Please choose times that fit your family's daily activities.",
     "family": "FAMILY",
     "manage_family": "Manage Family",
     "connected_members": "{} connected members",
@@ -215,7 +225,9 @@
     "help_center": "Help Center",
     "version": "VITALIS CARE • VERSION {}",
     "invite_code_label": "FAMILY INVITE CODE",
-    "code_copied": "Invite code copied"
+    "code_copied": "Invite code copied",
+    "edit": "Edit",
+    "confirm": "Confirm"
   },
   "family": {
     "management_title": "Family Management",
@@ -249,6 +261,22 @@
     "error_invalid_code": "Invalid or expired invite code"
   },
   "simplified": {
+    "welcome": "Hello {}!",
+    "how_are_you": "How are you today?",
+    "med_progress": "Medication Progress",
+    "completion": "{}% Completed",
+    "taken_btn": "TAKEN MEDICATION",
+    "taken_subtitle": "Record the dose you just took",
+    "emergency_btn": "EMERGENCY",
+    "chat_btn": "CHAT",
+    "ai_chat_btn": "AI ASSISTANT",
+    "today_schedule": "Today's Schedule",
+    "no_meds": "No medications scheduled for today",
+    "taken_confirm": "You've taken your medication, right?",
+    "not_yet": "Not yet",
+    "yes_done": "Yes, I did",
+    "recorded": "Recorded!",
+    "calling": "Calling family members...",
     "exit_confirm": "Are you sure you want to exit simplified mode and return to the standard interface?"
   }
 }

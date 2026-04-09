@@ -11,6 +11,7 @@ class DashboardState with _$DashboardState implements BaseCubitState {
     @Default(6) int totalCount,
     @Default(1) int waitingCount,
     @Default(1) int missedCount,
+    @Default([]) List<MedicationAlert> alerts,
   }) = _DashboardState;
 
   const DashboardState._();

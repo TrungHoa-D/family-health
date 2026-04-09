@@ -2,13 +2,18 @@ import 'dart:async';
 
 import 'package:family_health/domain/entities/user_entity.dart';
 import 'package:family_health/domain/repositories/auth_repository.dart';
-import 'package:family_health/domain/usecases/get_medication_logs_usecase.dart';
+import 'package:family_health/domain/usecases/get_today_stats_usecase.dart';
 import 'package:family_health/domain/usecases/watch_family_schedules_usecase.dart';
 import 'package:family_health/presentation/base/page_status.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit_state.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+
+import 'package:family_health/domain/entities/medication_alert.dart';
+import 'package:family_health/domain/entities/user_entity.dart';
+import 'package:family_health/presentation/base/page_status.dart';
+import 'package:family_health/presentation/cubit_base/base_cubit_state.dart';
 
 part 'dashboard_cubit.freezed.dart';
 part 'dashboard_state.dart';
@@ -17,12 +22,12 @@ part 'dashboard_state.dart';
 class DashboardCubit extends BaseCubit<DashboardState> {
   DashboardCubit(
     this._authRepository,
-    this._getMedicationLogsUseCase,
+    this._getTodayStatsUseCase,
     this._watchFamilySchedulesUseCase,
   ) : super(const DashboardState());
 
   final AuthRepository _authRepository;
-  final GetMedicationLogsUseCase _getMedicationLogsUseCase;
+  final GetTodayStatsUseCase _getTodayStatsUseCase;
   final WatchFamilySchedulesUseCase _watchFamilySchedulesUseCase;
 
   StreamSubscription? _schedulesSubscription;
@@ -40,31 +45,17 @@ class DashboardCubit extends BaseCubit<DashboardState> {
       _schedulesSubscription?.cancel();
       _schedulesSubscription = _watchFamilySchedulesUseCase.call(user.familyId!).listen(
         (schedules) async {
-          final logs = await _getMedicationLogsUseCase.call(
-            params: GetMedicationLogsParams(
-              familyId: user.familyId!,
-              date: DateTime.now(),
-            ),
-          );
-
-          // Lọc lịch trình dành riêng cho người dùng này
-          final mySchedules = schedules.where((s) => s.targetUserId == user.uid).toList();
-          final myLogs = logs.where((l) => mySchedules.any((s) => s.id == l.scheduleId)).toList();
-
-          final totalCount = mySchedules.length;
-          final takenCount = myLogs.where((log) => log.status == 'TAKEN').length;
-          final missedCount = myLogs.where((log) => log.status == 'MISSED').length;
-          final waitingCount = totalCount - myLogs.length;
-          final progress = totalCount > 0 ? takenCount / totalCount : 0.0;
+          final stats = await _getTodayStatsUseCase.call(params: user.familyId!);
 
           emit(state.copyWith(
             pageStatus: PageStatus.Loaded,
-            totalCount: totalCount,
-            takenCount: takenCount,
-            waitingCount: waitingCount > 0 ? waitingCount : 0,
-            missedCount: missedCount,
-            progress: progress,
-          ),);
+            totalCount: stats.totalDoses,
+            takenCount: stats.takenDoses,
+            waitingCount: stats.totalDoses - stats.takenDoses - stats.missedDoses,
+            missedCount: stats.missedDoses,
+            progress: stats.completionPercentage / 100,
+            alerts: stats.alerts,
+          ));
         },
         onError: (e) {
           emit(state.copyWith(pageStatus: PageStatus.Error, pageErrorMessage: e.toString()));

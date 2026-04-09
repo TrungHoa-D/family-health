@@ -1,17 +1,16 @@
-part of 'home_cubit.dart';
+part of 'ai_chat_cubit.dart';
 
 @freezed
-class HomeState with _$HomeState implements BaseCubitState {
-  const factory HomeState({
+class AIChatSupportState with _$AIChatSupportState implements BaseCubitState {
+  const factory AIChatSupportState({
     @Default(PageStatus.Uninitialized) PageStatus pageStatus,
-    @Default(0) int currentTabIndex,
     String? pageErrorMessage,
-    UserEntity? user,
-    HomeStats? todayStats,
-    @Default([]) List<PatientSchedule> simplifiedMeds,
-  }) = _HomeState;
+    @Default([]) List<AIChatMessage> messages,
+    @Default(false) bool isTyping,
+    String? userId,
+  }) = _AIChatSupportState;
 
-  const HomeState._();
+  const AIChatSupportState._();
 
   @override
   BaseCubitState copyWithState({

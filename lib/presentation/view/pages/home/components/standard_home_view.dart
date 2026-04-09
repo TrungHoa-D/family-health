@@ -1,4 +1,6 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/router/router.dart';
 import 'package:family_health/presentation/view/widgets/app_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
@@ -67,6 +69,12 @@ class StandardHomeView extends StatelessWidget {
             page: const HomeRoute(),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        heroTag: 'ai_support_fab',
+        backgroundColor: AppColors.primary,
+        onPressed: () => context.router.push(const AIChatSupportRoute()),
+        child: const Icon(Icons.psychology, color: Colors.white, size: 28),
       ),
     );
   }
