@@ -165,11 +165,9 @@ class ChatBubble extends StatelessWidget {
         padding: const EdgeInsets.all(AppSpacing.md),
         constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
         decoration: BoxDecoration(
-          color: message.isUser ? AppColors.primary : AppColors.white,
-          borderRadius: BorderRadius.circular(12).copyWith(
-            bottomLeft: message.isUser ? const Radius.circular(12) : Radius.zero,
-            bottomRight: message.isUser ? Radius.zero : const Radius.circular(12),
-          ),
+          color: message.isUser ? AppColors.primary : const Color(0xFFF5F7FA), // Soft grey background for AI to stand out
+          borderRadius: BorderRadius.circular(16), // Hình chữ nhật bo tròn đơn giản
+          border: message.isUser ? null : Border.all(color: const Color(0xFFE4E7EB)),
         ),
         child: MarkdownBody(
           data: message.content,

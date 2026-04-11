@@ -30,36 +30,57 @@ class MedicationInfoList extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.md),
 
-        // Liều lượng
+        // Ngày nhập kho
+        _InfoRow(
+          icon: Icons.calendar_today,
+          iconColor: AppColors.secondary,
+          label: 'meds.info_created_at'.tr(),
+          value: medication.createdAt != null ? DateFormat('dd/MM/yyyy').format(medication.createdAt!) : 'Chưa cập nhật',
+        ),
+        const SizedBox(height: AppSpacing.md),
+
+        // Ngày hết hạn
+        _InfoRow(
+          icon: Icons.date_range,
+          iconColor: AppColors.error,
+          label: 'meds.info_expiry_date'.tr(),
+          value: medication.expiryDate != null ? DateFormat('dd/MM/yyyy').format(medication.expiryDate!) : 'Chưa cập nhật',
+        ),
+        const SizedBox(height: AppSpacing.md),
+
+        // Phân loại
+        _InfoRow(
+          icon: Icons.category,
+          iconColor: const Color(0xFF5C9CE6),
+          label: 'meds.category_label'.tr(),
+          value: medication.categories.isNotEmpty ? medication.categories.join(', ') : 'Chưa cập nhật',
+        ),
+        const SizedBox(height: AppSpacing.md),
+
+        // Mô tả
+        _InfoRow(
+          icon: Icons.description,
+          iconColor: const Color(0xFF8D6E63),
+          label: 'meds.info_description'.tr(),
+          value: medication.description != null && medication.description!.isNotEmpty ? medication.description! : 'Chưa cập nhật',
+        ),
+        const SizedBox(height: AppSpacing.md),
+          
+        // Liều lượng tiêu chuẩn
         _InfoRow(
           icon: Icons.medication,
           iconColor: AppColors.primary,
           label: 'meds.info_dosage'.tr(),
-          value: medication.dosageStandard,
+          value: medication.dosageStandard.isNotEmpty ? medication.dosageStandard : 'Chưa cập nhật',
         ),
         const SizedBox(height: AppSpacing.md),
 
-        // Thời gian
+        // Số lượng còn lại
         _InfoRow(
-          icon: Icons.schedule,
-          iconColor: AppColors.secondary,
-          label: 'meds.info_timing'.tr(),
-          value: medication.scheduleDescription ?? '',
-        ),
-        const SizedBox(height: AppSpacing.md),
-
-        // Người dùng
-        _InfoRow(
-          icon: Icons.person,
-          iconColor: const Color(0xFFA33200),
-          label: 'meds.info_user'.tr(),
-          value: medication.targetUserName ?? 'N/A',
-        ),
-        const SizedBox(height: AppSpacing.md),
-
-        // Người giám sát
-        const _SupervisorRow(
-          supervisorNames: [],
+          icon: Icons.inventory,
+          iconColor: const Color(0xFF66BB6A),
+          label: 'meds.info_stock_quantity'.tr(),
+          value: medication.stockQuantity != null ? '${medication.stockQuantity} ${medication.unit ?? ''}'.trim() : 'Chưa cập nhật',
         ),
       ],
     );
@@ -139,148 +160,4 @@ class _InfoRow extends StatelessWidget {
   }
 }
 
-/// Hàng giám sát — hiển thị avatar chồng nhau
-class _SupervisorRow extends StatelessWidget {
-  const _SupervisorRow({required this.supervisorNames});
-  final List<String> supervisorNames;
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md + 4),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusInput),
-      ),
-      child: Row(
-        children: [
-          // Icon container
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.black.withValues(alpha: 0.04),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: const Center(
-              child: Icon(Icons.group, color: Color(0xFF5C9CE6), size: 24),
-            ),
-          ),
-          const SizedBox(width: AppSpacing.md),
-          // Supervisor info
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'meds.info_supervisor'.tr().toUpperCase(),
-                  style: AppStyles.labelSmall.copyWith(
-                    color: AppColors.textSecondary,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 11,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                _buildAvatarStack(),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAvatarStack() {
-    if (supervisorNames.isEmpty) {
-      return Text(
-        '—',
-        style: AppStyles.bodyMedium.copyWith(
-          color: AppColors.textSecondary,
-        ),
-      );
-    }
-
-    final displayCount =
-        supervisorNames.length > 2 ? 2 : supervisorNames.length;
-    final remaining = supervisorNames.length - displayCount;
-
-    return Row(
-      children: [
-        // Stacked avatar circles
-        SizedBox(
-          width: (displayCount * 24.0) + (remaining > 0 ? 32 : 0),
-          height: 32,
-          child: Stack(
-            children: [
-              for (int i = 0; i < displayCount; i++)
-                Positioned(
-                  left: i * 20.0,
-                  child: Container(
-                    width: 32,
-                    height: 32,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppColors.surface,
-                      border: Border.all(color: AppColors.white, width: 2),
-                    ),
-                    child: CircleAvatar(
-                      radius: 14,
-                      backgroundColor: _getAvatarColor(i),
-                      child: Text(
-                        supervisorNames[i][0],
-                        style: AppStyles.labelSmall.copyWith(
-                          color: AppColors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              if (remaining > 0)
-                Positioned(
-                  left: displayCount * 20.0,
-                  child: Container(
-                    width: 32,
-                    height: 32,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppColors.primaryLight,
-                      border: Border.all(color: AppColors.white, width: 2),
-                    ),
-                    child: Center(
-                      child: Text(
-                        '+$remaining',
-                        style: AppStyles.labelSmall.copyWith(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 10,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Color _getAvatarColor(int index) {
-    const colors = [
-      Color(0xFF78909C),
-      Color(0xFF8D6E63),
-      Color(0xFF66BB6A),
-      Color(0xFFFF7043),
-    ];
-    return colors[index % colors.length];
-  }
-}

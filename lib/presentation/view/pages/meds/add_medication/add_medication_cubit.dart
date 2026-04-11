@@ -57,6 +57,10 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
           isEditing: true,
           editingMedicationId: medication.id,
           drugName: medication.name,
+          description: medication.description ?? '',
+          expiryDate: medication.expiryDate,
+          stockQuantity: medication.stockQuantity?.toString() ?? '',
+          unit: medication.unit ?? '',
           dosage: medication.dosageStandard ?? '',
           selectedCategory: medication.categories.isNotEmpty
               ? medication.categories.first
@@ -64,20 +68,7 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
           imageUrl: medication.imageUrl,
         ),
       );
-    } 
-    
-    if (schedule != null) {
-      emit(
-        state.copyWith(
-          selectedUser: schedule.targetUserId,
-          anchorTime: schedule.timing['anchor_event'] ?? 'Sau ăn sáng',
-          offset: schedule.timing['offset'].toString(),
-          supervisor: 'Trung Hòa', // Mock for now
-        ),
-      );
-    }
-    
-    if (medication == null && schedule == null) {
+    } else {
       emit(state.copyWith(pageStatus: PageStatus.Loaded));
     }
 
@@ -115,20 +106,25 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
     );
   }
 
-  void selectUser(String value) {
-    emit(state.copyWith(selectedUser: value));
+  void updateDescription(String value) {
+    emit(state.copyWith(description: value));
   }
 
-  void selectAnchorTime(String value) {
-    emit(state.copyWith(anchorTime: value));
+  void updateExpiryDate(DateTime? date) {
+    emit(
+      state.copyWith(
+        expiryDate: date,
+        expiryDateError: null,
+      ),
+    );
   }
 
-  void selectOffset(String value) {
-    emit(state.copyWith(offset: value));
+  void updateStockQuantity(String value) {
+    emit(state.copyWith(stockQuantity: value));
   }
 
-  void selectSupervisor(String value) {
-    emit(state.copyWith(supervisor: value));
+  void updateUnit(String value) {
+    emit(state.copyWith(unit: value));
   }
 
   void selectCategory(String value) {
@@ -164,15 +160,11 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
         {
           "name": "Tên thuốc",
           "dosage": "Liều lượng (ví dụ: 500mg, 1 viên)",
-          "unit": "Đơn vị (viên, gói, ml)",
-          "frequency": "Số lần mỗi ngày (ví dụ: 2 lần/ngày)",
-          "instructions": "Chỉ dẫn (ví dụ: Sau khi ăn sáng, Trước khi đi ngủ)",
           "category": "Phân loại thuốc — ƯU TIÊN chọn 1 trong danh sách có sẵn: [$categoryList]. Nếu không có loại nào phù hợp, hãy TẠO MỚI tên phân loại (viết HOA, ngắn gọn 1-2 từ).",
           "category_description": "Mô tả ngắn gọn cho phân loại thuốc (VD: Thuốc điều trị và kiểm soát huyết áp). Chỉ điền nếu category là MỚI, không nằm trong danh sách trên. Nếu category đã có sẵn, để null.",
-          "anchor_event": "Sự kiện mốc (chọn 1: Sau ăn sáng, Sau ăn trưa, Sau ăn tối, Trước đi ngủ)",
-          "offset_minutes": 30
+          "description": "Mô tả / công dụng chính của thuốc",
+          "unit": "Đơn vị (Viên, Gói, Lọ...)"
         }
-        Nếu không có thông tin mốc thời gian rõ ràng, hãy mặc định anchor_event là "Sau ăn sáng".
         Nếu không chắc chắn ở trường nào, hãy để giá trị null. Trường category nếu không chắc hãy để "KHÁC".
         CHỈ trả về chuỗi JSON, không giải thích thêm.
       ''';
@@ -203,6 +195,13 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
         await _saveCategoryUseCase.call(params: newCat);
       }
 
+      DateTime? parsedExpiryDate;
+      if (data['expiry_date'] != null) {
+        try {
+          parsedExpiryDate = DateTime.parse(data['expiry_date'] as String);
+        } catch (_) {}
+      }
+
       emit(
         state.copyWith(
           isScanning: false,
@@ -210,10 +209,10 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
           drugName: data['name'] ?? state.drugName,
           dosage: data['dosage'] ?? state.dosage,
           selectedCategory: scannedCategory ?? state.selectedCategory,
-          frequency: data['frequency'] ?? state.frequency,
-          instructions: data['instructions'] ?? state.instructions,
-          anchorTime: data['anchor_event'] ?? state.anchorTime,
-          offset: 'Sau ${data['offset_minutes'] ?? 30}p',
+          description: data['description'] ?? state.description,
+          stockQuantity: data['stock_quantity']?.toString() ?? state.stockQuantity,
+          unit: data['unit'] ?? state.unit,
+          expiryDate: parsedExpiryDate ?? state.expiryDate,
         ),
       );
     } catch (e) {
@@ -228,20 +227,20 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
 
   bool validate() {
     String? drugNameError;
-    String? dosageError;
+    String? expiryDateError;
 
     if (state.drugName.trim().isEmpty) {
       drugNameError = 'meds.validation_drug_name';
     }
-    if (state.dosage.trim().isEmpty) {
-      dosageError = 'meds.validation_dosage';
+    if (state.expiryDate == null) {
+      expiryDateError = 'meds.validation_expiry_date';
     }
 
-    if (drugNameError != null || dosageError != null) {
+    if (drugNameError != null || expiryDateError != null) {
       emit(
         state.copyWith(
           drugNameError: drugNameError,
-          dosageError: dosageError,
+          expiryDateError: expiryDateError,
         ),
       );
       return false;
@@ -286,39 +285,18 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
       final medication = Medication(
         id: medicationId,
         name: state.drugName,
-        dosageStandard: state.dosage,
+        description: state.description.isNotEmpty ? state.description : null,
+        dosageStandard: state.dosage.isNotEmpty ? state.dosage : null,
         categories: [state.selectedCategory],
+        stockQuantity: int.tryParse(state.stockQuantity) ?? 0,
+        unit: state.unit.isNotEmpty ? state.unit : null,
+        expiryDate: state.expiryDate,
         imageUrl: finalImageUrl,
         familyId: familyId,
         createdAt: DateTime.now(),
       );
 
-      final schedule = PatientSchedule(
-        id: 'sch_$medicationId',
-        medId: medicationId,
-        medName: state.drugName,
-        familyId: familyId,
-        targetUserId: user.uid,
-        createdBy: user.uid,
-        dosage: state.dosage,
-        timing: {
-          'anchor_event': state.anchorTime,
-          'offset': int.tryParse(state.offset.replaceAll(RegExp(r'[^0-9]'), '')) ?? 30,
-          'type': 'offset',
-        },
-      );
-
-      // Gọi song song save medication + save schedule
-      await Future.wait([
-        _saveMedicationUseCase.call(params: medication),
-        _saveScheduleUseCase.call(params: schedule),
-      ]);
-
-      // Schedule notifications sau khi save xong
-      if (state.isEditing) {
-        await _notificationService.cancelMedicationReminders(schedule.id);
-      }
-      await _notificationService.scheduleMedicationReminders(schedule);
+      await _saveMedicationUseCase.call(params: medication);
 
       emit(state.copyWith(isSaving: false, isSaved: true));
     } catch (e) {

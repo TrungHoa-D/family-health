@@ -71,6 +71,7 @@ class MedicationModel {
     this.categories = const [],
     this.stockQuantity,
     this.expiryDate,
+    this.createdAt,
     // Schedule info (UI combined)
     this.scheduleDescription,
     this.targetUserName,
@@ -88,6 +89,7 @@ class MedicationModel {
   final List<String> categories;
   final int? stockQuantity;
   final DateTime? expiryDate;
+  final DateTime? createdAt;
 
   // Schedule/Usage info for UI display
   final String? scheduleDescription;
@@ -107,6 +109,7 @@ class MedicationModel {
       categories: categories,
       stockQuantity: stockQuantity,
       expiryDate: expiryDate,
+      createdAt: createdAt,
     );
   }
 }

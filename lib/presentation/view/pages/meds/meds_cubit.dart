@@ -119,6 +119,7 @@ class MedsCubit extends BaseCubit<MedsState> {
       categories: med.categories,
       stockQuantity: med.stockQuantity,
       expiryDate: med.expiryDate,
+      createdAt: med.createdAt,
       tag: tag,
       tagColor: tagColor,
       textColor: textColor,

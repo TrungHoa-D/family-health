@@ -17,9 +17,9 @@ class MedsCard extends StatelessWidget {
       onPressed: onTap,
       margin: const EdgeInsets.symmetric(
         horizontal: AppSpacing.md,
-        vertical: AppSpacing.sm,
+        vertical: AppSpacing.xs,
       ),
-      padding: const EdgeInsets.all(AppSpacing.md),
+      padding: const EdgeInsets.all(AppSpacing.sm),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -66,11 +66,7 @@ class MedsCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: AppSpacing.sm),
-                    _Tag(
-                      label: medication.tag,
-                      color: medication.tagColor,
-                      textColor: medication.textColor,
-                    ),
+                    _buildStatusTag(),
                   ],
                 ),
                 if (medication.targetUserName != null)
@@ -81,20 +77,40 @@ class MedsCard extends StatelessWidget {
                   ),
                 const SizedBox(height: AppSpacing.sm),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    const Icon(
-                      Icons.access_time,
-                      size: 16,
-                      color: AppColors.textSecondary,
-                    ),
-                    const SizedBox(width: 4),
                     Expanded(
-                      child: Text(
-                        medication.scheduleDescription ?? '',
-                        style: AppStyles.labelSmall
-                            .copyWith(color: AppColors.textSecondary),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (medication.scheduleDescription?.isNotEmpty == true)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 4.0),
+                              child: Text(
+                                medication.scheduleDescription!,
+                                style: AppStyles.labelSmall
+                                    .copyWith(color: AppColors.textSecondary),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          // Thông tin kho và hạn sử dụng
+                          Text(
+                            'Kho: ${medication.stockQuantity ?? 0} ${medication.unit ?? ''}'.trim(),
+                            style: AppStyles.labelSmall.copyWith(
+                              color: AppColors.textSecondary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'HSD: ${medication.expiryDate != null ? DateFormat('dd/MM/yyyy').format(medication.expiryDate!) : '--'}',
+                            style: AppStyles.labelSmall.copyWith(
+                              color: isExpired ? AppColors.error : AppColors.textSecondary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(width: AppSpacing.sm),
@@ -129,6 +145,29 @@ class MedsCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  bool get isExpired {
+    if (medication.expiryDate == null) return false;
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final expiry = DateTime(medication.expiryDate!.year, medication.expiryDate!.month, medication.expiryDate!.day);
+    return expiry.isBefore(today);
+  }
+
+  Widget _buildStatusTag() {
+    if (isExpired) {
+      return _Tag(
+        label: 'HẾT HẠN',
+        color: AppColors.error.withValues(alpha: 0.1),
+        textColor: AppColors.error,
+      );
+    }
+    return _Tag(
+      label: medication.tag,
+      color: medication.tagColor,
+      textColor: medication.textColor,
     );
   }
 }

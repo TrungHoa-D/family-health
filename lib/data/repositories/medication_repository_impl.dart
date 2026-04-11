@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:family_health/data/models/medication_log_model.dart';
 import 'package:family_health/data/remote/datasources/firebase_firestore_datasource.dart';
 import 'package:family_health/data/remote/datasources/firebase_storage_datasource.dart';
@@ -63,8 +64,15 @@ class MedicationRepositoryImpl implements MedicationRepository {
   @override
   Stream<List<MedicationCategory>> watchCategories() {
     return _dataSource.watchCategories().map(
-          (list) =>
-              list.map((json) => MedicationCategory.fromJson(json)).toList(),
+          (list) => list.map((json) {
+            // Convert Firestore Timestamp -> DateTime
+            final fixedJson = Map<String, dynamic>.from(json);
+            if (fixedJson['created_at'] is Timestamp) {
+              fixedJson['created_at'] =
+                  (fixedJson['created_at'] as Timestamp).toDate().toIso8601String();
+            }
+            return MedicationCategory.fromJson(fixedJson);
+          }).toList(),
         );
   }
 

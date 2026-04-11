@@ -4,10 +4,18 @@ import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
 import 'package:flutter/material.dart';
 
+import '../meds_cubit.dart';
+import 'medication_search_delegate.dart';
+
 class MedsHeader extends StatelessWidget {
-  const MedsHeader({super.key, this.onAddMedication});
+  const MedsHeader({
+    super.key,
+    this.onAddMedication,
+    this.medications = const [],
+  });
 
   final VoidCallback? onAddMedication;
+  final List<MedicationModel> medications;
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +35,15 @@ class MedsHeader extends StatelessWidget {
           ),
           Row(
             children: [
-              _ActionButton(icon: Icons.search, onTap: () {}),
-              const SizedBox(width: AppSpacing.sm),
-              _ActionButton(icon: Icons.filter_list, onTap: () {}),
+              _ActionButton(
+                icon: Icons.search,
+                onTap: () {
+                  showSearch(
+                    context: context,
+                    delegate: MedicationSearchDelegate(medications),
+                  );
+                },
+              ),
               const SizedBox(width: AppSpacing.sm),
               _AddButton(onTap: onAddMedication),
             ],

@@ -245,7 +245,10 @@ class FirebaseFirestoreDataSource {
     return _firestore
         .collection('medication_categories')
         .snapshots()
-        .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
+        .map((snapshot) => snapshot.docs.map((doc) {
+              final data = doc.data();
+              return {...data, 'id': doc.id};
+            }).toList());
   }
 
   Future<void> saveCategory(String id, Map<String, dynamic> data) async {

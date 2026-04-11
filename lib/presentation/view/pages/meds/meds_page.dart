@@ -40,6 +40,7 @@ class MedsPage extends BaseCubitPage<MedsCubit, MedsState> {
               child: Column(
                 children: [
                   MedsHeader(
+                    medications: state.medications,
                     onAddMedication: () {
                       context.router.push(AddMedicationRoute()).then((_) {
                         if (context.mounted) {

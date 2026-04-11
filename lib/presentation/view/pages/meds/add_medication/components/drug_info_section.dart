@@ -16,14 +16,18 @@ class DrugInfoSection extends StatelessWidget {
     this.dosageError,
     required this.onDrugNameChanged,
     required this.onDosageChanged,
+    required this.description,
+    required this.onDescriptionChanged,
     this.isAiFilled = false,
   });
   final String drugName;
   final String dosage;
   final String? drugNameError;
   final String? dosageError;
+  final String description;
   final ValueChanged<String> onDrugNameChanged;
   final ValueChanged<String> onDosageChanged;
+  final ValueChanged<String> onDescriptionChanged;
   final bool isAiFilled;
 
   @override
@@ -95,6 +99,26 @@ class DrugInfoSection extends StatelessWidget {
                 onChanged: onDosageChanged,
                 isAiFilled: isAiFilled,
               ),
+              const SizedBox(height: AppSpacing.md),
+              
+              // Description field
+              Text(
+                'meds.description_label'.tr(),
+                style: AppStyles.labelSmall.copyWith(
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.5,
+                  fontSize: 11,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              _buildInputField(
+                value: description,
+                hintText: 'meds.description_hint'.tr(),
+                onChanged: onDescriptionChanged,
+                isAiFilled: isAiFilled,
+                maxLines: 3,
+              ),
             ],
           ),
         ),
@@ -108,6 +132,7 @@ class DrugInfoSection extends StatelessWidget {
     String? errorText,
     required ValueChanged<String> onChanged,
     bool isAiFilled = false,
+    int maxLines = 1,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,6 +149,7 @@ class DrugInfoSection extends StatelessWidget {
             value: value,
             hintText: hintText,
             onChanged: onChanged,
+            maxLine: maxLines,
             decoration: InputDecoration(
               fillColor:
                   isAiFilled ? AppColors.aiFilledBackground : AppColors.white,

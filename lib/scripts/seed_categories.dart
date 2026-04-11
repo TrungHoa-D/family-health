@@ -2,7 +2,6 @@
 // Chạy: dart run lib/scripts/seed_categories.dart
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 
 Future<void> main() async {
   // Không thể chạy standalone — dùng trong app thay thế

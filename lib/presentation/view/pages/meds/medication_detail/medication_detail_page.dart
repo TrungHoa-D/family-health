@@ -11,9 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'ai_chat_cubit.dart';
-import 'components/ai_assistant_card.dart';
+import 'components/animated_ai_fab.dart';
 import 'components/ai_chat_bottom_sheet.dart';
-import 'components/medication_action_buttons.dart';
 import 'components/medication_hero_section.dart';
 import 'components/medication_info_list.dart';
 import 'medication_detail_cubit.dart';
@@ -58,6 +57,38 @@ class MedicationDetailPage
                   AppStyles.titleLarge.copyWith(color: AppColors.textPrimary),
             ),
             centerTitle: true,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.edit, color: AppColors.primary),
+                onPressed: () {
+                  context.router
+                      .push(AddMedicationRoute(medication: med.toEntity()))
+                      .then((_) {
+                    if (context.mounted) {
+                      context.router.maybePop();
+                    }
+                  });
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.delete_outline, color: AppColors.error),
+                onPressed: () => _showDeleteConfirm(context),
+              ),
+            ],
+          ),
+          floatingActionButton: AnimatedAiFab(
+            medicationName: med.name,
+            onTap: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+                builder: (_) => BlocProvider(
+                  create: (context) => getIt<AIChatCubit>(),
+                  child: AiChatBottomSheet(medicationName: med.name),
+                ),
+              );
+            },
           ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(
@@ -71,49 +102,8 @@ class MedicationDetailPage
                 MedicationHeroSection(medication: med),
                 const SizedBox(height: AppSpacing.xl),
 
-                // Vùng 4 — AI Assistant Card
-                AiAssistantCard(
-                  medicationName: med.name,
-                  onAskNow: () {
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      backgroundColor: Colors.transparent,
-                      builder: (_) => BlocProvider(
-                        create: (context) => getIt<AIChatCubit>(),
-                        child: AiChatBottomSheet(medicationName: med.name),
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(height: AppSpacing.xl),
-
                 // Vùng 3 — Info List
                 MedicationInfoList(medication: med),
-                const SizedBox(height: AppSpacing.xl),
-
-                // Vùng 5 — Action Buttons
-                MedicationActionButtons(
-                  onEdit: () {
-                    context.router
-                        .push(AddMedicationRoute(medication: med.toEntity()))
-                        .then((_) {
-                      if (context.mounted) {
-                        // Pop back to meds list since the medication may have changed
-                        context.router.maybePop();
-                      }
-                    });
-                  },
-                  onCopy: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('meds.copy_coming_soon'.tr()),
-                        backgroundColor: AppColors.primary,
-                      ),
-                    );
-                  },
-                  onDelete: () => _showDeleteConfirm(context),
-                ),
                 const SizedBox(height: AppSpacing.xxl),
               ],
             ),

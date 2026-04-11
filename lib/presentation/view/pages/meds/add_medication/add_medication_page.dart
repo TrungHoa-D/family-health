@@ -16,7 +16,7 @@ import 'package:image_picker/image_picker.dart';
 import 'add_medication_cubit.dart';
 import 'components/ai_scanner_card.dart';
 import 'components/drug_info_section.dart';
-import 'components/schedule_section.dart';
+import 'components/inventory_info_section.dart';
 
 @RoutePage()
 class AddMedicationPage
@@ -232,10 +232,12 @@ class AddMedicationPage
                     DrugInfoSection(
                       drugName: state.drugName,
                       dosage: state.dosage,
+                      description: state.description,
                       drugNameError: state.drugNameError,
                       dosageError: state.dosageError,
                       onDrugNameChanged: cubit.updateDrugName,
                       onDosageChanged: cubit.updateDosage,
+                      onDescriptionChanged: cubit.updateDescription,
                     ),
 
                     const SizedBox(height: AppSpacing.xl),
@@ -303,16 +305,15 @@ class AddMedicationPage
 
                     const SizedBox(height: AppSpacing.xl),
 
-                    // Vùng 4 — Schedule Section
-                    ScheduleSection(
-                      selectedUser: state.selectedUser,
-                      anchorTime: state.anchorTime,
-                      offset: state.offset,
-                      supervisor: state.supervisor,
-                      onUserChanged: cubit.selectUser,
-                      onAnchorTimeChanged: cubit.selectAnchorTime,
-                      onOffsetChanged: cubit.selectOffset,
-                      onSupervisorChanged: cubit.selectSupervisor,
+                    // Vùng 4 — Inventory Info Section
+                    InventoryInfoSection(
+                      expiryDate: state.expiryDate,
+                      stockQuantity: state.stockQuantity,
+                      unit: state.unit,
+                      expiryDateError: state.expiryDateError,
+                      onExpiryDateChanged: cubit.updateExpiryDate,
+                      onStockQuantityChanged: cubit.updateStockQuantity,
+                      onUnitChanged: cubit.updateUnit,
                     ),
 
 
