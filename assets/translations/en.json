@@ -8,7 +8,8 @@
     "saving": "Saving...",
     "cancel": "Cancel",
     "save": "Save",
-    "refresh": "Refresh"
+    "refresh": "Refresh",
+    "edit": "Edit"
   },
   "login": {
     "title": "Log in",

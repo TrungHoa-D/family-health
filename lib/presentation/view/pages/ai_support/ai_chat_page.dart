@@ -37,6 +37,13 @@ class _AIChatSupportViewState extends State<AIChatSupportView> {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
+  @override
+  void initState() {
+    super.initState();
+    // Initial scroll to bottom
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+  }
+
   void _scrollToBottom() {
     if (!mounted) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -62,31 +69,27 @@ class _AIChatSupportViewState extends State<AIChatSupportView> {
           appBar: AppBar(
             backgroundColor: AppColors.background,
             elevation: 0,
+            leadingWidth: 40,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textPrimary),
+              padding: EdgeInsets.zero,
+              icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textPrimary, size: 20),
               onPressed: () => context.router.back(),
             ),
+            titleSpacing: 0,
             title: Row(
               children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(Icons.psychology, color: AppColors.primary, size: 24),
-                ),
-                const SizedBox(width: AppSpacing.md),
+                const Icon(Icons.auto_awesome, color: AppColors.primary, size: 24),
+                const SizedBox(width: AppSpacing.sm),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'ai_chat.title'.tr(),
-                      style: AppStyles.titleMedium.copyWith(fontWeight: FontWeight.bold),
+                      style: AppStyles.titleMedium.copyWith(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                     Text(
                       'ai_chat.subtitle'.tr(),
-                      style: AppStyles.bodySmall.copyWith(color: AppColors.success),
+                      style: AppStyles.bodySmall.copyWith(color: AppColors.success, fontSize: 11),
                     ),
                   ],
                 ),
@@ -96,6 +99,10 @@ class _AIChatSupportViewState extends State<AIChatSupportView> {
           ),
           body: Column(
             children: [
+              const Padding(
+                padding: EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.sm, AppSpacing.md, 0),
+                child: _AIWarningBanner(),
+              ),
               Expanded(
                 child: state.pageStatus == PageStatus.Loading && state.messages.isEmpty
                     ? const Center(child: CircularProgressIndicator())
@@ -161,8 +168,8 @@ class _AIChatSupportViewState extends State<AIChatSupportView> {
       padding: EdgeInsets.only(
         left: AppSpacing.md,
         right: AppSpacing.md,
-        top: AppSpacing.md,
-        bottom: MediaQuery.of(context).padding.bottom + AppSpacing.md,
+        top: AppSpacing.sm,
+        bottom: MediaQuery.of(context).padding.bottom + AppSpacing.sm,
       ),
       decoration: BoxDecoration(
         color: AppColors.background,
@@ -180,21 +187,33 @@ class _AIChatSupportViewState extends State<AIChatSupportView> {
           Row(
             children: [
               Expanded(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                  decoration: BoxDecoration(
-                    color: AppColors.surface,
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  child: TextField(
-                    controller: _controller,
-                    decoration: InputDecoration(
-                      hintText: 'ai_chat.hint'.tr(),
-                      border: InputBorder.none,
+                child: TextField(
+                  controller: _controller,
+                  minLines: 1,
+                  maxLines: 5,
+                  decoration: InputDecoration(
+                    hintText: 'ai_chat.hint'.tr(),
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
                     ),
-                    maxLines: null,
-                    keyboardType: TextInputType.multiline,
+                    fillColor: AppColors.surface,
+                    filled: true,
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(24),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(24),
+                      borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(24),
+                      borderSide: BorderSide.none,
+                    ),
                   ),
+                  keyboardType: TextInputType.multiline,
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
@@ -217,15 +236,6 @@ class _AIChatSupportViewState extends State<AIChatSupportView> {
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          Text(
-            'ai_chat.disclaimer'.tr(),
-            style: AppStyles.bodySmall.copyWith(
-              color: AppColors.textSecondary.withValues(alpha: 0.6),
-              fontSize: 10,
-            ),
-            textAlign: TextAlign.center,
-          ),
         ],
       ),
     );
@@ -247,10 +257,7 @@ class _AiChatBubble extends StatelessWidget {
         padding: const EdgeInsets.all(AppSpacing.md),
         decoration: BoxDecoration(
           color: isUser ? AppColors.primary : AppColors.surface,
-          borderRadius: BorderRadius.circular(16).copyWith(
-            bottomLeft: isUser ? const Radius.circular(16) : const Radius.circular(0),
-            bottomRight: isUser ? const Radius.circular(0) : const Radius.circular(16),
-          ),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.05),
@@ -284,6 +291,38 @@ class _AiChatBubble extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+class _AIWarningBanner extends StatelessWidget {
+  const _AIWarningBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.sm),
+      decoration: BoxDecoration(
+        color: Colors.amber.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.amber.withValues(alpha: 0.2)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(Icons.warning_amber_rounded, color: Colors.amber, size: 16),
+          const SizedBox(width: AppSpacing.xs),
+          Expanded(
+            child: Text(
+              'Lưu ý: Nội dung AI cung cấp chỉ mang tính chất tham khảo. Luôn tham khảo ý kiến bác sĩ trước khi sử dụng thuốc.',
+              style: AppStyles.bodySmall.copyWith(
+                color: Colors.amber[900],
+                fontSize: 10,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

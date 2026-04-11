@@ -10,6 +10,7 @@ import 'package:family_health/presentation/view/pages/dashboard/dashboard_page.d
 import 'package:family_health/presentation/view/pages/events/events_page.dart';
 import 'package:family_health/presentation/view/pages/meds/meds_page.dart';
 import 'package:family_health/presentation/view/pages/settings/settings_page.dart';
+import 'package:family_health/presentation/view/widgets/draggable_ai_fab.dart';
 
 class StandardHomeView extends StatelessWidget {
   const StandardHomeView({
@@ -23,59 +24,76 @@ class StandardHomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: IndexedStack(
-        index: currentIndex,
-        children: [
-          const DashboardPage().wrappedRoute(context),
-          const MedsPage().wrappedRoute(context),
-          const EventsPage().wrappedRoute(context),
-          const ChatPage().wrappedRoute(context),
-          const SettingsPage().wrappedRoute(context),
-        ],
-      ),
-      bottomNavigationBar: AppBottomNavigationBar(
-        currentIndex: currentIndex,
-        onTap: onTabChanged,
-        items: [
-          AppBottomNavigationItem(
-            label: 'bottom_nav.home'.tr(),
-            icon: const Icon(Icons.home_outlined),
-            selectedIcon: const Icon(Icons.home),
-            page: const HomeRoute(),
+    return Stack(
+      children: [
+        Scaffold(
+          body: IndexedStack(
+            index: currentIndex,
+            children: [
+              const DashboardPage().wrappedRoute(context),
+              const MedsPage().wrappedRoute(context),
+              const EventsPage().wrappedRoute(context),
+              const ChatPage().wrappedRoute(context),
+              const SettingsPage().wrappedRoute(context),
+            ],
           ),
-          AppBottomNavigationItem(
-            label: 'bottom_nav.meds'.tr(),
-            icon: const Icon(Icons.medication_outlined),
-            selectedIcon: const Icon(Icons.medication),
-            page: const HomeRoute(),
+          bottomNavigationBar: AppBottomNavigationBar(
+            currentIndex: currentIndex,
+            onTap: onTabChanged,
+            items: [
+              AppBottomNavigationItem(
+                label: 'bottom_nav.home'.tr(),
+                icon: const Icon(Icons.home_outlined),
+                selectedIcon: const Icon(Icons.home),
+                page: const HomeRoute(),
+              ),
+              AppBottomNavigationItem(
+                label: 'bottom_nav.meds'.tr(),
+                icon: const Icon(Icons.medication_outlined),
+                selectedIcon: const Icon(Icons.medication),
+                page: const HomeRoute(),
+              ),
+              AppBottomNavigationItem(
+                label: 'bottom_nav.events'.tr(),
+                icon: const Icon(Icons.calendar_month_outlined),
+                selectedIcon: const Icon(Icons.calendar_month),
+                page: const HomeRoute(),
+              ),
+              AppBottomNavigationItem(
+                label: 'bottom_nav.chat'.tr(),
+                icon: const Icon(Icons.forum_outlined),
+                selectedIcon: const Icon(Icons.forum),
+                page: const HomeRoute(),
+              ),
+              AppBottomNavigationItem(
+                label: 'bottom_nav.settings'.tr(),
+                icon: const Icon(Icons.settings_outlined),
+                selectedIcon: const Icon(Icons.settings),
+                page: const HomeRoute(),
+              ),
+            ],
           ),
-          AppBottomNavigationItem(
-            label: 'bottom_nav.events'.tr(),
-            icon: const Icon(Icons.calendar_month_outlined),
-            selectedIcon: const Icon(Icons.calendar_month),
-            page: const HomeRoute(),
+        ),
+        DraggableFloatingActionButton(
+          onPressed: () => context.router.push(const AIChatSupportRoute()),
+          child: Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primary.withValues(alpha: 0.4),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: const Icon(Icons.auto_awesome, color: Colors.white, size: 28),
           ),
-          AppBottomNavigationItem(
-            label: 'bottom_nav.chat'.tr(),
-            icon: const Icon(Icons.forum_outlined),
-            selectedIcon: const Icon(Icons.forum),
-            page: const HomeRoute(),
-          ),
-          AppBottomNavigationItem(
-            label: 'bottom_nav.settings'.tr(),
-            icon: const Icon(Icons.settings_outlined),
-            selectedIcon: const Icon(Icons.settings),
-            page: const HomeRoute(),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'ai_support_fab',
-        backgroundColor: AppColors.primary,
-        onPressed: () => context.router.push(const AIChatSupportRoute()),
-        child: const Icon(Icons.psychology, color: Colors.white, size: 28),
-      ),
+        ),
+      ],
     );
   }
 }
