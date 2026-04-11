@@ -49,6 +49,75 @@ class AddMedicationPage
     }
   }
 
+  void _showCreateCategoryDialog(BuildContext context) {
+    final nameController = TextEditingController();
+    final descController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppSpacing.radiusCard),
+        ),
+        title: Text(
+          'meds.create_category_title'.tr(),
+          style: AppStyles.titleMedium,
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameController,
+              decoration: InputDecoration(
+                labelText: 'meds.category_name_label'.tr(),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusCard),
+                ),
+              ),
+              textCapitalization: TextCapitalization.characters,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            TextField(
+              controller: descController,
+              decoration: InputDecoration(
+                labelText: 'meds.category_desc_label'.tr(),
+                hintText: 'meds.category_desc_hint'.tr(),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusCard),
+                ),
+              ),
+              maxLines: 2,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(
+              'meds.cancel'.tr(),
+              style:
+                  AppStyles.labelLarge.copyWith(color: AppColors.textSecondary),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              final name = nameController.text.trim();
+              final desc = descController.text.trim();
+              if (name.isNotEmpty && desc.isNotEmpty) {
+                context.read<AddMedicationCubit>().createCategory(name, desc);
+                Navigator.of(dialogContext).pop();
+              }
+            },
+            child: Text(
+              'common.save'.tr(),
+              style: AppStyles.labelLarge.copyWith(color: AppColors.primary),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget builder(BuildContext context) {
     return BlocConsumer<AddMedicationCubit, AddMedicationState>(
@@ -92,6 +161,18 @@ class AddMedicationPage
       },
       builder: (context, state) {
         final cubit = context.read<AddMedicationCubit>();
+
+        // Build category list: from Firestore + fallback defaults
+        final categoryNames = state.categoryNames.isNotEmpty
+            ? state.categoryNames
+            : ['HUYẾT ÁP', 'TIỂU ĐƯỜNG', 'BỔ SUNG', 'KHÁC'];
+
+        // Ensure selected category is in list
+        final displayCategories = [...categoryNames];
+        if (!displayCategories.contains(state.selectedCategory) &&
+            state.selectedCategory.isNotEmpty) {
+          displayCategories.insert(0, state.selectedCategory);
+        }
 
         return Stack(
           children: [
@@ -171,21 +252,8 @@ class AddMedicationPage
                     Wrap(
                       spacing: AppSpacing.sm,
                       runSpacing: AppSpacing.sm,
-                      children: () {
-                        final defaultCategories = [
-                          'HUYẾT ÁP',
-                          'TIỂU ĐƯỜNG',
-                          'BỔ SUNG',
-                          'KHÁC'
-                        ];
-                        final displayCategories = [...defaultCategories];
-                        if (!displayCategories
-                            .contains(state.selectedCategory) &&
-                            state.selectedCategory.isNotEmpty) {
-                          displayCategories.insert(0, state.selectedCategory);
-                        }
-
-                        return displayCategories.map((cat) {
+                      children: [
+                        ...displayCategories.map((cat) {
                           final isSelected = state.selectedCategory == cat;
                           return ChoiceChip(
                             label: Text(cat),
@@ -206,8 +274,31 @@ class AddMedicationPage
                             ),
                             showCheckmark: false,
                           );
-                        }).toList();
-                      }(),
+                        }),
+                        // Nút "Tạo mới"
+                        ActionChip(
+                          label: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.add, size: 16),
+                              const SizedBox(width: 4),
+                              Text('meds.create_category_title'.tr()),
+                            ],
+                          ),
+                          onPressed: () => _showCreateCategoryDialog(context),
+                          backgroundColor: AppColors.primary.withOpacity(0.1),
+                          labelStyle: AppStyles.labelLarge.copyWith(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(AppSpacing.radiusButton),
+                            side: BorderSide(
+                                color: AppColors.primary.withOpacity(0.3)),
+                          ),
+                        ),
+                      ],
                     ),
 
                     const SizedBox(height: AppSpacing.xl),

@@ -8,19 +8,39 @@ class MedsState with _$MedsState implements BaseCubitState {
     @Default(0) int selectedFilterIndex,
     @Default([]) List<MedicationModel> medications,
     @Default([]) List<MedicationRefillModel> refills,
+    @Default([]) List<MedicationCategory> allCategories,
   }) = _MedsState;
 
   const MedsState._();
 
-  static const filterCategories = [
-    null,       // index 0 = All
-    'HUYẾT ÁP', // index 1
-    'TIỂU ĐƯỜNG', // index 2
-    'BỔ SUNG',  // index 3
-  ];
+  /// Top 3 categories có nhiều thuốc nhất
+  List<String> get topCategoryNames {
+    // Đếm số lượng thuốc mỗi category
+    final countMap = <String, int>{};
+    for (final med in medications) {
+      for (final cat in med.categories) {
+        countMap[cat] = (countMap[cat] ?? 0) + 1;
+      }
+    }
+
+    // Sắp xếp theo số lượng giảm dần, lấy top 3
+    final sorted = countMap.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+
+    return sorted.take(3).map((e) => e.key).toList();
+  }
+
+  /// Danh sách filter labels cho filter bar: "Tất cả" + top 3
+  List<String?> get filterCategories {
+    return [
+      null, // index 0 = Tất cả
+      ...topCategoryNames,
+    ];
+  }
 
   List<MedicationModel> get filteredMedications {
     if (selectedFilterIndex == 0) return medications;
+    if (selectedFilterIndex >= filterCategories.length) return medications;
     final category = filterCategories[selectedFilterIndex];
     if (category == null) return medications;
     return medications
@@ -99,3 +119,4 @@ class MedicationRefillModel {
   final String name;
   final int remainingPills;
 }
+

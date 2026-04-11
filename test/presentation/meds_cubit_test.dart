@@ -2,6 +2,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:family_health/domain/entities/medication.dart';
 import 'package:family_health/domain/entities/user_entity.dart';
 import 'package:family_health/domain/usecases/get_user_usecase.dart';
+import 'package:family_health/domain/usecases/watch_categories_usecase.dart';
 import 'package:family_health/domain/usecases/watch_medications_usecase.dart';
 import 'package:family_health/presentation/base/page_status.dart';
 import 'package:family_health/presentation/view/pages/meds/meds_cubit.dart';
@@ -12,6 +13,7 @@ import 'package:mockito/mockito.dart';
 
 @GenerateMocks([
   WatchMedicationsUseCase,
+  WatchCategoriesUseCase,
   GetUserUseCase,
   FirebaseAuth,
   User,
@@ -21,22 +23,26 @@ import 'meds_cubit_test.mocks.dart';
 void main() {
   late MedsCubit cubit;
   late MockWatchMedicationsUseCase mockWatchMedicationsUseCase;
+  late MockWatchCategoriesUseCase mockWatchCategoriesUseCase;
   late MockGetUserUseCase mockGetUserUseCase;
   late MockFirebaseAuth mockFirebaseAuth;
   late MockUser mockUser;
 
   setUp(() {
     mockWatchMedicationsUseCase = MockWatchMedicationsUseCase();
+    mockWatchCategoriesUseCase = MockWatchCategoriesUseCase();
     mockGetUserUseCase = MockGetUserUseCase();
     mockFirebaseAuth = MockFirebaseAuth();
     mockUser = MockUser();
 
     when(mockFirebaseAuth.currentUser).thenReturn(mockUser);
     when(mockUser.uid).thenReturn('test-uid');
+    when(mockWatchCategoriesUseCase.call()).thenAnswer((_) => Stream.value([]));
 
     cubit = MedsCubit(
       mockWatchMedicationsUseCase,
       mockGetUserUseCase,
+      mockWatchCategoriesUseCase,
       firebaseAuth: mockFirebaseAuth,
     );
   });

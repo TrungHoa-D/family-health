@@ -25,9 +25,15 @@ class AddMedicationState with _$AddMedicationState implements BaseCubitState {
     String? saveError,
     @Default(false) bool isScanning,
     String? scanError,
+    @Default([]) List<MedicationCategory> availableCategories,
   }) = _AddMedicationState;
 
   const AddMedicationState._();
+
+  /// Tên các category từ Firestore để hiển thị chip
+  List<String> get categoryNames {
+    return availableCategories.map((c) => c.name).toList();
+  }
 
   @override
   BaseCubitState copyWithState({

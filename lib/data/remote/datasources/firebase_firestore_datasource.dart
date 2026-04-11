@@ -239,4 +239,22 @@ class FirebaseFirestoreDataSource {
       return docs;
     });
   }
+
+  // --- Medication Category Methods ---
+  Stream<List<Map<String, dynamic>>> watchCategories() {
+    return _firestore
+        .collection('medication_categories')
+        .snapshots()
+        .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
+  }
+
+  Future<void> saveCategory(String id, Map<String, dynamic> data) async {
+    final docId = id.isEmpty ? generateId('medication_categories') : id;
+    final finalData = {...data, 'id': docId};
+    await _firestore.collection('medication_categories').doc(docId).set(
+          finalData,
+          SetOptions(merge: true),
+        );
+  }
 }
+

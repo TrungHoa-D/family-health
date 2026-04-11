@@ -2,8 +2,10 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:family_health/domain/entities/user_entity.dart';
 import 'package:family_health/domain/usecases/get_user_usecase.dart';
 import 'package:family_health/domain/usecases/get_ai_response_usecase.dart';
+import 'package:family_health/domain/usecases/save_category_usecase.dart';
 import 'package:family_health/domain/usecases/save_medication_usecase.dart';
 import 'package:family_health/domain/usecases/save_schedule_usecase.dart';
+import 'package:family_health/domain/usecases/watch_categories_usecase.dart';
 import 'package:family_health/presentation/base/page_status.dart';
 import 'package:family_health/presentation/view/pages/meds/add_medication/add_medication_cubit.dart';
 import 'package:family_health/shared/services/notification_service.dart';
@@ -18,6 +20,8 @@ import 'package:mockito/mockito.dart';
   SaveScheduleUseCase,
   GetUserUseCase,
   GetAIResponseUseCase,
+  WatchCategoriesUseCase,
+  SaveCategoryUseCase,
   FirebaseAuth,
   User,
   NotificationService,
@@ -35,6 +39,8 @@ void main() {
   late MockUser mockUser;
   late MockNotificationService mockNotificationService;
   late MockMediaService mockMediaService;
+  late MockWatchCategoriesUseCase mockWatchCategoriesUseCase;
+  late MockSaveCategoryUseCase mockSaveCategoryUseCase;
 
   setUp(() {
     mockSaveMedicationUseCase = MockSaveMedicationUseCase();
@@ -45,9 +51,12 @@ void main() {
     mockUser = MockUser();
     mockNotificationService = MockNotificationService();
     mockMediaService = MockMediaService();
+    mockWatchCategoriesUseCase = MockWatchCategoriesUseCase();
+    mockSaveCategoryUseCase = MockSaveCategoryUseCase();
 
     when(mockFirebaseAuth.currentUser).thenReturn(mockUser);
     when(mockUser.uid).thenReturn('test-uid');
+    when(mockWatchCategoriesUseCase.call()).thenAnswer((_) => Stream.value([]));
 
     cubit = AddMedicationCubit(
       mockSaveMedicationUseCase,
@@ -56,6 +65,8 @@ void main() {
       mockGetAIResponseUseCase,
       mockNotificationService,
       mockMediaService,
+      mockWatchCategoriesUseCase,
+      mockSaveCategoryUseCase,
       firebaseAuth: mockFirebaseAuth,
     );
   });

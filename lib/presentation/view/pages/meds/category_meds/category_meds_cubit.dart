@@ -1,49 +1,46 @@
 import 'dart:async';
 
 import 'package:family_health/domain/entities/medication.dart';
-import 'package:family_health/domain/entities/medication_category.dart';
 import 'package:family_health/domain/usecases/get_user_usecase.dart';
-import 'package:family_health/domain/usecases/watch_categories_usecase.dart';
 import 'package:family_health/domain/usecases/watch_medications_usecase.dart';
 import 'package:family_health/presentation/base/page_status.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit_state.dart';
+import 'package:family_health/presentation/view/pages/meds/meds_cubit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 
-part 'meds_cubit.freezed.dart';
-part 'meds_state.dart';
+part 'category_meds_cubit.freezed.dart';
+part 'category_meds_state.dart';
 
 @injectable
-class MedsCubit extends BaseCubit<MedsState> {
-  MedsCubit(
+class CategoryMedsCubit extends BaseCubit<CategoryMedsState> {
+  CategoryMedsCubit(
     this._watchMedicationsUseCase,
-    this._getUserUseCase,
-    this._watchCategoriesUseCase, {
+    this._getUserUseCase, {
     FirebaseAuth? firebaseAuth,
   })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
-        super(const MedsState());
+        super(const CategoryMedsState());
 
   final WatchMedicationsUseCase _watchMedicationsUseCase;
   final GetUserUseCase _getUserUseCase;
-  final WatchCategoriesUseCase _watchCategoriesUseCase;
   final FirebaseAuth _firebaseAuth;
   StreamSubscription? _medsSubscription;
-  StreamSubscription? _categoriesSubscription;
 
-  Future<void> loadData() async {
-    emit(state.copyWith(pageStatus: PageStatus.Loading));
+  Future<void> loadData(String categoryName) async {
+    emit(state.copyWith(
+      pageStatus: PageStatus.Loading,
+      categoryName: categoryName,
+    ));
 
     final user = _firebaseAuth.currentUser;
     if (user == null) {
-      emit(
-        state.copyWith(
-          pageStatus: PageStatus.Error,
-          pageErrorMessage: 'User not logged in',
-        ),
-      );
+      emit(state.copyWith(
+        pageStatus: PageStatus.Error,
+        pageErrorMessage: 'User not logged in',
+      ));
       return;
     }
 
@@ -51,51 +48,36 @@ class MedsCubit extends BaseCubit<MedsState> {
     final familyId = userEntity?.familyId;
 
     if (familyId == null) {
-      emit(
-        state.copyWith(
-          pageStatus: PageStatus.Error,
-          pageErrorMessage: 'No family group found',
-        ),
-      );
+      emit(state.copyWith(
+        pageStatus: PageStatus.Error,
+        pageErrorMessage: 'No family group found',
+      ));
       return;
     }
 
-    // Watch medications
     _medsSubscription?.cancel();
     _medsSubscription = _watchMedicationsUseCase.call(familyId).listen(
       (meds) {
-        final uiModels = meds.map(_mapToUiModel).toList();
-        emit(
-          state.copyWith(
-            pageStatus: PageStatus.Loaded,
-            medications: uiModels,
-          ),
-        );
+        // Filter by category
+        final filtered = meds
+            .where((m) => m.categories.contains(categoryName))
+            .map(_mapToUiModel)
+            .toList();
+        emit(state.copyWith(
+          pageStatus: PageStatus.Loaded,
+          medications: filtered,
+        ));
       },
       onError: (e) {
-        emit(
-          state.copyWith(
-            pageStatus: PageStatus.Error,
-            pageErrorMessage: e.toString(),
-          ),
-        );
-      },
-    );
-
-    // Watch categories
-    _categoriesSubscription?.cancel();
-    _categoriesSubscription = _watchCategoriesUseCase.call().listen(
-      (categories) {
-        emit(state.copyWith(allCategories: categories));
-      },
-      onError: (_) {
-        // Nếu chưa có collection thì bỏ qua
+        emit(state.copyWith(
+          pageStatus: PageStatus.Error,
+          pageErrorMessage: e.toString(),
+        ));
       },
     );
   }
 
   MedicationModel _mapToUiModel(Medication med) {
-    // Default colors based on categories or tags
     Color tagColor = const Color(0xFFE3F2FD);
     Color textColor = const Color(0xFF1976D2);
 
@@ -125,15 +107,9 @@ class MedsCubit extends BaseCubit<MedsState> {
     );
   }
 
-  void changeFilter(int index) {
-    emit(state.copyWith(selectedFilterIndex: index));
-  }
-
   @override
   Future<void> close() {
     _medsSubscription?.cancel();
-    _categoriesSubscription?.cancel();
     return super.close();
   }
 }
-

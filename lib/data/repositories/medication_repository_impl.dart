@@ -3,6 +3,7 @@ import 'package:family_health/data/models/medication_log_model.dart';
 import 'package:family_health/data/remote/datasources/firebase_firestore_datasource.dart';
 import 'package:family_health/data/remote/datasources/firebase_storage_datasource.dart';
 import 'package:family_health/domain/entities/medication.dart';
+import 'package:family_health/domain/entities/medication_category.dart';
 import 'package:family_health/domain/entities/medication_log.dart';
 import 'package:family_health/domain/entities/patient_schedule.dart';
 import 'package:family_health/domain/repositories/medication_repository_interface.dart';
@@ -60,6 +61,19 @@ class MedicationRepositoryImpl implements MedicationRepository {
   }
 
   @override
+  Stream<List<MedicationCategory>> watchCategories() {
+    return _dataSource.watchCategories().map(
+          (list) =>
+              list.map((json) => MedicationCategory.fromJson(json)).toList(),
+        );
+  }
+
+  @override
+  Future<void> saveCategory(MedicationCategory category) {
+    return _dataSource.saveCategory(category.id, category.toJson());
+  }
+
+  @override
   Future<void> saveMedicationLog(MedicationLog log) {
     return _dataSource.saveMedicationLog(
       log.logId,
@@ -73,3 +87,4 @@ class MedicationRepositoryImpl implements MedicationRepository {
     return list.map((json) => MedicationLogModel.fromJson(json).toEntity()).toList();
   }
 }
+

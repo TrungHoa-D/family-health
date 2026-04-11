@@ -2,11 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:family_health/domain/entities/medication.dart';
+import 'package:family_health/domain/entities/medication_category.dart';
 import 'package:family_health/domain/entities/patient_schedule.dart';
 import 'package:family_health/domain/usecases/get_ai_response_usecase.dart';
 import 'package:family_health/domain/usecases/get_user_usecase.dart';
+import 'package:family_health/domain/usecases/save_category_usecase.dart';
 import 'package:family_health/domain/usecases/save_medication_usecase.dart';
 import 'package:family_health/domain/usecases/save_schedule_usecase.dart';
+import 'package:family_health/domain/usecases/watch_categories_usecase.dart';
 import 'package:family_health/presentation/base/page_status.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit_state.dart';
@@ -15,6 +18,7 @@ import 'package:family_health/shared/services/notification_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'dart:async';
 
 part 'add_medication_cubit.freezed.dart';
 part 'add_medication_state.dart';
@@ -27,7 +31,9 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
     this._getUserUseCase,
     this._getAIResponseUseCase,
     this._notificationService,
-    this._mediaService, {
+    this._mediaService,
+    this._watchCategoriesUseCase,
+    this._saveCategoryUseCase, {
     FirebaseAuth? firebaseAuth,
   })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
         super(const AddMedicationState());
@@ -38,9 +44,12 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
   final GetAIResponseUseCase _getAIResponseUseCase;
   final NotificationService _notificationService;
   final MediaService _mediaService;
+  final WatchCategoriesUseCase _watchCategoriesUseCase;
+  final SaveCategoryUseCase _saveCategoryUseCase;
   final FirebaseAuth _firebaseAuth;
+  StreamSubscription? _categoriesSubscription;
 
-  void init({Medication? medication, PatientSchedule? schedule}) {
+  void init({Medication? medication, PatientSchedule? schedule}) async {
     if (medication != null) {
       emit(
         state.copyWith(
@@ -71,6 +80,21 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
     if (medication == null && schedule == null) {
       emit(state.copyWith(pageStatus: PageStatus.Loaded));
     }
+
+    // Load categories from Firestore
+    _loadCategories();
+  }
+
+  Future<void> _loadCategories() async {
+    _categoriesSubscription?.cancel();
+    _categoriesSubscription = _watchCategoriesUseCase.call().listen(
+      (categories) {
+        emit(state.copyWith(availableCategories: categories));
+      },
+      onError: (_) {
+        // Nếu chưa có collection thì bỏ qua
+      },
+    );
   }
 
   void updateDrugName(String value) {
@@ -111,11 +135,30 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
     emit(state.copyWith(selectedCategory: value));
   }
 
+  /// Tạo category mới với description
+  Future<void> createCategory(String name, String description) async {
+    final category = MedicationCategory(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      name: name.toUpperCase(),
+      description: description,
+      icon: 'category',
+      createdAt: DateTime.now(),
+    );
+
+    await _saveCategoryUseCase.call(params: category);
+    emit(state.copyWith(selectedCategory: category.name));
+  }
+
   Future<void> scanMedicationImage(File image) async {
     emit(state.copyWith(isScanning: true, scanError: null));
 
     try {
-      const prompt = '''
+      // Lấy danh sách category từ server để AI chọn đúng
+      final categoryList = state.categoryNames.isNotEmpty
+          ? state.categoryNames.join(', ')
+          : 'HUYẾT ÁP, TIỂU ĐƯỜNG, BỔ SUNG, KHÁC';
+
+      final prompt = '''
         Bạn là một chuyên gia y tế AI. Hãy phân tích ảnh nhãn thuốc hoặc đơn thuốc được cung cấp.
         Trích xuất thông tin chính xác và trả về DƯỚI DẠNG JSON duy nhất như sau:
         {
@@ -124,7 +167,8 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
           "unit": "Đơn vị (viên, gói, ml)",
           "frequency": "Số lần mỗi ngày (ví dụ: 2 lần/ngày)",
           "instructions": "Chỉ dẫn (ví dụ: Sau khi ăn sáng, Trước khi đi ngủ)",
-          "category": "Loại thuốc (Ví dụ: HUYẾT ÁP, TIỂU ĐƯỜNG, TIM MẠCH, KHÁNG SINH, GIẢM ĐAU... Chọn 1 từ/cụm từ chung nhất, ngắn gọn 1-2 từ, viết HOA)",
+          "category": "Phân loại thuốc — ƯU TIÊN chọn 1 trong danh sách có sẵn: [$categoryList]. Nếu không có loại nào phù hợp, hãy TẠO MỚI tên phân loại (viết HOA, ngắn gọn 1-2 từ).",
+          "category_description": "Mô tả ngắn gọn cho phân loại thuốc (VD: Thuốc điều trị và kiểm soát huyết áp). Chỉ điền nếu category là MỚI, không nằm trong danh sách trên. Nếu category đã có sẵn, để null.",
           "anchor_event": "Sự kiện mốc (chọn 1: Sau ăn sáng, Sau ăn trưa, Sau ăn tối, Trước đi ngủ)",
           "offset_minutes": 30
         }
@@ -142,13 +186,30 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
           response.replaceAll('```json', '').replaceAll('```', '').trim();
       final Map<String, dynamic> data = jsonDecode(cleanJson);
 
+      final scannedCategory = data['category'] as String?;
+      final categoryDesc = data['category_description'] as String?;
+
+      // Nếu AI trả về category mới chưa có trong danh sách → tự động tạo
+      if (scannedCategory != null &&
+          scannedCategory.isNotEmpty &&
+          !state.categoryNames.contains(scannedCategory)) {
+        final newCat = MedicationCategory(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          name: scannedCategory,
+          description: categoryDesc ?? 'Phân loại tự động từ AI',
+          icon: 'category',
+          createdAt: DateTime.now(),
+        );
+        await _saveCategoryUseCase.call(params: newCat);
+      }
+
       emit(
         state.copyWith(
           isScanning: false,
           scannedImage: image,
           drugName: data['name'] ?? state.drugName,
           dosage: data['dosage'] ?? state.dosage,
-          selectedCategory: data['category'] ?? state.selectedCategory,
+          selectedCategory: scannedCategory ?? state.selectedCategory,
           frequency: data['frequency'] ?? state.frequency,
           instructions: data['instructions'] ?? state.instructions,
           anchorTime: data['anchor_event'] ?? state.anchorTime,
@@ -266,5 +327,11 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
         saveError: e.toString(),
       ));
     }
+  }
+
+  @override
+  Future<void> close() {
+    _categoriesSubscription?.cancel();
+    return super.close();
   }
 }

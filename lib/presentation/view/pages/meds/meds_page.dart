@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit_page.dart';
 import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/router/router.dart';
@@ -25,6 +26,12 @@ class MedsPage extends BaseCubitPage<MedsCubit, MedsState> {
   Widget builder(BuildContext context) {
     return BlocBuilder<MedsCubit, MedsState>(
       builder: (context, state) {
+        // Build dynamic filter labels
+        final filterLabels = <String>[
+          'meds.filter_all'.tr(),
+          ...state.topCategoryNames,
+        ];
+
         return Scaffold(
           backgroundColor: AppColors.background,
           body: SafeArea(
@@ -43,8 +50,12 @@ class MedsPage extends BaseCubitPage<MedsCubit, MedsState> {
                   ),
                   MedsFilterBar(
                     selectedIndex: state.selectedFilterIndex,
+                    filterLabels: filterLabels,
                     onSelected: (index) =>
                         context.read<MedsCubit>().changeFilter(index),
+                    onViewMore: () {
+                      context.router.push(CategoryListRoute());
+                    },
                   ),
                   MedsListSection(
                     medications: state.filteredMedications,

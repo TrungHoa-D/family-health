@@ -18,6 +18,8 @@ import 'package:family_health/presentation/view/pages/home/home_page.dart';
 import 'package:family_health/presentation/view/pages/interface_mode_selection/interface_mode_selection_page.dart';
 import 'package:family_health/presentation/view/pages/login/login_page.dart';
 import 'package:family_health/presentation/view/pages/meds/add_medication/add_medication_page.dart';
+import 'package:family_health/presentation/view/pages/meds/category_list/category_list_page.dart';
+import 'package:family_health/presentation/view/pages/meds/category_meds/category_meds_page.dart';
 import 'package:family_health/presentation/view/pages/meds/medication_detail/medication_detail_page.dart';
 import 'package:family_health/presentation/view/pages/meds/meds_cubit.dart';
 import 'package:family_health/presentation/view/pages/meds/meds_page.dart';
@@ -54,6 +56,10 @@ class AppRouter extends RootStackRouter {
             page: AddMedicationRoute.page, guards: [authGuard, familyGuard]),
         AutoRoute(
             page: MedicationDetailRoute.page, guards: [authGuard, familyGuard]),
+        AutoRoute(
+            page: CategoryListRoute.page, guards: [authGuard, familyGuard]),
+        AutoRoute(
+            page: CategoryMedsRoute.page, guards: [authGuard, familyGuard]),
         AutoRoute(
             page: ProfileEditRoute.page, guards: [authGuard, familyGuard]),
         AutoRoute(

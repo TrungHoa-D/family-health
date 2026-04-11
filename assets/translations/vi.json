@@ -182,7 +182,17 @@
     "copy_coming_soon": "Tính năng sao chép sẽ sớm ra mắt!",
     "delete_confirm_title": "Xác nhận xóa",
     "delete_confirm_desc": "Hành động này sẽ xoá hoàn toàn lịch uống và thông tin đơn thuốc khỏi hệ thống. Bạn có chắc chắn muốn tiếp tục?",
-    "cancel": "Hủy"
+    "cancel": "Hủy",
+    "view_more_categories": "Xem thêm",
+    "category_list_title": "Phân loại thuốc",
+    "category_search_hint": "Tìm kiếm phân loại...",
+    "category_med_count": "{} thuốc",
+    "category_meds_title": "Thuốc {}",
+    "create_category_title": "Tạo phân loại mới",
+    "category_name_label": "Tên phân loại",
+    "category_desc_label": "Mô tả",
+    "category_desc_hint": "VD: Thuốc điều trị và kiểm soát huyết áp",
+    "no_meds_in_category": "Chưa có thuốc nào trong phân loại này"
   },
   "events": {
     "title": "Sự kiện y tế",
