@@ -83,6 +83,17 @@ class EditRoutinesPage extends BaseCubitPage<EditRoutinesCubit, EditRoutinesStat
                   icon: const Icon(Icons.arrow_back, color: AppColors.primary),
                   onPressed: () => context.router.maybePop(),
                 ),
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.md, vertical: 8),
+                    child: AppButton.mini(
+                      enable: !state.isSaving,
+                      title: 'common.save'.tr(),
+                      onPressed: () => context.read<EditRoutinesCubit>().save(),
+                    ),
+                  ),
+                ],
               ),
               body: Padding(
                 padding: const EdgeInsets.all(AppSpacing.lg),
@@ -106,11 +117,7 @@ class EditRoutinesPage extends BaseCubitPage<EditRoutinesCubit, EditRoutinesStat
                         },
                       ),
                     ),
-                    AppButton.primary(
-                      title: 'common.save'.tr(),
-                      onPressed: state.isSaving ? () {} : () => context.read<EditRoutinesCubit>().save(),
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
+
                   ],
                 ),
               ),

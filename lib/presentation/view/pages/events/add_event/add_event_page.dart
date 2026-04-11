@@ -67,7 +67,18 @@ class AddEventPage extends BaseCubitPage<AddEventCubit, AddEventState> {
                   state.isEditing ? 'Sửa sự kiện' : 'Thêm sự kiện y tế',
                   style: AppStyles.titleLarge.copyWith(color: AppColors.textPrimary),
                 ),
-                centerTitle: true,
+                centerTitle: false,
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.md, vertical: 8),
+                    child: AppButton.mini(
+                      enable: !state.isSaving,
+                      title: state.isEditing ? 'Lưu thay đổi' : 'Tạo sự kiện',
+                      onPressed: () => cubit.save(),
+                    ),
+                  ),
+                ],
               ),
               body: SingleChildScrollView(
                 padding: const EdgeInsets.all(AppSpacing.lg),
@@ -149,11 +160,6 @@ class AddEventPage extends BaseCubitPage<AddEventCubit, AddEventState> {
                     ),
                     const SizedBox(height: AppSpacing.xl * 2),
 
-                    const SizedBox(height: AppSpacing.xxl),
-                    AppButton.primary(
-                      title: state.isEditing ? 'Lưu thay đổi' : 'Tạo sự kiện',
-                      onPressed: state.isSaving ? () {} : () => cubit.save(),
-                    ),
                   ],
                 ),
               ),

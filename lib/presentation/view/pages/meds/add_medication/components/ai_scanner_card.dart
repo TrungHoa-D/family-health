@@ -1,14 +1,24 @@
+import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:family_health/presentation/resources/app_spacing.dart';
 import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
 import 'package:flutter/material.dart';
 
-/// Card quét đơn thuốc bằng AI — dashed border, icon camera
+/// Card quét đơn thuốc bằng AI — dashed border, icon camera hoặc image được scan
 class AiScannerCard extends StatelessWidget {
-  const AiScannerCard({super.key, this.onTap, this.isScanning = false});
+  const AiScannerCard({
+    super.key,
+    this.onTap,
+    this.isScanning = false,
+    this.scannedImage,
+    this.imageUrl,
+  });
+
   final VoidCallback? onTap;
   final bool isScanning;
+  final File? scannedImage;
+  final String? imageUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +32,7 @@ class AiScannerCard extends StatelessWidget {
         ),
         child: Container(
           width: double.infinity,
+          height: (scannedImage != null || imageUrl != null) ? 180 : null,
           padding: const EdgeInsets.symmetric(
             vertical: AppSpacing.lg,
             horizontal: AppSpacing.md,
@@ -30,53 +41,111 @@ class AiScannerCard extends StatelessWidget {
             color: AppColors.primary.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(AppSpacing.radiusCard),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 80,
-                height: 80,
-                decoration: const BoxDecoration(
-                  color: AppColors.primary,
-                  shape: BoxShape.circle,
-                ),
-                child: isScanning
-                    ? const Padding(
-                        padding: EdgeInsets.all(AppSpacing.lg),
-                        child: CircularProgressIndicator(
-                          color: AppColors.white,
-                          strokeWidth: 3,
-                        ),
-                      )
-                    : const Icon(
-                        Icons.photo_camera,
-                        color: AppColors.white,
-                        size: 40,
-                      ),
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              Text(
-                'meds.scan_ai_title'.tr(),
-                style: AppStyles.titleMedium.copyWith(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                'meds.scan_ai_desc'.tr(),
-                style: AppStyles.bodySmall.copyWith(
-                  color: AppColors.textSecondary,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
+          child: _buildContent(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContent() {
+    if (scannedImage != null) {
+      return Stack(
+        alignment: Alignment.center,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(AppSpacing.radiusCard),
+            child: Image.file(
+              scannedImage!,
+              width: double.infinity,
+              height: double.infinity,
+              fit: BoxFit.cover,
+            ),
           ),
+          if (isScanning) _buildLoadingOverlay(),
+        ],
+      );
+    }
+
+    if (imageUrl != null) {
+      return Stack(
+        alignment: Alignment.center,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(AppSpacing.radiusCard),
+            child: Image.network(
+              imageUrl!,
+              width: double.infinity,
+              height: double.infinity,
+              fit: BoxFit.cover,
+            ),
+          ),
+          if (isScanning) _buildLoadingOverlay(),
+        ],
+      );
+    }
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          width: 60,
+          height: 60,
+          decoration: const BoxDecoration(
+            color: AppColors.primary,
+            shape: BoxShape.circle,
+          ),
+          child: isScanning
+              ? const Padding(
+                  padding: EdgeInsets.all(AppSpacing.md),
+                  child: CircularProgressIndicator(
+                    color: AppColors.white,
+                    strokeWidth: 3,
+                  ),
+                )
+              : const Icon(
+                  Icons.photo_camera,
+                  color: AppColors.white,
+                  size: 32,
+                ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        Text(
+          'meds.scan_ai_title'.tr(),
+          style: AppStyles.titleMedium.copyWith(
+            color: AppColors.primary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Text(
+          'meds.scan_ai_desc'.tr(),
+          style: AppStyles.bodySmall.copyWith(
+            color: AppColors.textSecondary,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLoadingOverlay() {
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      decoration: BoxDecoration(
+        color: AppColors.black.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusCard),
+      ),
+      child: const Center(
+        child: CircularProgressIndicator(
+          color: AppColors.white,
         ),
       ),
     );
   }
 }
+
 
 /// Custom painter cho dashed border
 class _DashedBorderPainter extends CustomPainter {

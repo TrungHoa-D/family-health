@@ -114,18 +114,15 @@ class AddMedicationPage
                 ),
                 centerTitle: false,
                 actions: [
-                  if (!state.isEditing)
-                    Padding(
-                      padding: const EdgeInsets.only(right: AppSpacing.md),
-                      child: Text(
-                        'AI HEALTH',
-                        style: AppStyles.titleSmall.copyWith(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: -0.5,
-                        ),
-                      ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.md, vertical: 8),
+                    child: AppButton.mini(
+                      enable: !state.isSaving,
+                      title: 'meds.save_button'.tr(),
+                      onPressed: () => cubit.save(),
                     ),
+                  ),
                 ],
               ),
               body: SingleChildScrollView(
@@ -142,6 +139,8 @@ class AddMedicationPage
                         padding: const EdgeInsets.only(bottom: AppSpacing.xl),
                         child: AiScannerCard(
                           isScanning: state.isScanning,
+                          scannedImage: state.scannedImage,
+                          imageUrl: state.imageUrl,
                           onTap: state.isScanning
                               ? null
                               : () => _onScanTap(context),
@@ -225,15 +224,7 @@ class AddMedicationPage
                       onSupervisorChanged: cubit.selectSupervisor,
                     ),
 
-                    const SizedBox(height: AppSpacing.xl),
 
-                    // Vùng 5 — Save Button
-                    AppButton.primary(
-                      title: 'meds.save_button'.tr(),
-                      icon: const Icon(Icons.save,
-                          color: AppColors.white, size: 20),
-                      onPressed: state.isSaving ? () {} : () => cubit.save(),
-                    ),
 
                     const SizedBox(height: AppSpacing.md),
 

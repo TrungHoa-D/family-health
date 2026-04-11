@@ -30,9 +30,23 @@ class MedsCard extends StatelessWidget {
               color: Colors.black87,
               borderRadius: BorderRadius.circular(AppSpacing.radiusCard),
             ),
-            child: const Center(
-              child: Icon(Icons.medication, color: Colors.white, size: 32),
-            ),
+            child: medication.imageUrl != null
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(AppSpacing.radiusCard),
+                    child: Image.network(
+                      medication.imageUrl!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          const Center(
+                        child: Icon(Icons.medication,
+                            color: Colors.white, size: 32),
+                      ),
+                    ),
+                  )
+                : const Center(
+                    child:
+                        Icon(Icons.medication, color: Colors.white, size: 32),
+                  ),
           ),
           const SizedBox(width: AppSpacing.md),
           Expanded(

@@ -85,7 +85,18 @@ class ProfileEditPage
                   style:
                       AppStyles.titleLarge.copyWith(color: AppColors.textPrimary),
                 ),
-                centerTitle: true,
+                centerTitle: false,
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.md, vertical: 8),
+                    child: AppButton.mini(
+                      enable: !state.isSaving,
+                      title: 'settings.save_changes'.tr(),
+                      onPressed: () => cubit.updateProfile(currentUser: user),
+                    ),
+                  ),
+                ],
               ),
               body: SafeArea(
                 child: SingleChildScrollView(
@@ -189,12 +200,6 @@ class ProfileEditPage
                             .copyWith(color: AppColors.textSecondary),
                       ),
                       const SizedBox(height: AppSpacing.xxl),
-                      AppButton.primary(
-                        title: 'settings.save_changes'.tr(),
-                        onPressed: state.isSaving
-                            ? () {}
-                            : () => cubit.updateProfile(currentUser: user),
-                      ),
                     ],
                   ),
                 ),
