@@ -97,6 +97,10 @@ class FirebaseFirestoreDataSource {
         .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
   }
 
+  Future<void> deleteMedication(String id) async {
+    await _firestore.collection('medications').doc(id).delete();
+  }
+
   // --- Patient Schedule Methods ---
   Future<void> saveSchedule(String id, Map<String, dynamic> data) async {
     final docId = id.isEmpty ? generateId('patient_schedules') : id;
@@ -121,6 +125,16 @@ class FirebaseFirestoreDataSource {
         .where('family_id', isEqualTo: familyId)
         .snapshots()
         .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
+  }
+
+  Future<void> deleteSchedulesByMedId(String medId) async {
+    final query = await _firestore
+        .collection('patient_schedules')
+        .where('med_id', isEqualTo: medId)
+        .get();
+    for (final doc in query.docs) {
+      await doc.reference.delete();
+    }
   }
 
   // --- Medical Event Methods ---

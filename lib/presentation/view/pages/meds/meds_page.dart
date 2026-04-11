@@ -34,7 +34,11 @@ class MedsPage extends BaseCubitPage<MedsCubit, MedsState> {
                 children: [
                   MedsHeader(
                     onAddMedication: () {
-                      context.router.push(AddMedicationRoute());
+                      context.router.push(AddMedicationRoute()).then((_) {
+                        if (context.mounted) {
+                          context.read<MedsCubit>().loadData();
+                        }
+                      });
                     },
                   ),
                   MedsFilterBar(
@@ -43,11 +47,15 @@ class MedsPage extends BaseCubitPage<MedsCubit, MedsState> {
                         context.read<MedsCubit>().changeFilter(index),
                   ),
                   MedsListSection(
-                    medications: state.medications,
+                    medications: state.filteredMedications,
                     onMedicationTap: (medication) {
                       context.router.push(
                         MedicationDetailRoute(medication: medication),
-                      );
+                      ).then((_) {
+                        if (context.mounted) {
+                          context.read<MedsCubit>().loadData();
+                        }
+                      });
                     },
                   ),
                   const SizedBox(height: 16),

@@ -153,6 +153,7 @@
     "dosage_label": "LIỀU LƯỢNG",
     "drug_name_hint": "VD: Losartan 50mg",
     "dosage_hint": "VD: 1 viên mỗi ngày",
+    "category_label": "PHÂN LOẠI",
     "schedule_section": "Lịch trình & Giám sát",
     "user_label": "Người uống",
     "anchor_time_label": "Mốc thời gian",
@@ -180,6 +181,7 @@
     "action_delete": "Xóa",
     "copy_coming_soon": "Tính năng sao chép sẽ sớm ra mắt!",
     "delete_confirm_title": "Xác nhận xóa",
+    "delete_confirm_desc": "Hành động này sẽ xoá hoàn toàn lịch uống và thông tin đơn thuốc khỏi hệ thống. Bạn có chắc chắn muốn tiếp tục?",
     "cancel": "Hủy"
   },
   "events": {

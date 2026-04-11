@@ -78,7 +78,11 @@ class EventsView extends StatelessWidget {
                       ),
                       // Add FAB equivalent
                       GestureDetector(
-                        onTap: () => context.router.push(AddEventRoute()),
+                        onTap: () => context.router.push(AddEventRoute()).then((_) {
+                          if (context.mounted) {
+                            context.read<EventsCubit>().init();
+                          }
+                        }),
                         child: Container(
                           width: 56,
                           height: 56,
@@ -168,7 +172,11 @@ class EventsView extends StatelessWidget {
                         final event = state.selectedDateEvents[index];
                         return EventCard(
                           event: event,
-                          onTap: () => context.router.push(AddEventRoute(event: event)),
+                          onTap: () => context.router.push(AddEventRoute(event: event)).then((_) {
+                            if (context.mounted) {
+                              context.read<EventsCubit>().init();
+                            }
+                          }),
                         );
                       },
                     ),
@@ -233,7 +241,11 @@ class EventsView extends StatelessWidget {
                         final event = state.upcomingEvents[index];
                         return EventCard(
                           event: event,
-                          onTap: () => context.router.push(AddEventRoute(event: event)),
+                          onTap: () => context.router.push(AddEventRoute(event: event)).then((_) {
+                            if (context.mounted) {
+                              context.read<EventsCubit>().init();
+                            }
+                          }),
                         );
                       },
                     ),

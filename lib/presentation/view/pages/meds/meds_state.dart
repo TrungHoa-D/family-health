@@ -12,6 +12,22 @@ class MedsState with _$MedsState implements BaseCubitState {
 
   const MedsState._();
 
+  static const filterCategories = [
+    null,       // index 0 = All
+    'HUYẾT ÁP', // index 1
+    'TIỂU ĐƯỜNG', // index 2
+    'BỔ SUNG',  // index 3
+  ];
+
+  List<MedicationModel> get filteredMedications {
+    if (selectedFilterIndex == 0) return medications;
+    final category = filterCategories[selectedFilterIndex];
+    if (category == null) return medications;
+    return medications
+        .where((m) => m.categories.contains(category))
+        .toList();
+  }
+
   @override
   BaseCubitState copyWithState({
     PageStatus? pageStatus,

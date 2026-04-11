@@ -10,6 +10,7 @@ abstract class MedicationRepository {
   Stream<List<PatientSchedule>> watchSchedules(String targetUserId);
   Stream<List<PatientSchedule>> watchFamilySchedules(String familyId);
   Future<String> uploadMedicationImage(String medId, File image);
+  Future<void> deleteMedication(String medId);
 
   // Medication Logs
   Future<void> saveMedicationLog(MedicationLog log);

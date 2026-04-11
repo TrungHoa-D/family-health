@@ -52,6 +52,14 @@ class MedicationRepositoryImpl implements MedicationRepository {
   }
 
   @override
+  Future<void> deleteMedication(String medId) async {
+    await Future.wait([
+      _dataSource.deleteMedication(medId),
+      _dataSource.deleteSchedulesByMedId(medId),
+    ]);
+  }
+
+  @override
   Future<void> saveMedicationLog(MedicationLog log) {
     return _dataSource.saveMedicationLog(
       log.logId,

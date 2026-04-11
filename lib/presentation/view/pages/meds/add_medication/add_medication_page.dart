@@ -160,6 +160,59 @@ class AddMedicationPage
 
                     const SizedBox(height: AppSpacing.xl),
 
+                    // Vùng 3.5 — Category Selection
+                    Text(
+                      'meds.category_label'.tr(),
+                      style: AppStyles.labelLarge.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    Wrap(
+                      spacing: AppSpacing.sm,
+                      runSpacing: AppSpacing.sm,
+                      children: () {
+                        final defaultCategories = [
+                          'HUYẾT ÁP',
+                          'TIỂU ĐƯỜNG',
+                          'BỔ SUNG',
+                          'KHÁC'
+                        ];
+                        final displayCategories = [...defaultCategories];
+                        if (!displayCategories
+                            .contains(state.selectedCategory) &&
+                            state.selectedCategory.isNotEmpty) {
+                          displayCategories.insert(0, state.selectedCategory);
+                        }
+
+                        return displayCategories.map((cat) {
+                          final isSelected = state.selectedCategory == cat;
+                          return ChoiceChip(
+                            label: Text(cat),
+                            selected: isSelected,
+                            onSelected: (_) => cubit.selectCategory(cat),
+                            selectedColor: AppColors.primary,
+                            backgroundColor: Colors.grey[200],
+                            labelStyle: AppStyles.labelLarge.copyWith(
+                              color: isSelected ? Colors.white : Colors.black87,
+                              fontWeight: isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.circular(AppSpacing.radiusButton),
+                              side: BorderSide.none,
+                            ),
+                            showCheckmark: false,
+                          );
+                        }).toList();
+                      }(),
+                    ),
+
+                    const SizedBox(height: AppSpacing.xl),
+
                     // Vùng 4 — Schedule Section
                     ScheduleSection(
                       selectedUser: state.selectedUser,

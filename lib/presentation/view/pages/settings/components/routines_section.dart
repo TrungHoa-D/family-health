@@ -6,7 +6,9 @@ import 'package:family_health/presentation/view/pages/settings/settings_state.da
 import 'package:family_health/presentation/view/widgets/app_card.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:family_health/presentation/router/router.dart';
+import 'package:family_health/presentation/view/pages/settings/settings_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RoutinesSection extends StatelessWidget {
   const RoutinesSection({super.key, required this.routines});
@@ -39,7 +41,11 @@ class RoutinesSection extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  context.router.push(EditRoutinesRoute(initialRoutines: routines));
+                  context.router.push(EditRoutinesRoute(initialRoutines: routines)).then((_) {
+                    if (context.mounted) {
+                      context.read<SettingsCubit>().refreshData();
+                    }
+                  });
                 },
                 child: Text(
                   'common.edit'.tr(),

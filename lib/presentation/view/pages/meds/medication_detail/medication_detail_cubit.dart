@@ -1,3 +1,4 @@
+import 'package:family_health/domain/usecases/delete_medication_usecase.dart';
 import 'package:family_health/presentation/base/page_status.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit_state.dart';
@@ -10,7 +11,10 @@ part 'medication_detail_state.dart';
 
 @injectable
 class MedicationDetailCubit extends BaseCubit<MedicationDetailState> {
-  MedicationDetailCubit() : super(const MedicationDetailState());
+  MedicationDetailCubit(this._deleteMedicationUseCase)
+      : super(const MedicationDetailState());
+
+  final DeleteMedicationUseCase _deleteMedicationUseCase;
 
   void loadMedication(MedicationModel medication) {
     emit(
@@ -21,8 +25,14 @@ class MedicationDetailCubit extends BaseCubit<MedicationDetailState> {
     );
   }
 
-  void deleteMedication() {
-    // TODO(TrungHoa): Delete from Firestore
+  Future<void> deleteMedication() async {
+    if (state.medication != null) {
+      try {
+        await _deleteMedicationUseCase(params: state.medication!.id);
+      } catch (e) {
+        // Handle error if needed
+      }
+    }
   }
 
   void copyMedication() {

@@ -10,6 +10,7 @@ import 'package:family_health/domain/usecases/save_schedule_usecase.dart';
 import 'package:family_health/presentation/base/page_status.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit_state.dart';
+import 'package:family_health/shared/services/media_service.dart';
 import 'package:family_health/shared/services/notification_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -25,7 +26,8 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
     this._saveScheduleUseCase,
     this._getUserUseCase,
     this._getAIResponseUseCase,
-    this._notificationService, {
+    this._notificationService,
+    this._mediaService, {
     FirebaseAuth? firebaseAuth,
   })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
         super(const AddMedicationState());
@@ -35,6 +37,7 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
   final GetUserUseCase _getUserUseCase;
   final GetAIResponseUseCase _getAIResponseUseCase;
   final NotificationService _notificationService;
+  final MediaService _mediaService;
   final FirebaseAuth _firebaseAuth;
 
   void init({Medication? medication, PatientSchedule? schedule}) {
@@ -43,8 +46,13 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
         state.copyWith(
           pageStatus: PageStatus.Loaded,
           isEditing: true,
+          editingMedicationId: medication.id,
           drugName: medication.name,
           dosage: medication.dosageStandard ?? '',
+          selectedCategory: medication.categories.isNotEmpty
+              ? medication.categories.first
+              : 'KHÁC',
+          imageUrl: medication.imageUrl,
         ),
       );
     } 
@@ -99,6 +107,10 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
     emit(state.copyWith(supervisor: value));
   }
 
+  void selectCategory(String value) {
+    emit(state.copyWith(selectedCategory: value));
+  }
+
   Future<void> scanMedicationImage(File image) async {
     emit(state.copyWith(isScanning: true, scanError: null));
 
@@ -112,11 +124,12 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
           "unit": "Đơn vị (viên, gói, ml)",
           "frequency": "Số lần mỗi ngày (ví dụ: 2 lần/ngày)",
           "instructions": "Chỉ dẫn (ví dụ: Sau khi ăn sáng, Trước khi đi ngủ)",
+          "category": "Loại thuốc (Ví dụ: HUYẾT ÁP, TIỂU ĐƯỜNG, TIM MẠCH, KHÁNG SINH, GIẢM ĐAU... Chọn 1 từ/cụm từ chung nhất, ngắn gọn 1-2 từ, viết HOA)",
           "anchor_event": "Sự kiện mốc (chọn 1: Sau ăn sáng, Sau ăn trưa, Sau ăn tối, Trước đi ngủ)",
           "offset_minutes": 30
         }
         Nếu không có thông tin mốc thời gian rõ ràng, hãy mặc định anchor_event là "Sau ăn sáng".
-        Nếu không chắc chắn ở trường nào, hãy để giá trị null. 
+        Nếu không chắc chắn ở trường nào, hãy để giá trị null. Trường category nếu không chắc hãy để "KHÁC".
         CHỈ trả về chuỗi JSON, không giải thích thêm.
       ''';
 
@@ -132,8 +145,10 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
       emit(
         state.copyWith(
           isScanning: false,
+          scannedImage: image,
           drugName: data['name'] ?? state.drugName,
           dosage: data['dosage'] ?? state.dosage,
+          selectedCategory: data['category'] ?? state.selectedCategory,
           frequency: data['frequency'] ?? state.frequency,
           instructions: data['instructions'] ?? state.instructions,
           anchorTime: data['anchor_event'] ?? state.anchorTime,
@@ -194,14 +209,25 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
         throw Exception('Family not found');
       }
 
-      final medicationId = state.isEditing 
-          ? state.drugName.toLowerCase().replaceAll(' ', '_') // placeholder logic
+      final medicationId = state.isEditing && state.editingMedicationId != null
+          ? state.editingMedicationId!
           : DateTime.now().millisecondsSinceEpoch.toString();
+
+      String? finalImageUrl = state.imageUrl;
+
+      // Upload hình nếu vừa scan
+      if (state.scannedImage != null) {
+        final ext = state.scannedImage!.path.split('.').last;
+        final path = 'medications/$familyId/${medicationId}_${DateTime.now().millisecondsSinceEpoch}.$ext';
+        finalImageUrl = await _mediaService.uploadImage(path, state.scannedImage!);
+      }
 
       final medication = Medication(
         id: medicationId,
         name: state.drugName,
         dosageStandard: state.dosage,
+        categories: [state.selectedCategory],
+        imageUrl: finalImageUrl,
         familyId: familyId,
         createdAt: DateTime.now(),
       );

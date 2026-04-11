@@ -95,7 +95,14 @@ class MedicationDetailPage
                 // Vùng 5 — Action Buttons
                 MedicationActionButtons(
                   onEdit: () {
-                    context.router.push(AddMedicationRoute(medication: med.toEntity()));
+                    context.router
+                        .push(AddMedicationRoute(medication: med.toEntity()))
+                        .then((_) {
+                      if (context.mounted) {
+                        // Pop back to meds list since the medication may have changed
+                        context.router.maybePop();
+                      }
+                    });
                   },
                   onCopy: () {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -119,7 +126,8 @@ class MedicationDetailPage
   void _showDeleteConfirm(BuildContext context) {
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
+      barrierDismissible: true,
+      builder: (dialogContext) => AlertDialog(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSpacing.radiusCard),
         ),
@@ -133,7 +141,7 @@ class MedicationDetailPage
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.of(dialogContext).pop(),
             child: Text(
               'meds.cancel'.tr(),
               style:
@@ -142,7 +150,7 @@ class MedicationDetailPage
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.of(dialogContext).pop();
               context.read<MedicationDetailCubit>().deleteMedication();
               context.router.maybePop();
             },

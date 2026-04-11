@@ -153,6 +153,7 @@
     "dosage_label": "DOSAGE",
     "drug_name_hint": "e.g. Losartan 50mg",
     "dosage_hint": "e.g. 1 pill daily",
+    "category_label": "CATEGORY",
     "schedule_section": "Schedule & Monitoring",
     "user_label": "Patient",
     "anchor_time_label": "Time Anchor",
@@ -180,6 +181,7 @@
     "action_delete": "Delete",
     "copy_coming_soon": "Copy feature coming soon!",
     "delete_confirm_title": "Confirm Delete",
+    "delete_confirm_desc": "This action will completely remove the medication schedule and information from the system. Are you sure you want to continue?",
     "cancel": "Cancel"
   },
   "events": {
