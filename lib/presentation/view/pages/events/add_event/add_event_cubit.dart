@@ -106,7 +106,7 @@ class AddEventCubit extends BaseCubit<AddEventState> {
 
     await _notificationService.requestPermissions();
 
-    emit(state.copyWith(pageStatus: PageStatus.Loading));
+    emit(state.copyWith(isSaving: true, saveError: null));
 
     try {
       final user = _firebaseAuth.currentUser;
@@ -135,11 +135,11 @@ class AddEventCubit extends BaseCubit<AddEventState> {
       }
       await _notificationService.scheduleEventReminder(event);
 
-      emit(state.copyWith(pageStatus: PageStatus.Loaded, isSaved: true));
+      emit(state.copyWith(isSaving: false, isSaved: true));
     } catch (e) {
       emit(state.copyWith(
-        pageStatus: PageStatus.Error,
-        pageErrorMessage: e.toString(),
+        isSaving: false,
+        saveError: e.toString(),
       ));
     }
   }

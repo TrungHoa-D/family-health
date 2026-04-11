@@ -43,14 +43,19 @@ class AddMedicationPage
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null && context.mounted) {
-      context.read<AddMedicationCubit>().scanMedicationImage(File(pickedFile.path));
+      context
+          .read<AddMedicationCubit>()
+          .scanMedicationImage(File(pickedFile.path));
     }
   }
 
   @override
   Widget builder(BuildContext context) {
     return BlocConsumer<AddMedicationCubit, AddMedicationState>(
-      listenWhen: (prev, curr) => prev.isSaved != curr.isSaved,
+      listenWhen: (prev, curr) =>
+          prev.isSaved != curr.isSaved ||
+          prev.scanError != curr.scanError ||
+          prev.saveError != curr.saveError,
       listener: (context, state) {
         if (state.isSaved) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -64,6 +69,16 @@ class AddMedicationPage
             ),
           );
           context.router.maybePop();
+          return;
+        }
+
+        if (state.saveError != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.saveError!),
+              backgroundColor: AppColors.error,
+            ),
+          );
         }
 
         if (state.scanError != null) {
@@ -78,106 +93,122 @@ class AddMedicationPage
       builder: (context, state) {
         final cubit = context.read<AddMedicationCubit>();
 
-        return Scaffold(
-          backgroundColor: AppColors.background,
-          appBar: AppBar(
-            backgroundColor: AppColors.white,
-            elevation: 0,
-            surfaceTintColor: Colors.transparent,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: AppColors.primary),
-              onPressed: () => context.router.maybePop(),
-            ),
-            title: Text(
-              state.isEditing ? 'meds.edit_title'.tr() : 'meds.add_title'.tr(),
-              style:
-                  AppStyles.titleLarge.copyWith(color: AppColors.textPrimary),
-            ),
-            centerTitle: false,
-            actions: [
-              if (!state.isEditing)
-                Padding(
-                  padding: const EdgeInsets.only(right: AppSpacing.md),
-                  child: Text(
-                    'AI HEALTH',
-                    style: AppStyles.titleSmall.copyWith(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: -0.5,
+        return Stack(
+          children: [
+            Scaffold(
+              backgroundColor: AppColors.background,
+              appBar: AppBar(
+                backgroundColor: AppColors.white,
+                elevation: 0,
+                surfaceTintColor: Colors.transparent,
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back, color: AppColors.primary),
+                  onPressed: () => context.router.maybePop(),
+                ),
+                title: Text(
+                  state.isEditing
+                      ? 'meds.edit_title'.tr()
+                      : 'meds.add_title'.tr(),
+                  style: AppStyles.titleLarge
+                      .copyWith(color: AppColors.textPrimary),
+                ),
+                centerTitle: false,
+                actions: [
+                  if (!state.isEditing)
+                    Padding(
+                      padding: const EdgeInsets.only(right: AppSpacing.md),
+                      child: Text(
+                        'AI HEALTH',
+                        style: AppStyles.titleSmall.copyWith(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
                     ),
-                  ),
+                ],
+              ),
+              body: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.lg,
+                  vertical: AppSpacing.lg,
                 ),
-            ],
-          ),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.lg,
-              vertical: AppSpacing.lg,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Vùng 2 — AI Scanner
-                if (!state.isEditing)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.xl),
-                    child: AiScannerCard(
-                      isScanning: state.isScanning,
-                      onTap: state.isScanning ? null : () => _onScanTap(context),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Vùng 2 — AI Scanner
+                    if (!state.isEditing)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: AppSpacing.xl),
+                        child: AiScannerCard(
+                          isScanning: state.isScanning,
+                          onTap: state.isScanning
+                              ? null
+                              : () => _onScanTap(context),
+                        ),
+                      ),
+
+                    // Vùng 3 — Drug Info Section
+                    DrugInfoSection(
+                      drugName: state.drugName,
+                      dosage: state.dosage,
+                      drugNameError: state.drugNameError,
+                      dosageError: state.dosageError,
+                      onDrugNameChanged: cubit.updateDrugName,
+                      onDosageChanged: cubit.updateDosage,
                     ),
-                  ),
 
-                // Vùng 3 — Drug Info Section
-                DrugInfoSection(
-                  drugName: state.drugName,
-                  dosage: state.dosage,
-                  drugNameError: state.drugNameError,
-                  dosageError: state.dosageError,
-                  onDrugNameChanged: cubit.updateDrugName,
-                  onDosageChanged: cubit.updateDosage,
-                ),
+                    const SizedBox(height: AppSpacing.xl),
 
-                const SizedBox(height: AppSpacing.xl),
-
-                // Vùng 4 — Schedule Section
-                ScheduleSection(
-                  selectedUser: state.selectedUser,
-                  anchorTime: state.anchorTime,
-                  offset: state.offset,
-                  supervisor: state.supervisor,
-                  onUserChanged: cubit.selectUser,
-                  onAnchorTimeChanged: cubit.selectAnchorTime,
-                  onOffsetChanged: cubit.selectOffset,
-                  onSupervisorChanged: cubit.selectSupervisor,
-                ),
-
-                const SizedBox(height: AppSpacing.xl),
-
-                // Vùng 5 — Save Button
-                AppButton.primary(
-                  title: 'meds.save_button'.tr(),
-                  icon:
-                      const Icon(Icons.save, color: AppColors.white, size: 20),
-                  onPressed: cubit.save,
-                ),
-
-                const SizedBox(height: AppSpacing.md),
-
-                // Footer
-                Center(
-                  child: Text(
-                    'meds.ai_support_footer'.tr(),
-                    style: AppStyles.labelSmall.copyWith(
-                      color: AppColors.textSecondary,
-                      fontStyle: FontStyle.italic,
+                    // Vùng 4 — Schedule Section
+                    ScheduleSection(
+                      selectedUser: state.selectedUser,
+                      anchorTime: state.anchorTime,
+                      offset: state.offset,
+                      supervisor: state.supervisor,
+                      onUserChanged: cubit.selectUser,
+                      onAnchorTimeChanged: cubit.selectAnchorTime,
+                      onOffsetChanged: cubit.selectOffset,
+                      onSupervisorChanged: cubit.selectSupervisor,
                     ),
-                  ),
-                ),
 
-                const SizedBox(height: AppSpacing.xxl),
-              ],
+                    const SizedBox(height: AppSpacing.xl),
+
+                    // Vùng 5 — Save Button
+                    AppButton.primary(
+                      title: 'meds.save_button'.tr(),
+                      icon: const Icon(Icons.save,
+                          color: AppColors.white, size: 20),
+                      onPressed: state.isSaving ? () {} : () => cubit.save(),
+                    ),
+
+                    const SizedBox(height: AppSpacing.md),
+
+                    // Footer
+                    Center(
+                      child: Text(
+                        'meds.ai_support_footer'.tr(),
+                        style: AppStyles.labelSmall.copyWith(
+                          color: AppColors.textSecondary,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: AppSpacing.xxl),
+                  ],
+                ),
+              ),
             ),
-          ),
+            // Loading overlay khi đang lưu
+            if (state.isSaving)
+              Container(
+                color: Colors.black26,
+                child: const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+          ],
         );
       },
     );

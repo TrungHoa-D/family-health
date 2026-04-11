@@ -32,7 +32,11 @@ class MedsPage extends BaseCubitPage<MedsCubit, MedsState> {
               padding: const EdgeInsets.only(bottom: 100),
               child: Column(
                 children: [
-                  const MedsHeader(),
+                  MedsHeader(
+                    onAddMedication: () {
+                      context.router.push(AddMedicationRoute());
+                    },
+                  ),
                   MedsFilterBar(
                     selectedIndex: state.selectedFilterIndex,
                     onSelected: (index) =>
@@ -51,14 +55,6 @@ class MedsPage extends BaseCubitPage<MedsCubit, MedsState> {
                 ],
               ),
             ),
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              context.router.push(AddMedicationRoute());
-            },
-            backgroundColor: AppColors.primary,
-            shape: const CircleBorder(),
-            child: const Icon(Icons.add, color: Colors.white, size: 30),
           ),
         );
       },

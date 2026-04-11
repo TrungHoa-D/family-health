@@ -16,7 +16,9 @@ class AddMedicationState with _$AddMedicationState implements BaseCubitState {
     @Default('Trung Hòa') String supervisor,
     String? drugNameError,
     String? dosageError,
+    @Default(false) bool isSaving,
     @Default(false) bool isSaved,
+    String? saveError,
     @Default(false) bool isScanning,
     String? scanError,
   }) = _AddMedicationState;

@@ -180,7 +180,7 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
 
     await _notificationService.requestPermissions();
 
-    emit(state.copyWith(pageStatus: PageStatus.Loading));
+    emit(state.copyWith(isSaving: true, saveError: null));
 
     try {
       final user = _firebaseAuth.currentUser;
@@ -206,16 +206,12 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
         createdAt: DateTime.now(),
       );
 
-      // 1. Save medication to cabinet
-      await _saveMedicationUseCase.call(params: medication);
-
-      // 2. Save schedule for user
       final schedule = PatientSchedule(
         id: 'sch_$medicationId',
         medId: medicationId,
         medName: state.drugName,
         familyId: familyId,
-        targetUserId: user.uid, // Default to current user for simplicity in this form
+        targetUserId: user.uid,
         createdBy: user.uid,
         dosage: state.dosage,
         timing: {
@@ -225,22 +221,24 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
         },
       );
 
-      await _saveScheduleUseCase.call(params: schedule);
+      // Gọi song song save medication + save schedule
+      await Future.wait([
+        _saveMedicationUseCase.call(params: medication),
+        _saveScheduleUseCase.call(params: schedule),
+      ]);
 
-      // 3. Schedule Local Notifications
+      // Schedule notifications sau khi save xong
       if (state.isEditing) {
         await _notificationService.cancelMedicationReminders(schedule.id);
       }
       await _notificationService.scheduleMedicationReminders(schedule);
 
-      emit(state.copyWith(pageStatus: PageStatus.Loaded, isSaved: true));
+      emit(state.copyWith(isSaving: false, isSaved: true));
     } catch (e) {
-      emit(
-        state.copyWith(
-          pageStatus: PageStatus.Error,
-          pageErrorMessage: e.toString(),
-        ),
-      );
+      emit(state.copyWith(
+        isSaving: false,
+        saveError: e.toString(),
+      ));
     }
   }
 }

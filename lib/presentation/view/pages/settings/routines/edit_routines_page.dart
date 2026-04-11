@@ -43,57 +43,86 @@ class EditRoutinesPage extends BaseCubitPage<EditRoutinesCubit, EditRoutinesStat
   @override
   Widget builder(BuildContext context) {
     return BlocConsumer<EditRoutinesCubit, EditRoutinesState>(
-      listenWhen: (prev, curr) => prev.isSaved != curr.isSaved,
+      listenWhen: (prev, curr) =>
+          prev.isSaved != curr.isSaved ||
+          prev.saveError != curr.saveError,
       listener: (context, state) {
         if (state.isSaved) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('settings.save_success'.tr()),
+              backgroundColor: AppColors.success,
+            ),
+          );
           context.router.maybePop(true);
+          return;
+        }
+
+        if (state.saveError != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.saveError!),
+              backgroundColor: AppColors.error,
+            ),
+          );
         }
       },
       builder: (context, state) {
-        return Scaffold(
-          backgroundColor: AppColors.background,
-          appBar: AppBar(
-            backgroundColor: AppColors.white,
-            elevation: 0,
-            title: Text(
-              'settings.edit_routines'.tr(),
-              style: AppStyles.titleLarge.copyWith(color: AppColors.textPrimary),
-            ),
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: AppColors.primary),
-              onPressed: () => context.router.maybePop(),
-            ),
-          ),
-          body: Padding(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  'settings.edit_routines_desc'.tr(),
-                  style: AppStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+        return Stack(
+          children: [
+            Scaffold(
+              backgroundColor: AppColors.background,
+              appBar: AppBar(
+                backgroundColor: AppColors.white,
+                elevation: 0,
+                title: Text(
+                  'settings.edit_routines'.tr(),
+                  style: AppStyles.titleLarge.copyWith(color: AppColors.textPrimary),
                 ),
-                const SizedBox(height: AppSpacing.xl),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: state.routines.length,
-                    itemBuilder: (context, index) {
-                      final routine = state.routines[index];
-                      return _RoutineEditTile(
-                        routine: routine,
-                        onTap: () => _selectTime(context, index, routine.time),
-                      );
-                    },
-                  ),
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back, color: AppColors.primary),
+                  onPressed: () => context.router.maybePop(),
                 ),
-                AppButton.primary(
-                  title: 'common.save'.tr(),
-                  onPressed: () => context.read<EditRoutinesCubit>().save(),
+              ),
+              body: Padding(
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      'settings.edit_routines_desc'.tr(),
+                      style: AppStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+                    ),
+                    const SizedBox(height: AppSpacing.xl),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: state.routines.length,
+                        itemBuilder: (context, index) {
+                          final routine = state.routines[index];
+                          return _RoutineEditTile(
+                            routine: routine,
+                            onTap: () => _selectTime(context, index, routine.time),
+                          );
+                        },
+                      ),
+                    ),
+                    AppButton.primary(
+                      title: 'common.save'.tr(),
+                      onPressed: state.isSaving ? () {} : () => context.read<EditRoutinesCubit>().save(),
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                  ],
                 ),
-                const SizedBox(height: AppSpacing.lg),
-              ],
+              ),
             ),
-          ),
+            if (state.isSaving)
+              Container(
+                color: Colors.black26,
+                child: const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+          ],
         );
       },
     );

@@ -32,6 +32,7 @@ class SetupHealthProfileState
 
     // Validation
     @Default(false) bool isSubmitted,
+    @Default(false) bool isSaving,
   }) = _SetupHealthProfileState;
 
   const SetupHealthProfileState._();

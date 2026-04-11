@@ -6,7 +6,9 @@ class EditRoutinesState with _$EditRoutinesState implements BaseCubitState {
     @Default(PageStatus.Uninitialized) PageStatus pageStatus,
     String? pageErrorMessage,
     @Default([]) List<DailyRoutine> routines,
+    @Default(false) bool isSaving,
     @Default(false) bool isSaved,
+    String? saveError,
   }) = _EditRoutinesState;
 
   const EditRoutinesState._();

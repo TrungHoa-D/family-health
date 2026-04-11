@@ -115,12 +115,12 @@ class SetupHealthProfileCubit extends BaseCubit<SetupHealthProfileState> {
       return false;
     }
 
-    emit(state.copyWith(pageStatus: PageStatus.Loading));
+    emit(state.copyWith(isSaving: true));
 
     try {
       final user = await _checkAuthStatusUseCase(params: null);
       if (user == null) {
-        emit(state.copyWith(pageStatus: PageStatus.Error));
+        emit(state.copyWith(isSaving: false, pageStatus: PageStatus.Error));
         return false;
       }
 
@@ -146,10 +146,10 @@ class SetupHealthProfileCubit extends BaseCubit<SetupHealthProfileState> {
         params: SaveHealthProfileParams(uid: user.uid, profile: profile),
       );
 
-      emit(state.copyWith(pageStatus: PageStatus.Success));
+      emit(state.copyWith(isSaving: false, pageStatus: PageStatus.Success));
       return true;
     } catch (e) {
-      emit(state.copyWith(pageStatus: PageStatus.Error));
+      emit(state.copyWith(isSaving: false, pageStatus: PageStatus.Error));
       return false;
     }
   }

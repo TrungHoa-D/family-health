@@ -29,14 +29,14 @@ class EditRoutinesCubit extends BaseCubit<EditRoutinesState> {
   }
 
   Future<void> save() async {
-    emit(state.copyWith(pageStatus: PageStatus.Loading));
+    emit(state.copyWith(isSaving: true, saveError: null));
     try {
       // In a real app, we would update the health profile or user patterns in Firestore
       // For now, let's pretend we save it successfully
       await Future.delayed(const Duration(seconds: 1));
-      emit(state.copyWith(pageStatus: PageStatus.Loaded, isSaved: true));
+      emit(state.copyWith(isSaving: false, isSaved: true));
     } catch (e) {
-      emit(state.copyWith(pageStatus: PageStatus.Error, pageErrorMessage: e.toString()));
+      emit(state.copyWith(isSaving: false, saveError: e.toString()));
     }
   }
 }

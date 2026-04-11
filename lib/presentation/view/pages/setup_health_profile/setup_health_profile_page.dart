@@ -44,49 +44,65 @@ class SetupHealthProfilePage
           }
         }
       },
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.primary),
-            onPressed: () => context.router.maybePop(),
-          ),
-          title: BlocBuilder<SetupHealthProfileCubit, SetupHealthProfileState>(
-            buildWhen: (prev, curr) => prev.isUpdateMode != curr.isUpdateMode,
-            builder: (context, state) {
-              return Text(
-                state.isUpdateMode
-                    ? 'Cập nhật hồ sơ'
-                    : 'setup_health_profile.title'.tr(),
-                style: AppStyles.titleLarge.copyWith(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.w700,
+      child: BlocBuilder<SetupHealthProfileCubit, SetupHealthProfileState>(
+        buildWhen: (prev, curr) => prev.isSaving != curr.isSaving,
+        builder: (context, state) {
+          return Stack(
+            children: [
+              Scaffold(
+                backgroundColor: AppColors.background,
+                appBar: AppBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  scrolledUnderElevation: 0,
+                  leading: IconButton(
+                    icon: const Icon(Icons.arrow_back, color: AppColors.primary),
+                    onPressed: () => context.router.maybePop(),
+                  ),
+                  title: BlocBuilder<SetupHealthProfileCubit, SetupHealthProfileState>(
+                    buildWhen: (prev, curr) => prev.isUpdateMode != curr.isUpdateMode,
+                    builder: (context, state) {
+                      return Text(
+                        state.isUpdateMode
+                            ? 'Cập nhật hồ sơ'
+                            : 'setup_health_profile.title'.tr(),
+                        style: AppStyles.titleLarge.copyWith(
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      );
+                    },
+                  ),
                 ),
-              );
-            },
-          ),
-        ),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(height: AppSpacing.lg),
-                  _buildHeader(),
-                  const SizedBox(height: AppSpacing.xl),
-                  _buildFormSections(),
-                  const SizedBox(height: AppSpacing.xxl),
-                  _buildFooter(context),
-                ],
+                body: SafeArea(
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const SizedBox(height: AppSpacing.lg),
+                          _buildHeader(),
+                          const SizedBox(height: AppSpacing.xl),
+                          _buildFormSections(),
+                          const SizedBox(height: AppSpacing.xxl),
+                          _buildFooter(context),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
-        ),
+              if (state.isSaving)
+                Container(
+                  color: Colors.black26,
+                  child: const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -924,10 +940,12 @@ class SetupHealthProfilePage
                 width: double.infinity,
                 height: 56, // Large button
                 child: ElevatedButton(
-                  onPressed: () async {
-                    final cubit = context.read<SetupHealthProfileCubit>();
-                    await cubit.submitForm();
-                  },
+                  onPressed: state.isSaving
+                      ? null
+                      : () async {
+                          final cubit = context.read<SetupHealthProfileCubit>();
+                          await cubit.submitForm();
+                        },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     shape: RoundedRectangleBorder(

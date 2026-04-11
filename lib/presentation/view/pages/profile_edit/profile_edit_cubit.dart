@@ -51,16 +51,11 @@ class ProfileEditCubit extends BaseCubit<ProfileEditState> {
     final phoneNumber = state.phoneNumber.trim();
 
     if (name.isEmpty) {
-      emit(
-        state.copyWith(
-          pageStatus: PageStatus.Error,
-          pageErrorMessage: 'settings.name_required',
-        ),
-      );
+      emit(state.copyWith(saveError: 'settings.name_required'));
       return;
     }
 
-    emit(state.copyWith(pageStatus: PageStatus.Uninitialized));
+    emit(state.copyWith(isSaving: true, saveError: null));
 
     try {
       String? avatarUrl = currentUser.avatarUrl;
@@ -82,19 +77,12 @@ class ProfileEditCubit extends BaseCubit<ProfileEditState> {
       );
 
       await _syncUserUseCase(params: updatedUser);
-      emit(
-        state.copyWith(
-          pageStatus: PageStatus.Loaded,
-          isSuccess: true,
-        ),
-      );
+      emit(state.copyWith(isSaving: false, isSuccess: true));
     } catch (e) {
-      emit(
-        state.copyWith(
-          pageStatus: PageStatus.Error,
-          pageErrorMessage: e.toString(),
-        ),
-      );
+      emit(state.copyWith(
+        isSaving: false,
+        saveError: e.toString(),
+      ));
     }
   }
 }

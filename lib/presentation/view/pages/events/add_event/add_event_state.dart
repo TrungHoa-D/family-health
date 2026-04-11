@@ -14,7 +14,9 @@ class AddEventState with _$AddEventState implements BaseCubitState {
     required DateTime startTime,
     required DateTime endTime,
     String? titleError,
+    @Default(false) bool isSaving,
     @Default(false) bool isSaved,
+    String? saveError,
   }) = _AddEventState;
 
   const AddEventState._();

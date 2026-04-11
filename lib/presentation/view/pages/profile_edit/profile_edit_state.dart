@@ -8,7 +8,9 @@ class ProfileEditState with _$ProfileEditState implements BaseCubitState {
     @Default('') String name,
     @Default('') String phoneNumber,
     File? avatarFile,
+    @Default(false) bool isSaving,
     @Default(false) bool isSuccess,
+    String? saveError,
   }) = _ProfileEditState;
 
   const ProfileEditState._();
