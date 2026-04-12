@@ -109,10 +109,10 @@ class _ImagePreviewPopupState extends State<ImagePreviewPopup> {
               setState(() => _currentIndex = index);
             },
             itemBuilder: (context, index) {
-              return Center(
-                child: InteractiveViewer(
-                  minScale: 0.5,
-                  maxScale: 4.0,
+              return InteractiveViewer(
+                minScale: 0.5,
+                maxScale: 4.0,
+                child: Center(
                   child: _buildImage(index),
                 ),
               );

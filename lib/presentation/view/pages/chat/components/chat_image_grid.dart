@@ -3,14 +3,6 @@ import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/view/widgets/image_preview_popup.dart';
 import 'package:flutter/material.dart';
 
-/// Widget hiển thị layout ảnh trong chat bubble.
-///
-/// Layout:
-/// - 1 ảnh: hình chữ nhật bo tròn (tỉ lệ 4:3)
-/// - 2 ảnh: 2 hình vuông nằm ngang
-/// - 3 ảnh: 2 hình vuông hàng trên + 1 hình chữ nhật hàng dưới
-/// - 4 ảnh: grid 2x2 hình vuông
-/// - 5 ảnh: 2 hình vuông hàng trên + 3 hình vuông nhỏ hàng dưới
 class ChatImageGrid extends StatelessWidget {
   const ChatImageGrid({
     super.key,
@@ -64,29 +56,45 @@ class ChatImageGrid extends StatelessWidget {
 
   /// 2 ảnh: 2 hình vuông nằm ngang
   Widget _buildTwoImages(BuildContext context) {
-    final side = (maxWidth - _gap) / 2;
     return Row(
       children: [
-        SizedBox(width: side, height: side, child: _imageWidget(context, 0)),
+        Expanded(
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: _imageWidget(context, 0),
+          ),
+        ),
         const SizedBox(width: _gap),
-        SizedBox(width: side, height: side, child: _imageWidget(context, 1)),
+        Expanded(
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: _imageWidget(context, 1),
+          ),
+        ),
       ],
     );
   }
 
   /// 3 ảnh: 2 hình vuông hàng trên + 1 hình chữ nhật hàng dưới
   Widget _buildThreeImages(BuildContext context) {
-    final side = (maxWidth - _gap) / 2;
     final rectHeight = maxWidth * 0.45;
     return Column(
       children: [
         Row(
           children: [
-            SizedBox(
-                width: side, height: side, child: _imageWidget(context, 0)),
+            Expanded(
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: _imageWidget(context, 0),
+              ),
+            ),
             const SizedBox(width: _gap),
-            SizedBox(
-                width: side, height: side, child: _imageWidget(context, 1)),
+            Expanded(
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: _imageWidget(context, 1),
+              ),
+            ),
           ],
         ),
         const SizedBox(height: _gap),
@@ -101,26 +109,41 @@ class ChatImageGrid extends StatelessWidget {
 
   /// 4 ảnh: grid 2x2
   Widget _buildFourImages(BuildContext context) {
-    final side = (maxWidth - _gap) / 2;
     return Column(
       children: [
         Row(
           children: [
-            SizedBox(
-                width: side, height: side, child: _imageWidget(context, 0)),
+            Expanded(
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: _imageWidget(context, 0),
+              ),
+            ),
             const SizedBox(width: _gap),
-            SizedBox(
-                width: side, height: side, child: _imageWidget(context, 1)),
+            Expanded(
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: _imageWidget(context, 1),
+              ),
+            ),
           ],
         ),
         const SizedBox(height: _gap),
         Row(
           children: [
-            SizedBox(
-                width: side, height: side, child: _imageWidget(context, 2)),
+            Expanded(
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: _imageWidget(context, 2),
+              ),
+            ),
             const SizedBox(width: _gap),
-            SizedBox(
-                width: side, height: side, child: _imageWidget(context, 3)),
+            Expanded(
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: _imageWidget(context, 3),
+              ),
+            ),
           ],
         ),
       ],
@@ -129,40 +152,48 @@ class ChatImageGrid extends StatelessWidget {
 
   /// 5 ảnh: 2 hình vuông hàng trên + 3 hình vuông nhỏ hàng dưới
   Widget _buildFiveImages(BuildContext context) {
-    final topSide = (maxWidth - _gap) / 2;
-    final botSide = (maxWidth - _gap * 2) / 3;
     return Column(
       children: [
         Row(
           children: [
-            SizedBox(
-                width: topSide,
-                height: topSide,
-                child: _imageWidget(context, 0)),
+            Expanded(
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: _imageWidget(context, 0),
+              ),
+            ),
             const SizedBox(width: _gap),
-            SizedBox(
-                width: topSide,
-                height: topSide,
-                child: _imageWidget(context, 1)),
+            Expanded(
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: _imageWidget(context, 1),
+              ),
+            ),
           ],
         ),
         const SizedBox(height: _gap),
         Row(
           children: [
-            SizedBox(
-                width: botSide,
-                height: botSide,
-                child: _imageWidget(context, 2)),
+            Expanded(
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: _imageWidget(context, 2),
+              ),
+            ),
             const SizedBox(width: _gap),
-            SizedBox(
-                width: botSide,
-                height: botSide,
-                child: _imageWidget(context, 3)),
+            Expanded(
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: _imageWidget(context, 3),
+              ),
+            ),
             const SizedBox(width: _gap),
-            SizedBox(
-                width: botSide,
-                height: botSide,
-                child: _imageWidget(context, 4)),
+            Expanded(
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: _imageWidget(context, 4),
+              ),
+            ),
           ],
         ),
       ],

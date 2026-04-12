@@ -174,27 +174,27 @@ class _ChatInputFieldState extends State<ChatInputField> {
                 padding: EdgeInsets.zero,
               ),
 
-              // Send button — only visible when can send
+              // Send button — only visible when can send or is sending
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 200),
                 transitionBuilder: (child, animation) => ScaleTransition(
                   scale: animation,
                   child: child,
                 ),
-                child: _canSend
-                    ? widget.isSending
-                        ? const Padding(
-                            padding: EdgeInsets.all(8),
-                            child: SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: AppColors.primary,
-                              ),
-                            ),
-                          )
-                        : IconButton(
+                child: widget.isSending
+                    ? const Padding(
+                        padding: EdgeInsets.all(8),
+                        child: SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      )
+                    : _canSend
+                        ? IconButton(
                             key: const ValueKey('send_btn'),
                             icon: const Icon(
                               Icons.send_rounded,
@@ -207,10 +207,10 @@ class _ChatInputFieldState extends State<ChatInputField> {
                             ),
                             padding: EdgeInsets.zero,
                           )
-                    : const SizedBox(
-                        key: ValueKey('empty_send'),
-                        width: 8,
-                      ),
+                        : const SizedBox(
+                            key: ValueKey('empty_send'),
+                            width: 8,
+                          ),
               ),
             ],
           ),

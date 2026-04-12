@@ -14,16 +14,19 @@ class FirebaseStorageDataSource {
     return await uploadTask.ref.getDownloadURL();
   }
 
-  /// Uploads multiple files in parallel and returns their download URLs.
+  /// Uploads multiple files sequentially to prevent native crash on some platforms.
   Future<List<String>> uploadFiles(String basePath, List<File> files) async {
-    final futures = files.asMap().entries.map((entry) {
-      final index = entry.key;
-      final file = entry.value;
-      final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final path = '$basePath/${timestamp}_$index.jpg';
-      return uploadFile(path, file);
-    });
-    return Future.wait(futures);
+    final List<String> downloadUrls = [];
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    
+    for (int i = 0; i < files.length; i++) {
+      final file = files[i];
+      final path = '$basePath/${timestamp}_$i.jpg';
+      final url = await uploadFile(path, file);
+      downloadUrls.add(url);
+    }
+    
+    return downloadUrls;
   }
 
   /// Deletes a file at a specific path.

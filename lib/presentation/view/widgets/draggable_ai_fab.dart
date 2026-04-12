@@ -9,7 +9,7 @@ class DraggableFloatingActionButton extends StatefulWidget {
     super.key,
     required this.child,
     required this.onPressed,
-    this.initialOffset = const Offset(20, 20),
+    this.initialOffset = const Offset(16, 92),
   });
 
   final Widget child;
