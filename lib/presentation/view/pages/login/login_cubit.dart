@@ -105,19 +105,28 @@ class LoginCubit extends BaseCubit<LoginState> {
       }
 
       final existingUser = await _getUserUseCase.call(params: user.uid);
-      final isFirstTime = existingUser == null;
-
-      await _syncUserUseCase.call(params: user);
-
-      emit(state.copyWith(isSigningIn: false, user: user));
-
-      if (context.mounted) {
-        if (isFirstTime) {
+      
+      if (existingUser == null) {
+        // Người dùng mới: Đồng bộ dữ liệu cơ bản và bắt đầu onboarding
+        await _syncUserUseCase.call(params: user);
+        emit(state.copyWith(isSigningIn: false, user: user));
+        if (context.mounted) {
           context.router.replaceAll([const InterfaceModeSelectionRoute()]);
-        } else {
-          context.router.replaceAll([const HomeRoute()]);
+        }
+      } else {
+        // Người dùng cũ: Sử dụng dữ liệu từ Firestore, tránh ghi đè dữ liệu quan trọng
+        emit(state.copyWith(isSigningIn: false, user: existingUser));
+        if (context.mounted) {
+          // Kiểm tra xem đã cài đặt chế độ giao diện chưa
+          if (existingUser.uiPreference == null) {
+            context.router.replaceAll([const InterfaceModeSelectionRoute()]);
+          } else {
+            // HomeRoute sẽ có FamilyGuard để kiểm tra tiếp family_id
+            context.router.replaceAll([const HomeRoute()]);
+          }
         }
       }
+
     } catch (e) {
       logger.e('Email Form failed: $e');
       emit(state.copyWith(isSigningIn: false));
@@ -137,17 +146,23 @@ class LoginCubit extends BaseCubit<LoginState> {
       final UserEntity user = await _googleSignInUseCase.call(params: null);
 
       final existingUser = await _getUserUseCase.call(params: user.uid);
-      final isFirstTime = existingUser == null;
-
-      await _syncUserUseCase.call(params: user);
-
-      emit(state.copyWith(isSigningIn: false, user: user));
-
-      if (context.mounted) {
-        if (isFirstTime) {
+      
+      if (existingUser == null) {
+        // Người dùng mới: Đồng bộ dữ liệu cơ bản và bắt đầu onboarding
+        await _syncUserUseCase.call(params: user);
+        emit(state.copyWith(isSigningIn: false, user: user));
+        if (context.mounted) {
           context.router.replaceAll([const InterfaceModeSelectionRoute()]);
-        } else {
-          context.router.replaceAll([const HomeRoute()]);
+        }
+      } else {
+        // Người dùng cũ: Sử dụng dữ liệu từ Firestore, tránh ghi đè
+        emit(state.copyWith(isSigningIn: false, user: existingUser));
+        if (context.mounted) {
+          if (existingUser.uiPreference == null) {
+            context.router.replaceAll([const InterfaceModeSelectionRoute()]);
+          } else {
+            context.router.replaceAll([const HomeRoute()]);
+          }
         }
       }
     } catch (e) {

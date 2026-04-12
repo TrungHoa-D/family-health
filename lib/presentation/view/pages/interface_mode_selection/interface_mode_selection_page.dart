@@ -222,7 +222,7 @@ class InterfaceModeSelectionPage extends BaseCubitPage<
           final cubit = context.read<InterfaceModeSelectionCubit>();
           final success = await cubit.submitForm();
           if (success) {
-            context.router.replaceAll([const FamilySetupRoute()]);
+            context.router.replaceAll([const HomeRoute()]);
           }
         },
         icon: const Icon(Icons.arrow_forward, color: AppColors.white),

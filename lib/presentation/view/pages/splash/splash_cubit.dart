@@ -53,7 +53,14 @@ class SplashCubit extends BaseCubit<SplashState> {
 
     if (context.mounted) {
       if (user != null) {
-        context.router.replaceAll([const HomeRoute()]);
+        // Lấy dữ liệu user đã fetch ở trên
+        final userData = await _getUserUseCase.call(params: user.uid);
+        
+        if (userData == null || userData.uiPreference == null) {
+          context.router.replaceAll([const InterfaceModeSelectionRoute()]);
+        } else {
+          context.router.replaceAll([const HomeRoute()]);
+        }
       } else {
         context.router.replaceAll([const LoginRoute()]);
       }
