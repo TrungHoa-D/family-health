@@ -1,9 +1,13 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:family_health/domain/entities/chat_message.dart';
 import 'package:family_health/domain/usecases/fetch_family_usecase.dart';
 import 'package:family_health/domain/usecases/get_user_usecase.dart';
 import 'package:family_health/domain/usecases/send_message_usecase.dart';
+import 'package:family_health/domain/usecases/upload_chat_images_usecase.dart';
+import 'package:family_health/domain/usecases/delete_message_usecase.dart';
+import 'package:family_health/domain/usecases/edit_message_usecase.dart';
 import 'package:family_health/domain/usecases/watch_chat_messages_usecase.dart';
 import 'package:family_health/presentation/base/page_status.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit.dart';
@@ -17,7 +21,10 @@ class ChatCubit extends BaseCubit<ChatState> {
     this._watchChatMessagesUseCase,
     this._sendMessageUseCase,
     this._getUserUseCase,
-    this._fetchFamilyUseCase, {
+    this._fetchFamilyUseCase,
+    this._uploadChatImagesUseCase,
+    this._deleteMessageUseCase,
+    this._editMessageUseCase, {
     FirebaseAuth? firebaseAuth,
   })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
         super(const ChatState()) {
@@ -28,6 +35,9 @@ class ChatCubit extends BaseCubit<ChatState> {
   final SendMessageUseCase _sendMessageUseCase;
   final GetUserUseCase _getUserUseCase;
   final FetchFamilyUseCase _fetchFamilyUseCase;
+  final UploadChatImagesUseCase _uploadChatImagesUseCase;
+  final DeleteMessageUseCase _deleteMessageUseCase;
+  final EditMessageUseCase _editMessageUseCase;
   final FirebaseAuth _firebaseAuth;
 
   StreamSubscription? _messagesSubscription;
@@ -85,14 +95,31 @@ class ChatCubit extends BaseCubit<ChatState> {
     }
   }
 
-  Future<void> sendMessage(String text) async {
-    if (text.trim().isEmpty || state.currentFamilyId == null || state.currentUserId == null) {
-      return;
-    }
+  Future<void> sendMessage(String text, {List<File> images = const []}) async {
+    final hasText = text.trim().isNotEmpty;
+    final hasImages = images.isNotEmpty;
+
+    if (!hasText && !hasImages) return;
+    if (state.currentFamilyId == null || state.currentUserId == null) return;
 
     try {
+      List<String> imageUrls = [];
+
+      // Upload images if any
+      if (hasImages) {
+        emit(state.copyWith(isSendingImage: true));
+        imageUrls = await _uploadChatImagesUseCase.call(
+          params: UploadChatImagesParams(
+            familyId: state.currentFamilyId!,
+            files: images,
+          ),
+        );
+      }
+
       final userEntity = await _getUserUseCase.call(params: state.currentUserId!);
-      
+
+      final messageType = hasImages ? 'IMAGE' : 'TEXT';
+
       final message = ChatMessage(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         familyId: state.currentFamilyId!,
@@ -100,13 +127,40 @@ class ChatCubit extends BaseCubit<ChatState> {
         senderName: userEntity?.displayName ?? 'Thành viên',
         senderAvatarUrl: userEntity?.avatarUrl,
         content: text,
-        messageType: 'TEXT',
+        messageType: messageType,
         timestamp: DateTime.now(),
+        imageUrls: imageUrls,
       );
 
       await _sendMessageUseCase.call(params: message);
     } catch (e) {
       // Handle error (maybe show snackbar)
+    } finally {
+      if (!isClosed) {
+        emit(state.copyWith(isSendingImage: false));
+      }
+    }
+  }
+
+  Future<void> deleteMessage(String id) async {
+    try {
+      await _deleteMessageUseCase.call(params: id);
+    } catch (e) {
+      emit(state.copyWith(
+        pageErrorMessage: 'Lỗi khi xóa tin nhắn: $e',
+      ));
+    }
+  }
+
+  Future<void> editMessage(String id, String newContent) async {
+    try {
+      await _editMessageUseCase.call(
+        params: EditMessageParams(id: id, newContent: newContent),
+      );
+    } catch (e) {
+      emit(state.copyWith(
+        pageErrorMessage: 'Lỗi khi sửa tin nhắn: $e',
+      ));
     }
   }
 

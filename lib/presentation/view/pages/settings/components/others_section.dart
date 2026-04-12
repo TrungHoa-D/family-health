@@ -67,7 +67,7 @@ class OthersSection extends StatelessWidget {
         const SizedBox(height: AppSpacing.xl),
         Center(
           child: Text(
-            'settings.version'.tr(args: ['2.4.0']),
+            'settings.version'.tr(args: ['1.0.0']),
             style: AppStyles.labelSmall.copyWith(
               color: AppColors.textSecondary,
               fontWeight: FontWeight.bold,
@@ -75,7 +75,7 @@ class OthersSection extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 120), // Bottom padding for navigation bar
+        const SizedBox(height: AppSpacing.xl),
       ],
     );
   }

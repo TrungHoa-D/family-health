@@ -75,69 +75,6 @@ class FamilyInviteSection extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
-        AppCard(
-          margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Column(
-            children: [
-              Text(
-                'settings.invite_code'.tr(),
-                style: AppStyles.labelSmall.copyWith(
-                  color: AppColors.textSecondary,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.5,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Text(
-                      inviteCode,
-                      style: AppStyles.headlineMedium.copyWith(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 4.0,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  const SizedBox(width: AppSpacing.sm),
-                  Container(
-                    decoration: const BoxDecoration(
-                      color: AppColors.primaryLight,
-                      shape: BoxShape.circle,
-                    ),
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.content_copy,
-                        color: AppColors.primary,
-                        size: 20,
-                      ),
-                      onPressed: () {
-                        Clipboard.setData(ClipboardData(text: inviteCode));
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('settings.code_copied'.tr())),
-                        );
-                      },
-                      constraints: const BoxConstraints(),
-                      padding: const EdgeInsets.all(8),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
-              Text(
-                'settings.invite_desc'.tr(),
-                textAlign: TextAlign.center,
-                style: AppStyles.bodySmall
-                    .copyWith(color: AppColors.textSecondary),
-              ),
-            ],
-          ),
-        ),
       ],
     );
   }

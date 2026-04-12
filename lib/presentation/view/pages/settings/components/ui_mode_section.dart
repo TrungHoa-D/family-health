@@ -28,12 +28,18 @@ class UIModeSection extends StatelessWidget {
             style: AppStyles.titleMedium.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: AppSpacing.md),
-          _ModeCard(
-            title: 'Tối giản'.tr(),
-            subtitle: 'Nút bấm lớn, dễ dùng'.tr(),
-            icon: Icons.accessibility_new,
-            isSelected: mode == 'simplified',
-            onTap: () => onModeChanged('simplified'),
+          Row(
+            children: [
+              Expanded(
+                child: _ModeCard(
+                  title: 'Tối giản'.tr(),
+                  subtitle: 'Nút bấm lớn, dễ dùng'.tr(),
+                  icon: Icons.accessibility_new,
+                  isSelected: mode == 'simplified',
+                  onTap: () => onModeChanged('simplified'),
+                ),
+              ),
+            ],
           ),
         ],
       ),

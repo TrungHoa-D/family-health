@@ -175,6 +175,14 @@ class FirebaseFirestoreDataSource {
         .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
   }
 
+  Future<void> deleteChatMessage(String id) async {
+    await _firestore.collection('chats').doc(id).delete();
+  }
+
+  Future<void> updateChatMessage(String id, String newContent) async {
+    await _firestore.collection('chats').doc(id).update({'content': newContent});
+  }
+
   // --- Medication Log Methods ---
   Future<void> saveMedicationLog(String id, Map<String, dynamic> data) async {
     final docId = id.isEmpty ? generateId('medication_logs') : id;

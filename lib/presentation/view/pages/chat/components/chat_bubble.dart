@@ -3,7 +3,19 @@ import 'package:family_health/domain/entities/chat_message.dart';
 import 'package:family_health/presentation/resources/app_spacing.dart';
 import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
+import 'package:family_health/presentation/view/pages/chat/chat_cubit.dart';
+import 'package:family_health/presentation/view/pages/chat/components/chat_image_grid.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+String _formatTimestamp(DateTime timestamp) {
+  final now = DateTime.now();
+  final isOlderThan1Day = now.difference(timestamp).inDays >= 1 || now.day != timestamp.day;
+  if (isOlderThan1Day) {
+    return DateFormat('dd/MM/yyyy hh:mm a').format(timestamp);
+  }
+  return DateFormat('hh:mm a').format(timestamp);
+}
 
 class ChatBubble extends StatelessWidget {
   const ChatBubble({super.key, required this.message, required this.isMe});
@@ -105,10 +117,15 @@ class _MyBubble extends StatelessWidget {
   const _MyBubble({required this.message});
   final ChatMessage message;
 
+  bool get _hasImages => message.imageUrls.isNotEmpty;
+  bool get _hasText => message.content.trim().isNotEmpty;
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(
+    return GestureDetector(
+      onLongPress: () => _showOptions(context),
+      child: Padding(
+        padding: const EdgeInsets.only(
         left: 48,
         right: AppSpacing.md,
         top: AppSpacing.xs,
@@ -118,10 +135,6 @@ class _MyBubble extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.lg,
-              vertical: AppSpacing.md,
-            ),
             decoration: BoxDecoration(
               color: AppColors.primary,
               borderRadius: BorderRadius.circular(16)
@@ -134,9 +147,34 @@ class _MyBubble extends StatelessWidget {
                 ),
               ],
             ),
-            child: Text(
-              message.content,
-              style: AppStyles.bodyMedium.copyWith(color: AppColors.white),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                // Images
+                if (_hasImages)
+                  Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: ChatImageGrid(imageUrls: message.imageUrls),
+                    ),
+                  ),
+
+                // Text content
+                if (_hasText)
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: 12,
+                      right: 12,
+                      bottom: 8,
+                      top: _hasImages ? 4 : 8,
+                    ),
+                    child: Text(
+                      message.content,
+                      style: AppStyles.bodyMedium.copyWith(color: AppColors.white),
+                    ),
+                  ),
+              ],
             ),
           ),
           const SizedBox(height: 4),
@@ -144,7 +182,7 @@ class _MyBubble extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                DateFormat('hh:mm a').format(message.timestamp),
+                _formatTimestamp(message.timestamp),
                 style: AppStyles.bodySmall
                     .copyWith(color: AppColors.textSecondary, fontSize: 10),
               ),
@@ -158,6 +196,74 @@ class _MyBubble extends StatelessWidget {
           ),
         ],
       ),
+      ),
+    );
+  }
+
+  void _showOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (sheetContext) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (_hasText)
+              ListTile(
+                leading: const Icon(Icons.edit_outlined, color: AppColors.textPrimary),
+                title: Text('Chỉnh sửa tin nhắn'.tr()),
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  _showEditDialog(context);
+                },
+              ),
+            ListTile(
+              leading: const Icon(Icons.delete_outline, color: AppColors.error),
+              title: Text('Xóa tin nhắn'.tr(), style: const TextStyle(color: AppColors.error)),
+              onTap: () {
+                Navigator.pop(sheetContext);
+                context.read<ChatCubit>().deleteMessage(message.id);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showEditDialog(BuildContext context) {
+    final controller = TextEditingController(text: message.content);
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text('Chỉnh sửa tin nhắn'.tr()),
+        content: TextField(
+          controller: controller,
+          maxLines: null,
+          decoration: InputDecoration(
+            hintText: 'Nhập nội dung'.tr(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text('Hủy'.tr()),
+          ),
+          FilledButton(
+            onPressed: () {
+              final newContent = controller.text.trim();
+              if (newContent.isNotEmpty) {
+                context.read<ChatCubit>().editMessage(message.id, newContent);
+                Navigator.pop(dialogContext);
+              }
+            },
+            child: Text('Lưu'.tr()),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -165,6 +271,9 @@ class _MyBubble extends StatelessWidget {
 class _OtherMemberBubble extends StatelessWidget {
   const _OtherMemberBubble({required this.message});
   final ChatMessage message;
+
+  bool get _hasImages => message.imageUrls.isNotEmpty;
+  bool get _hasText => message.content.trim().isNotEmpty;
 
   @override
   Widget build(BuildContext context) {
@@ -213,10 +322,6 @@ class _OtherMemberBubble extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.lg,
-                    vertical: AppSpacing.md,
-                  ),
                   decoration: BoxDecoration(
                     color: AppColors.surface,
                     borderRadius: BorderRadius.circular(16)
@@ -229,17 +334,41 @@ class _OtherMemberBubble extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: Text(
-                    message.content,
-                    style: AppStyles.bodyMedium
-                        .copyWith(color: AppColors.textPrimary),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Images
+                      if (_hasImages)
+                        Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: ChatImageGrid(imageUrls: message.imageUrls),
+                          ),
+                        ),
+
+                      // Text content
+                      if (_hasText)
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: 12,
+                            right: 12,
+                            bottom: 8,
+                            top: _hasImages ? 4 : 8,
+                          ),
+                          child: Text(
+                            message.content,
+                            style: AppStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 4),
                 Padding(
                   padding: const EdgeInsets.only(left: 4),
                   child: Text(
-                    DateFormat('hh:mm a').format(message.timestamp),
+                    _formatTimestamp(message.timestamp),
                     style: AppStyles.bodySmall
                         .copyWith(color: AppColors.textSecondary, fontSize: 10),
                   ),

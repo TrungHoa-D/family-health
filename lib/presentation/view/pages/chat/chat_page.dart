@@ -80,8 +80,9 @@ class _ChatViewState extends State<ChatView> {
                       right: 0,
                       bottom: 0,
                       child: ChatInputField(
-                        onSend: (text) =>
-                            context.read<ChatCubit>().sendMessage(text),
+                        onSend: (text, images) =>
+                            context.read<ChatCubit>().sendMessage(text, images: images),
+                        isSending: state.isSendingImage,
                       ),
                     ),
                   ],

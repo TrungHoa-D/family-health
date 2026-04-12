@@ -21,6 +21,7 @@ class ChatMessage with _$ChatMessage {
     @JsonKey(name: 'message_type') required String messageType,
     required DateTime timestamp,
     @Default([]) List<String> readBy,
+    @JsonKey(name: 'images_url') @Default([]) List<String> imageUrls,
   }) = _ChatMessage;
 
   factory ChatMessage.fromJson(Map<String, dynamic> json) =>

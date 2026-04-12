@@ -16,6 +16,7 @@ class ChatState with _$ChatState implements BaseCubitState {
     String? currentFamilyId,
     String? currentUserId,
     String? familyGroupName,
+    @Default(false) bool isSendingImage,
   }) = _ChatState;
 
   const ChatState._();
