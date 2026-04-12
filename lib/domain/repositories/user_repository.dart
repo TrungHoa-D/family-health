@@ -8,4 +8,6 @@ abstract class UserRepository {
   Future<void> updateUIPreference(String uid, String preference);
   Future<String> uploadAvatar(String uid, File image);
   Stream<UserEntity?> watchUser(String uid);
+  Future<void> updateFcmToken(String uid, String token);
+  Future<void> removeFcmToken(String uid, String token);
 }

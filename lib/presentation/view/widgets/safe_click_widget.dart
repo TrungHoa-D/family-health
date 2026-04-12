@@ -32,6 +32,8 @@ class SafeClickWidget extends StatelessWidget {
       child: child,
       borderRadius: borderRadius,
       splashFactory: splashFactory,
+      hoverColor: Colors.transparent,
+      highlightColor: Colors.transparent,
     );
   }
 

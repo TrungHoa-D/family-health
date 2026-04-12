@@ -1,4 +1,5 @@
 import 'package:family_health/domain/entities/medication_alert.dart';
+import 'package:family_health/domain/entities/member_stats.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'home_stats.freezed.dart';
@@ -11,5 +12,6 @@ class HomeStats with _$HomeStats {
     @Default(0) int missedDoses,
     @Default(0.0) double completionPercentage,
     @Default([]) List<MedicationAlert> alerts,
+    @Default([]) List<MemberStats> memberStats,
   }) = _HomeStats;
 }

@@ -1,17 +1,20 @@
 part of 'dashboard_cubit.dart';
 
+
 @freezed
 class DashboardState with _$DashboardState implements BaseCubitState {
   const factory DashboardState({
     @Default(PageStatus.Uninitialized) PageStatus pageStatus,
     String? pageErrorMessage,
     UserEntity? user,
-    @Default(0.67) double progress,
-    @Default(4) int takenCount,
-    @Default(6) int totalCount,
-    @Default(1) int waitingCount,
-    @Default(1) int missedCount,
+    @Default(0.0) double progress,
+    @Default(0) int takenCount,
+    @Default(0) int totalCount,
+    @Default(0) int waitingCount,
+    @Default(0) int missedCount,
     @Default([]) List<MedicationAlert> alerts,
+    @Default([]) List<MemberStats> memberStats,
+    @Default([]) List<MedicalEvent> upcomingEvents,
   }) = _DashboardState;
 
   const DashboardState._();

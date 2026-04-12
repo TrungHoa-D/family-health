@@ -222,34 +222,40 @@ class FamilyManagementPage
   Widget _buildActionButtons(
       BuildContext context, FamilyManagementState state) {
     if (state.isAdmin) {
-      return AppButton(
-        onPressed: () => _showConfirmDialog(
-          context,
-          title: 'family.disband_confirm_title'.tr(),
-          content: 'family.disband_confirm_desc'.tr(),
-          onConfirm: () => context.read<FamilyManagementCubit>().disbandGroup(),
-          isDanger: true,
-        ),
-        borderColor: AppColors.error,
-        child: Text(
-          'family.disband_group'.tr(),
-          style: const TextStyle(color: AppColors.error),
+      return Padding(
+        padding: const EdgeInsets.only(top: AppSpacing.md, bottom: AppSpacing.xxl),
+        child: SizedBox(
+          width: double.infinity,
+          child: AppButton.primary(
+            title: 'family.disband_group'.tr(),
+            onPressed: () => _showConfirmDialog(
+              context,
+              title: 'family.disband_confirm_title'.tr(),
+              content: 'family.disband_confirm_desc'.tr(),
+              onConfirm: () => context.read<FamilyManagementCubit>().disbandGroup(),
+              isDanger: true,
+            ),
+            backgroundColor: AppColors.error,
+          ),
         ),
       );
     }
 
-    return AppButton(
-      onPressed: () => _showConfirmDialog(
-        context,
-        title: 'family.leave_confirm_title'.tr(),
-        content: 'family.leave_confirm_desc'.tr(),
-        onConfirm: () => context.read<FamilyManagementCubit>().leaveFamily(),
-        isDanger: true,
-      ),
-      borderColor: AppColors.error,
-      child: Text(
-        'family.leave_group'.tr(),
-        style: const TextStyle(color: AppColors.error),
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.md, bottom: AppSpacing.xxl),
+      child: SizedBox(
+        width: double.infinity,
+        child: AppButton.primary(
+          title: 'family.leave_group'.tr(),
+          onPressed: () => _showConfirmDialog(
+            context,
+            title: 'family.leave_confirm_title'.tr(),
+            content: 'family.leave_confirm_desc'.tr(),
+            onConfirm: () => context.read<FamilyManagementCubit>().leaveFamily(),
+            isDanger: true,
+          ),
+          backgroundColor: AppColors.error,
+        ),
       ),
     );
   }

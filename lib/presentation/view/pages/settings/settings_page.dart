@@ -44,7 +44,7 @@ class SettingsPage extends BaseCubitPage<SettingsCubit, SettingsState> {
             elevation: 0,
             surfaceTintColor: Colors.transparent,
             title: Text(
-              'bottom_nav.settings'.tr(),
+              'bottom_nav.profile'.tr(),
               style: AppStyles.titleLarge.copyWith(
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,

@@ -1,5 +1,6 @@
 import 'package:family_health/domain/entities/home_stats.dart';
 import 'package:family_health/domain/entities/medication_alert.dart';
+import 'package:family_health/domain/entities/member_stats.dart';
 import 'package:family_health/domain/repositories/medication_repository_interface.dart';
 import 'package:family_health/domain/repositories/user_repository.dart';
 import 'package:family_health/domain/usecases/use_case.dart';
@@ -16,50 +17,76 @@ class GetTodayStatsUseCase implements UseCase<HomeStats, String> {
     final now = DateTime.now();
     final familyId = params;
 
-    // 1. Get all family schedules
+    // 1. Lấy tất cả schedules của gia đình
     final schedules =
         await _medicationRepository.watchFamilySchedules(familyId).first;
 
-    // 2. Get today's logs
+    // 2. Lấy logs hôm nay
     final logs = await _medicationRepository.getMedicationLogs(familyId, now);
 
-    // 3. Get family members for names
+    // 3. Lấy thông tin thành viên
     final memberIds = schedules.map((s) => s.targetUserId).toSet().toList();
     final members = await _userRepository.getUsers(memberIds);
-    final memberNames = {for (var m in members) m.uid: m.displayName ?? 'Thành viên'};
+    final memberMap = {for (var m in members) m.uid: m};
 
+    // 4. Tổng hợp stats toàn gia đình
     final totalDoses = schedules.length;
     final takenCount = logs.where((l) => l.status == 'TAKEN').length;
     final missedCount = logs.where((l) => l.status == 'MISSED').length;
 
-    // 4. Calculate Alerts (Delayed doses)
-    final List<MedicationAlert> alerts = [];
-    for (final schedule in schedules) {
-      final hasTaken = logs.any((l) =>
-          l.scheduleId == schedule.id &&
-          l.status == 'TAKEN');
-      
-      if (!hasTaken) {
-         // Check if delayed
-         // For demo, we assume scheduledTime is based on anchor_event
-         // For now, let's just add one dummy alert if there's any pending to show UI works
-         if (schedule.medName.contains('Huyết áp')) {
-           alerts.add(MedicationAlert(
-             scheduleId: schedule.id,
-             userName: memberNames[schedule.targetUserId] ?? 'Thành viên',
-             medName: schedule.medName,
-             dosage: schedule.dosage,
-             scheduledTime: now.subtract(const Duration(minutes: 23)),
-             delayMinutes: 23,
-           ));
-         }
-      }
+    // 5. Tính tiến độ từng thành viên
+    final List<MemberStats> memberStats = [];
+    for (final userId in memberIds) {
+      final member = memberMap[userId];
+      if (member == null) continue;
+
+      final memberSchedules =
+          schedules.where((s) => s.targetUserId == userId).toList();
+      final memberTaken = logs
+          .where((l) =>
+              l.status == 'TAKEN' &&
+              memberSchedules.any((s) => s.id == l.scheduleId))
+          .length;
+
+      memberStats.add(MemberStats(
+        userId: userId,
+        displayName: member.displayName ?? 'Thành viên',
+        avatarUrl: member.avatarUrl,
+        takenDoses: memberTaken,
+        totalDoses: memberSchedules.length,
+      ));
     }
 
-    double percentage = 0.0;
-    if (totalDoses > 0) {
-      percentage = (takenCount / totalDoses) * 100;
+    // 6. Tính alerts: PENDING logs đã trễ >= 15 phút
+    final List<MedicationAlert> alerts = [];
+    final pendingLogs = logs.where((l) => l.status == 'PENDING').toList();
+    for (final log in pendingLogs) {
+      final delayMinutes =
+          now.difference(log.scheduledTime).inMinutes;
+      if (delayMinutes < 15) continue;
+
+      final schedule = schedules.firstWhere(
+        (s) => s.id == log.scheduleId,
+        orElse: () => schedules.first, // fallback an toàn
+      );
+
+      // Chỉ thêm alert nếu tìm thấy đúng schedule
+      if (schedule.id != log.scheduleId) continue;
+
+      final member = memberMap[schedule.targetUserId];
+      alerts.add(MedicationAlert(
+        scheduleId: log.scheduleId,
+        userName: member?.displayName ?? 'Thành viên',
+        medName: schedule.medName,
+        dosage: schedule.dosage,
+        scheduledTime: log.scheduledTime,
+        delayMinutes: delayMinutes,
+      ));
     }
+
+    // 7. Tính phần trăm hoàn thành
+    final double percentage =
+        totalDoses > 0 ? (takenCount / totalDoses) * 100 : 0.0;
 
     return HomeStats(
       totalDoses: totalDoses,
@@ -67,6 +94,7 @@ class GetTodayStatsUseCase implements UseCase<HomeStats, String> {
       missedDoses: missedCount,
       completionPercentage: percentage,
       alerts: alerts,
+      memberStats: memberStats,
     );
   }
 }

@@ -1,1 +1,37 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"family-health-952eb","appId":"1:739468791394:android:880a29769c3e8092678b3b","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"family-health-952eb","configurations":{"android":"1:739468791394:android:880a29769c3e8092678b3b","ios":"1:739468791394:ios:8e41a1e4c572864e678b3b","windows":"1:739468791394:web:207596ad35121111678b3b"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "family-health-952eb",
+          "appId": "1:739468791394:android:880a29769c3e8092678b3b",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "family-health-952eb",
+          "configurations": {
+            "android": "1:739468791394:android:880a29769c3e8092678b3b",
+            "ios": "1:739468791394:ios:8e41a1e4c572864e678b3b",
+            "windows": "1:739468791394:web:207596ad35121111678b3b"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "disallowLegacyRuntimeConfig": true,
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ]
+    }
+  ]
+}

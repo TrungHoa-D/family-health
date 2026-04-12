@@ -129,7 +129,8 @@
     "meds": "Meds",
     "events": "Events",
     "chat": "Chat",
-    "settings": "Settings"
+    "settings": "Settings",
+    "profile": "Profile"
   },
   "meds": {
     "title": "Medicine Cabinet",

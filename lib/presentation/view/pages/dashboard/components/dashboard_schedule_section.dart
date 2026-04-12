@@ -4,6 +4,7 @@ import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
 import 'package:family_health/presentation/view/widgets/app_card.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class DashboardScheduleSection extends StatelessWidget {
   const DashboardScheduleSection({
@@ -41,16 +42,12 @@ class DashboardScheduleSection extends StatelessWidget {
 class DashboardScheduleModel {
   DashboardScheduleModel({
     required this.title,
-    required this.month,
-    required this.day,
-    required this.time,
+    required this.dateTime,
     required this.location,
     this.onTap,
   });
   final String title;
-  final String month;
-  final String day;
-  final String time;
+  final DateTime dateTime;
   final String location;
   final VoidCallback? onTap;
 }
@@ -84,7 +81,7 @@ class _ScheduleCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  schedule.month.toUpperCase(),
+                  DateFormat('MMM', 'vi').format(schedule.dateTime).toUpperCase(),
                   style: AppStyles.labelSmall.copyWith(
                     color: AppColors.white,
                     fontSize: 10,
@@ -92,7 +89,7 @@ class _ScheduleCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  schedule.day,
+                  schedule.dateTime.day.toString(),
                   style: AppStyles.titleLarge.copyWith(
                     color: AppColors.white,
                     fontWeight: FontWeight.w900,
@@ -115,7 +112,7 @@ class _ScheduleCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '${schedule.time} • ${schedule.location}',
+                  '${DateFormat('HH:mm').format(schedule.dateTime)} • ${schedule.location}',
                   style: AppStyles.labelSmall.copyWith(
                     color: AppColors.textSecondary,
                     fontWeight: FontWeight.w500,

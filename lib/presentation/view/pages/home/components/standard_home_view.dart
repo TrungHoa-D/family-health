@@ -66,9 +66,9 @@ class StandardHomeView extends StatelessWidget {
                 page: const HomeRoute(),
               ),
               AppBottomNavigationItem(
-                label: 'bottom_nav.settings'.tr(),
-                icon: const Icon(Icons.settings_outlined),
-                selectedIcon: const Icon(Icons.settings),
+                label: 'bottom_nav.profile'.tr(),
+                icon: const Icon(Icons.person_outline),
+                selectedIcon: const Icon(Icons.person),
                 page: const HomeRoute(),
               ),
             ],

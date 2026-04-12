@@ -22,6 +22,18 @@ class FirebaseFirestoreDataSource {
     return _firestore.collection('users').doc(uid).snapshots().map((doc) => doc.data());
   }
 
+  Future<void> addFcmToken(String uid, String token) async {
+    await _firestore.collection('users').doc(uid).update({
+      'fcm_tokens': FieldValue.arrayUnion([token]),
+    });
+  }
+
+  Future<void> removeFcmToken(String uid, String token) async {
+    await _firestore.collection('users').doc(uid).update({
+      'fcm_tokens': FieldValue.arrayRemove([token]),
+    });
+  }
+
   // --- Family Group Methods ---
   Future<void> createFamilyGroup(String id, Map<String, dynamic> data) async {
     await _firestore.collection('family_groups').doc(id).set(data);

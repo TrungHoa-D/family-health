@@ -61,4 +61,14 @@ class UserRepositoryImpl implements UserRepository {
     
     return url;
   }
+
+  @override
+  Future<void> updateFcmToken(String uid, String token) async {
+    await _firestoreDataSource.addFcmToken(uid, token);
+  }
+
+  @override
+  Future<void> removeFcmToken(String uid, String token) async {
+    await _firestoreDataSource.removeFcmToken(uid, token);
+  }
 }

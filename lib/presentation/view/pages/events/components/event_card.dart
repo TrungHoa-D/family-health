@@ -43,7 +43,10 @@ class EventCard extends StatelessWidget {
         onTap: onTap,
         child: AppCard(
           margin: const EdgeInsets.only(right: AppSpacing.md),
-          padding: const EdgeInsets.all(AppSpacing.md),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sm,
+            vertical: AppSpacing.sm,
+          ),
           child: Row(
             children: [
               // Icon Circle

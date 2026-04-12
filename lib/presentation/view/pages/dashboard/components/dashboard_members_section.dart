@@ -46,6 +46,7 @@ class DashboardMembersSection extends StatelessWidget {
             ],
           ),
         ),
+        const SizedBox(height: AppSpacing.sm),
         SizedBox(
           height: 170,
           child: ListView.builder(
@@ -65,7 +66,13 @@ class DashboardMembersSection extends StatelessWidget {
   }
 
   Widget _buildAddButton() {
-    return Container(
+    return InkWell(
+      onTap: onViewAll,
+      hoverColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      borderRadius: BorderRadius.circular(AppSpacing.radiusCard),
+      child: Container(
       width: 100,
       margin:
           const EdgeInsets.only(right: AppSpacing.md, bottom: AppSpacing.md),
@@ -96,6 +103,7 @@ class DashboardMembersSection extends StatelessWidget {
           ),
         ],
       ),
+      ),
     );
   }
 }
@@ -104,13 +112,17 @@ class DashboardMemberModel {
   DashboardMemberModel({
     required this.name,
     this.photoUrl,
-    required this.progress,
+    required this.takenCount,
+    required this.totalCount,
     required this.statusColor,
   });
   final String name;
   final String? photoUrl;
-  final String progress; // e.g. "4/6"
+  final int takenCount;
+  final int totalCount;
   final Color statusColor;
+
+  String get progress => '$takenCount/$totalCount';
 }
 
 class _MemberItem extends StatelessWidget {
