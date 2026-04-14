@@ -16,7 +16,9 @@ import 'package:family_health/domain/usecases/watch_user_usecase.dart';
 import 'package:family_health/presentation/base/page_status.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit_state.dart';
+import 'package:family_health/shared/services/fcm_service.dart';
 import 'package:family_health/shared/utils/logger.dart';
+import 'package:family_health/di/di.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 
@@ -57,6 +59,9 @@ class HomeCubit extends BaseCubit<HomeState> {
         HomeStats? stats;
         if (user?.familyId != null) {
           stats = await _getTodayStatsUseCase.call(params: user!.familyId!);
+          
+          // Initialize FCM Service once user is loaded
+          getIt<FcmService>().init(user.uid);
         }
 
         if (user?.uiPreference == 'simplified' && user?.familyId != null) {

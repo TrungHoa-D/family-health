@@ -1,4 +1,5 @@
 const { onSchedule } = require("firebase-functions/v2/scheduler");
+const { onDocumentCreated } = require("firebase-functions/v2/firestore");
 const admin = require("firebase-admin");
 
 admin.initializeApp();
@@ -80,3 +81,67 @@ exports.checkMissedDoses = onSchedule("every 5 minutes", async (event) => {
 
         return null;
     });
+
+exports.onMedicalEventCreated = onDocumentCreated("medical_events/{eventId}", async (event) => {
+    const data = event.data.data();
+    const familyId = data.familyId;
+    const title = data.title;
+    const creatorId = data.creatorId;
+
+    if (!familyId) {
+        console.log("No familyId found in event data.");
+        return null;
+    }
+
+    try {
+        // Lấy thông tin gia đình để biết ai cần thông báo
+        const familyDoc = await db.collection("family_groups").doc(familyId).get();
+        if (!familyDoc.exists) {
+            console.log(`Family group ${familyId} not found.`);
+            return null;
+        }
+        
+        const familyData = familyDoc.data();
+        const memberIds = familyData.memberIds || [];
+
+        let tokens = [];
+        // Duyệt qua các thành viên để lấy FCM tokens
+        for (const uid of memberIds) {
+            if (uid === creatorId) continue; // Không gửi cho chính người tạo
+
+            const userDoc = await db.collection("users").doc(uid).get();
+            if (userDoc.exists) {
+                const userData = userDoc.data();
+                if (userData.fcm_tokens && userData.fcm_tokens.length > 0) {
+                    tokens = tokens.concat(userData.fcm_tokens);
+                }
+            }
+        }
+
+        if (tokens.length > 0) {
+            // Loại bỏ token trùng lặp
+            const uniqueTokens = [...new Set(tokens)];
+
+            const payload = {
+                notification: {
+                    title: "📅 Sự kiện gia đình mới",
+                    body: `Sự kiện "${title}" vừa được thêm vào lịch gia đình.`,
+                },
+                data: {
+                    eventId: event.params.eventId,
+                    type: "MEDICAL_EVENT",
+                    click_action: "FLUTTER_NOTIFICATION_CLICK"
+                }
+            };
+
+            const response = await messaging.sendToDevice(uniqueTokens, payload);
+            console.log(`Sent notification for event ${title} to ${uniqueTokens.length} devices. Success: ${response.successCount}`);
+        } else {
+            console.log("No FCM tokens found to notify.");
+        }
+    } catch (error) {
+        console.error("Error sending event notification:", error);
+    }
+
+    return null;
+});

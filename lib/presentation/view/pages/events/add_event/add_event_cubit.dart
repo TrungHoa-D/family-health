@@ -172,7 +172,7 @@ class AddEventCubit extends BaseCubit<AddEventState> {
 
       // Schedule notification
       if (state.isEditing) {
-        await _notificationService.cancelNotification(eventToSave.id.hashCode);
+        await _notificationService.cancelEventReminders(eventToSave.id);
       }
       await _notificationService.scheduleEventReminder(eventToSave);
 

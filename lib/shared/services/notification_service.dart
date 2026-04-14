@@ -204,18 +204,62 @@ class NotificationService {
   }
 
   Future<void> scheduleEventReminder(MedicalEvent event) async {
-    // Schedule 30 mins before event
-    final reminderTime = event.startTime.subtract(const Duration(minutes: 30));
-    
-    if (reminderTime.isBefore(DateTime.now())) return;
+    final baseId = event.id.hashCode;
 
+    // 1. 1 giờ trước khi bắt đầu
+    await _scheduleEventAt(
+      id: baseId,
+      event: event,
+      time: event.startTime.subtract(const Duration(hours: 1)),
+      body: 'Còn 1 giờ nữa là đến sự kiện: ${event.title}',
+    );
+
+    // 2. 15 phút trước khi bắt đầu
+    await _scheduleEventAt(
+      id: baseId + 1,
+      event: event,
+      time: event.startTime.subtract(const Duration(minutes: 15)),
+      body: 'Sự kiện "${event.title}" sẽ bắt đầu trong 15 phút tới',
+    );
+
+    // 3. Lúc bắt đầu
+    await _scheduleEventAt(
+      id: baseId + 2,
+      event: event,
+      time: event.startTime,
+      body: 'Sự kiện "${event.title}" đang diễn ra',
+    );
+
+    // 4. Lúc kết thúc
+    await _scheduleEventAt(
+      id: baseId + 3,
+      event: event,
+      time: event.endTime,
+      body: 'Sự kiện "${event.title}" đã kết thúc',
+    );
+  }
+
+  Future<void> _scheduleEventAt({
+    required int id,
+    required MedicalEvent event,
+    required DateTime time,
+    required String body,
+  }) async {
+    if (time.isBefore(DateTime.now())) return;
     await scheduleNotification(
-      id: event.id.hashCode,
+      id: id,
       title: '📅 Nhắc nhở sự kiện',
-      body: 'Sắp đến giờ hẹn: ${event.title} tại ${event.location ?? "Địa điểm chưa xác định"}',
-      scheduledDate: reminderTime,
+      body: body,
+      scheduledDate: time,
       payload: 'event_${event.id}',
     );
+  }
+
+  Future<void> cancelEventReminders(String eventId) async {
+    final baseId = eventId.hashCode;
+    for (int i = 0; i < 4; i++) {
+      await cancelNotification(baseId + i);
+    }
   }
 
   Future<void> cancelMedicationReminders(String scheduleId) async {
