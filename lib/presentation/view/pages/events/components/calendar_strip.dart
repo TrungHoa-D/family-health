@@ -16,8 +16,8 @@ class CalendarStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Generate 7 days: 3 before, today, 3 after
-    final startDate = currentDate.subtract(const Duration(days: 3));
+    // Generate 7 days: 2 before, today, 4 after
+    final startDate = currentDate.subtract(const Duration(days: 2));
     final days =
         List.generate(7, (index) => startDate.add(Duration(days: index)));
 

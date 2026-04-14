@@ -10,6 +10,12 @@ enum EventType {
   OTHER,
 }
 
+enum EventStatus {
+  UPCOMING,
+  COMPLETED,
+  CANCELLED,
+}
+
 @freezed
 class MedicalEvent with _$MedicalEvent {
   const factory MedicalEvent({
@@ -21,6 +27,9 @@ class MedicalEvent with _$MedicalEvent {
     @JsonKey(name: 'start_time') required DateTime startTime,
     @JsonKey(name: 'end_time') required DateTime endTime,
     required String location,
+    @JsonKey(name: 'creator_id') String? creatorId,
+    @JsonKey(name: 'participant_ids') @Default([]) List<String> participantIds,
+    @JsonKey(name: 'status') @Default('UPCOMING') String status,
   }) = _MedicalEvent;
 
   factory MedicalEvent.fromJson(Map<String, dynamic> json) =>

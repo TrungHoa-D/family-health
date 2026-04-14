@@ -133,6 +133,7 @@ class DashboardPage extends BaseCubitPage<DashboardCubit, DashboardState> {
                                   title: e.title,
                                   dateTime: e.startTime,
                                   location: e.location,
+                                  onTap: () => context.router.push(EventDetailRoute(event: e)),
                                 ))
                             .toList(),
                       ),

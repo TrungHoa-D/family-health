@@ -37,93 +37,194 @@ class EventCard extends StatelessWidget {
         break;
     }
 
-    return SizedBox(
-      width: 280,
-      child: GestureDetector(
-        onTap: onTap,
-        child: AppCard(
-          margin: const EdgeInsets.only(right: AppSpacing.md),
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.sm,
-            vertical: AppSpacing.sm,
-          ),
-          child: Row(
-            children: [
-              // Icon Circle
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: eventColor.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
+    return GestureDetector(
+      onTap: onTap,
+      child: AppCard(
+        margin: const EdgeInsets.only(bottom: AppSpacing.md),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.lg,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Icon Circle
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: eventColor.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(eventIcon, color: eventColor, size: 24),
                 ),
-                child: Icon(eventIcon, color: eventColor, size: 24),
-              ),
-              const SizedBox(width: AppSpacing.md),
-              // Content
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      event.title,
-                      style: AppStyles.titleMedium,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 6),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.schedule,
-                          size: 14,
-                          color: AppColors.textSecondary,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          DateFormat('HH:mm').format(event.startTime),
-                          style: AppStyles.bodySmall.copyWith(
-                            color: AppColors.textSecondary,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 11,
-                          ),
-                        ),
-                        const SizedBox(width: AppSpacing.sm),
-                        const Icon(
-                          Icons.location_on,
-                          size: 14,
-                          color: AppColors.textSecondary,
-                        ),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: Text(
-                            event.location,
-                            style: AppStyles.bodySmall.copyWith(
-                              color: AppColors.textSecondary,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 11,
+                const SizedBox(width: AppSpacing.md),
+                // Content
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              event.title,
+                              style: AppStyles.titleMedium.copyWith(
+                                fontWeight: FontWeight.bold,
+                                decoration: event.status == 'CANCELLED'
+                                    ? TextDecoration.lineThrough
+                                    : null,
+                                color: event.status == 'CANCELLED'
+                                    ? AppColors.textSecondary
+                                    : AppColors.textPrimary,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                          _StatusChip(status: event.status),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const Icon(Icons.access_time_filled,
+                              size: 14, color: AppColors.primary),
+                          const SizedBox(width: 4),
+                          Text(
+                            '${DateFormat('HH:mm').format(event.startTime)} - ${DateFormat('HH:mm').format(event.endTime)}',
+                            style: AppStyles.bodySmall.copyWith(
+                                color: AppColors.textSecondary,
+                                fontWeight: FontWeight.w500),
+                          ),
+                          const SizedBox(width: AppSpacing.md),
+                          const Icon(Icons.location_on,
+                              size: 14, color: AppColors.primary),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              event.location.isNotEmpty
+                                  ? event.location
+                                  : 'Không có địa điểm',
+                              style: AppStyles.bodySmall.copyWith(
+                                  color: AppColors.textSecondary,
+                                  fontWeight: FontWeight.w500),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            if (event.description != null && event.description!.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.sm),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(AppSpacing.sm),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  event.description!,
+                  style:
+                      AppStyles.bodySmall.copyWith(color: AppColors.textPrimary),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
-          ),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
+              child: Divider(height: 1, color: AppColors.border),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                if (event.participantIds.isNotEmpty)
+                  Row(
+                    children: [
+                      const Icon(Icons.people_outline,
+                          size: 16, color: AppColors.textSecondary),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${event.participantIds.length} người tham gia',
+                        style: AppStyles.labelSmall
+                            .copyWith(color: AppColors.textSecondary),
+                      ),
+                    ],
+                  )
+                else
+                  const SizedBox.shrink(),
+                Text(
+                  DateFormat('dd/MM/yyyy').format(event.startTime),
+                  style: AppStyles.labelSmall
+                      .copyWith(color: AppColors.textSecondary),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
   }
-
+  
   EventType _getEventType(String type) {
     return EventType.values.firstWhere(
       (e) => e.name.toUpperCase() == type.toUpperCase(),
       orElse: () => EventType.OTHER,
+    );
+  }
+}
+
+class _StatusChip extends StatelessWidget {
+  const _StatusChip({required this.status});
+  final String status;
+
+  @override
+  Widget build(BuildContext context) {
+    Color color;
+    String text;
+
+    switch (status) {
+      case 'COMPLETED':
+        color = AppColors.success;
+        text = 'Hoàn thành';
+        break;
+      case 'CANCELLED':
+        color = AppColors.error;
+        text = 'Đã huỷ';
+        break;
+      case 'UPCOMING':
+      default:
+        color = AppColors.primary;
+        text = 'Sắp tới';
+        break;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
+      ),
+      child: Text(
+        text,
+        style: AppStyles.labelSmall.copyWith(
+          color: color,
+          fontWeight: FontWeight.bold,
+          fontSize: 10,
+        ),
+      ),
     );
   }
 }

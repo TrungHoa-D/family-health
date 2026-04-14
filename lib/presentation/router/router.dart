@@ -10,6 +10,8 @@ import 'package:family_health/presentation/view/pages/ai_support/ai_chat_page.da
 import 'package:family_health/presentation/view/pages/chat/chat_page.dart';
 import 'package:family_health/presentation/view/pages/dashboard/dashboard_page.dart';
 import 'package:family_health/presentation/view/pages/events/add_event/add_event_page.dart';
+import 'package:family_health/presentation/view/pages/events/detail/event_detail_page.dart';
+import 'package:family_health/presentation/view/pages/events/list/event_list_page.dart';
 import 'package:family_health/presentation/view/pages/events/events_page.dart';
 import 'package:family_health/presentation/view/pages/family_group/family_group_page.dart';
 import 'package:family_health/presentation/view/pages/family_management/family_management_page.dart';
@@ -70,6 +72,8 @@ class AppRouter extends RootStackRouter {
         AutoRoute(
             page: EditRoutinesRoute.page, guards: [authGuard, familyGuard]),
         AutoRoute(page: AddEventRoute.page, guards: [authGuard, familyGuard]),
+        AutoRoute(page: EventDetailRoute.page, guards: [authGuard, familyGuard]),
+        AutoRoute(page: EventListRoute.page, guards: [authGuard, familyGuard]),
         AutoRoute(page: FamilyGroupRoute.page),
         AutoRoute(
             page: AIChatSupportRoute.page,

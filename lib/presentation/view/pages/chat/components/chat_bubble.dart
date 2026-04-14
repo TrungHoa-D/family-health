@@ -5,6 +5,7 @@ import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
 import 'package:family_health/presentation/view/pages/chat/chat_cubit.dart';
 import 'package:family_health/presentation/view/pages/chat/components/chat_image_grid.dart';
+import 'package:family_health/presentation/view/widgets/app_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -288,22 +289,8 @@ class _OtherMemberBubble extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Container(
-            width: 32,
-            height: 32,
             margin: const EdgeInsets.only(bottom: 16),
-            decoration: const BoxDecoration(
-              color: AppColors.primaryLight,
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Text(
-                message.senderAvatarUrl ?? message.senderName.substring(0, 1),
-                style: AppStyles.titleSmall.copyWith(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
+            child: AppAvatar.small(imageUrl: message.senderAvatarUrl),
           ),
           const SizedBox(width: AppSpacing.sm),
           Expanded(

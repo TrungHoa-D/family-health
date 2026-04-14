@@ -1,6 +1,7 @@
 import 'package:family_health/domain/entities/home_stats.dart';
 import 'package:family_health/domain/entities/medication_alert.dart';
 import 'package:family_health/domain/entities/member_stats.dart';
+import 'package:family_health/domain/repositories/family_repository_interface.dart';
 import 'package:family_health/domain/repositories/medication_repository_interface.dart';
 import 'package:family_health/domain/repositories/user_repository.dart';
 import 'package:family_health/domain/usecases/use_case.dart';
@@ -8,9 +9,10 @@ import 'package:injectable/injectable.dart';
 
 @injectable
 class GetTodayStatsUseCase implements UseCase<HomeStats, String> {
-  GetTodayStatsUseCase(this._medicationRepository, this._userRepository);
+  GetTodayStatsUseCase(this._medicationRepository, this._userRepository, this._familyRepository);
   final MedicationRepository _medicationRepository;
   final UserRepository _userRepository;
+  final FamilyRepository _familyRepository;
 
   @override
   Future<HomeStats> call({required String params}) async {
@@ -25,7 +27,11 @@ class GetTodayStatsUseCase implements UseCase<HomeStats, String> {
     final logs = await _medicationRepository.getMedicationLogs(familyId, now);
 
     // 3. Lấy thông tin thành viên
-    final memberIds = schedules.map((s) => s.targetUserId).toSet().toList();
+    final familyGroup = await _familyRepository.getFamilyGroup(familyId);
+    final memberIds = familyGroup != null
+        ? familyGroup.memberIds
+        : schedules.map((s) => s.targetUserId).toSet().toList();
+
     final members = await _userRepository.getUsers(memberIds);
     final memberMap = {for (var m in members) m.uid: m};
 

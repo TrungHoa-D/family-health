@@ -76,33 +76,55 @@ class EventsView extends StatelessWidget {
                           ),
                         ],
                       ),
-                      // Add FAB equivalent
-                      GestureDetector(
-                        onTap: () => context.router.push(AddEventRoute()).then((_) {
-                          if (context.mounted) {
-                            context.read<EventsCubit>().init();
-                          }
-                        }),
-                        child: Container(
-                          width: 56,
-                          height: 56,
-                          decoration: BoxDecoration(
-                            color: AppColors.primary,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.primary.withValues(alpha: 0.3),
-                                blurRadius: 16,
-                                offset: const Offset(0, 8),
+                      // Buttons Row
+                      Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () => context.router.push(const EventListRoute()),
+                            child: Container(
+                              width: 48,
+                              height: 48,
+                              decoration: BoxDecoration(
+                                color: AppColors.surface,
+                                shape: BoxShape.circle,
+                                border: Border.all(color: AppColors.border),
                               ),
-                            ],
+                              child: const Icon(
+                                Icons.format_list_bulleted,
+                                color: AppColors.textPrimary,
+                                size: 24,
+                              ),
+                            ),
                           ),
-                          child: const Icon(
-                            Icons.add,
-                            color: AppColors.white,
-                            size: 32,
+                          const SizedBox(width: AppSpacing.md),
+                          GestureDetector(
+                            onTap: () => context.router.push(AddEventRoute()).then((_) {
+                              if (context.mounted) {
+                                context.read<EventsCubit>().init();
+                              }
+                            }),
+                            child: Container(
+                              width: 56,
+                              height: 56,
+                              decoration: BoxDecoration(
+                                color: AppColors.primary,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.primary.withValues(alpha: 0.3),
+                                    blurRadius: 16,
+                                    offset: const Offset(0, 8),
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.add,
+                                color: AppColors.white,
+                                size: 32,
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
                     ],
                   ),
@@ -160,30 +182,27 @@ class EventsView extends StatelessWidget {
                     ),
                   ),
                 ),
-                SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: 100, // Card height approx
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                      itemCount: state.selectedDateEvents.length,
-                      itemBuilder: (context, index) {
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
                         final event = state.selectedDateEvents[index];
                         return EventCard(
                           event: event,
-                          onTap: () => context.router.push(AddEventRoute(event: event)).then((_) {
+                          onTap: () => context.router.push(EventDetailRoute(event: event)).then((_) {
                             if (context.mounted) {
                               context.read<EventsCubit>().init();
                             }
                           }),
                         );
                       },
+                      childCount: state.selectedDateEvents.length,
                     ),
                   ),
                 ),
                 const SliverToBoxAdapter(
-                  child: SizedBox(height: AppSpacing.xl),
+                  child: SizedBox(height: AppSpacing.md),
                 ),
               ] else ...[
                 SliverPadding(
@@ -229,25 +248,22 @@ class EventsView extends StatelessWidget {
                     ),
                   ),
                 ),
-                SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: 100,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                      itemCount: state.upcomingEvents.length,
-                      itemBuilder: (context, index) {
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
                         final event = state.upcomingEvents[index];
                         return EventCard(
                           event: event,
-                          onTap: () => context.router.push(AddEventRoute(event: event)).then((_) {
+                          onTap: () => context.router.push(EventDetailRoute(event: event)).then((_) {
                             if (context.mounted) {
                               context.read<EventsCubit>().init();
                             }
                           }),
                         );
                       },
+                      childCount: state.upcomingEvents.length,
                     ),
                   ),
                 ),

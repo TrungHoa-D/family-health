@@ -5,6 +5,7 @@ import 'package:family_health/presentation/cubit_base/base_cubit_page.dart';
 import 'package:family_health/presentation/resources/app_spacing.dart';
 import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
+import 'package:family_health/presentation/view/widgets/app_avatar.dart';
 import 'package:family_health/presentation/view/widgets/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -158,7 +159,56 @@ class AddEventPage extends BaseCubitPage<AddEventCubit, AddEventState> {
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.radiusInput)),
                       ),
                     ),
-                    const SizedBox(height: AppSpacing.xl * 2),
+                    const SizedBox(height: AppSpacing.lg),
+
+                    // Participants
+                    if (state.familyMembers.isNotEmpty) ...[
+                      _buildFieldTitle('Người tham gia'),
+                      Wrap(
+                        spacing: AppSpacing.md,
+                        runSpacing: AppSpacing.sm,
+                        children: state.familyMembers.map((member) {
+                          final isSelected =
+                              state.selectedParticipantIds.contains(member.uid);
+                          return GestureDetector(
+                            onTap: () => cubit.toggleParticipant(member.uid),
+                            child: AnimatedOpacity(
+                              duration: const Duration(milliseconds: 200),
+                              opacity: isSelected ? 1.0 : 0.4,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    decoration: isSelected
+                                        ? BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                                color: AppColors.primary,
+                                                width: 2),
+                                          )
+                                        : null,
+                                    child: AppAvatar.medium(
+                                        imageUrl: member.avatarUrl),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    member.displayName?.split(' ').last ?? '',
+                                    style: AppStyles.labelSmall.copyWith(
+                                        color: isSelected
+                                            ? AppColors.primary
+                                            : AppColors.textSecondary,
+                                        fontWeight: isSelected
+                                            ? FontWeight.bold
+                                            : FontWeight.normal),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                      const SizedBox(height: AppSpacing.xl * 2),
+                    ],
 
                   ],
                 ),

@@ -1,4 +1,7 @@
 import 'package:family_health/domain/entities/medical_event.dart';
+import 'package:family_health/domain/entities/user_entity.dart';
+import 'package:family_health/domain/usecases/fetch_family_usecase.dart';
+import 'package:family_health/domain/usecases/get_family_members_usecase.dart';
 import 'package:family_health/domain/usecases/get_user_usecase.dart';
 import 'package:family_health/domain/usecases/save_medical_event_usecase.dart';
 import 'package:family_health/presentation/base/page_status.dart';
@@ -18,7 +21,9 @@ class AddEventCubit extends BaseCubit<AddEventState> {
   AddEventCubit(
     this._saveMedicalEventUseCase,
     this._getUserUseCase,
-    this._notificationService, {
+    this._notificationService,
+    this._fetchFamilyUseCase,
+    this._getFamilyMembersUseCase, {
     FirebaseAuth? firebaseAuth,
   })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
         super(AddEventState(
@@ -29,9 +34,29 @@ class AddEventCubit extends BaseCubit<AddEventState> {
   final SaveMedicalEventUseCase _saveMedicalEventUseCase;
   final GetUserUseCase _getUserUseCase;
   final NotificationService _notificationService;
+  final FetchFamilyUseCase _fetchFamilyUseCase;
+  final GetFamilyMembersUseCase _getFamilyMembersUseCase;
   final FirebaseAuth _firebaseAuth;
 
-  void init({MedicalEvent? event}) {
+  Future<void> init({MedicalEvent? event}) async {
+    emit(state.copyWith(pageStatus: PageStatus.Loading));
+    
+    try {
+      final user = _firebaseAuth.currentUser;
+      if (user != null) {
+        final userEntity = await _getUserUseCase.call(params: user.uid);
+        final familyId = userEntity?.familyId;
+        if (familyId != null) {
+          final family = await _fetchFamilyUseCase.call(params: familyId);
+          if (family != null) {
+            final members = await _getFamilyMembersUseCase.call(params: family.memberIds);
+            emit(state.copyWith(familyMembers: members));
+          }
+        }
+      }
+    } catch (e) {
+      // Ignore load members failure
+    }
     if (event != null) {
       emit(state.copyWith(
         pageStatus: PageStatus.Loaded,
@@ -43,6 +68,9 @@ class AddEventCubit extends BaseCubit<AddEventState> {
         startTime: event.startTime,
         endTime: event.endTime,
         location: event.location,
+        selectedParticipantIds: event.participantIds,
+        creatorId: event.creatorId,
+        status: event.status,
       ));
     } else {
       final now = DateTime.now();
@@ -88,6 +116,16 @@ class AddEventCubit extends BaseCubit<AddEventState> {
     emit(state.copyWith(endTime: time));
   }
 
+  void toggleParticipant(String uid) {
+    final current = List<String>.from(state.selectedParticipantIds);
+    if (current.contains(uid)) {
+      current.remove(uid);
+    } else {
+      current.add(uid);
+    }
+    emit(state.copyWith(selectedParticipantIds: current));
+  }
+
   bool validate() {
     String? titleError;
     if (state.title.trim().isEmpty) {
@@ -116,7 +154,7 @@ class AddEventCubit extends BaseCubit<AddEventState> {
       final familyId = userEntity?.familyId;
       if (familyId == null) throw Exception('Family not found');
 
-      final event = MedicalEvent(
+      final eventToSave = MedicalEvent(
         id: state.isEditing ? state.eventId : const Uuid().v4(),
         familyId: familyId,
         title: state.title,
@@ -125,15 +163,18 @@ class AddEventCubit extends BaseCubit<AddEventState> {
         startTime: state.startTime,
         endTime: state.endTime,
         location: state.location,
+        creatorId: state.isEditing ? state.creatorId : user.uid,
+        participantIds: state.selectedParticipantIds,
+        status: state.isEditing ? state.status : 'UPCOMING',
       );
 
-      await _saveMedicalEventUseCase.call(params: event);
+      await _saveMedicalEventUseCase.call(params: eventToSave);
 
       // Schedule notification
       if (state.isEditing) {
-        await _notificationService.cancelNotification(event.id.hashCode);
+        await _notificationService.cancelNotification(eventToSave.id.hashCode);
       }
-      await _notificationService.scheduleEventReminder(event);
+      await _notificationService.scheduleEventReminder(eventToSave);
 
       emit(state.copyWith(isSaving: false, isSaved: true));
     } catch (e) {
