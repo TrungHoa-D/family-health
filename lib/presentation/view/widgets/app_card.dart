@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 /// - Không viền mặc định
 class AppCard extends StatelessWidget {
   const AppCard({
-    Key? key,
+    super.key,
     required this.child,
     this.padding = const EdgeInsets.all(AppSpacing.md),
     this.margin = EdgeInsets.zero,
@@ -23,7 +23,8 @@ class AppCard extends StatelessWidget {
     this.enableShadow = true,
     this.borderRadius,
     this.onPressed,
-  }) : super(key: key);
+    this.clipBehavior,
+  });
 
   final Color? backgroundColor;
   final EdgeInsets margin;
@@ -35,6 +36,7 @@ class AppCard extends StatelessWidget {
   final bool enableShadow;
   final double? borderRadius;
   final VoidCallback? onPressed;
+  final Clip? clipBehavior;
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +63,7 @@ class AppCard extends StatelessWidget {
       child: Material(
         color: backgroundColor ?? AppColors.white,
         borderRadius: BorderRadius.circular(radius),
-        clipBehavior: Clip.hardEdge,
+        clipBehavior: clipBehavior ?? Clip.hardEdge,
         child: SafeClickWidget(
           onPressed: onPressed,
           child: Padding(

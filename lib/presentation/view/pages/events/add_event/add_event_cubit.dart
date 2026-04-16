@@ -1,9 +1,11 @@
 import 'package:family_health/domain/entities/medical_event.dart';
+import 'package:family_health/domain/entities/medication.dart';
 import 'package:family_health/domain/entities/user_entity.dart';
 import 'package:family_health/domain/usecases/fetch_family_usecase.dart';
 import 'package:family_health/domain/usecases/get_family_members_usecase.dart';
 import 'package:family_health/domain/usecases/get_user_usecase.dart';
 import 'package:family_health/domain/usecases/save_medical_event_usecase.dart';
+import 'package:family_health/domain/usecases/watch_medications_usecase.dart';
 import 'package:family_health/presentation/base/page_status.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit_state.dart';
@@ -12,6 +14,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:uuid/uuid.dart';
+import 'dart:async';
 
 part 'add_event_cubit.freezed.dart';
 part 'add_event_state.dart';
@@ -23,7 +26,8 @@ class AddEventCubit extends BaseCubit<AddEventState> {
     this._getUserUseCase,
     this._notificationService,
     this._fetchFamilyUseCase,
-    this._getFamilyMembersUseCase, {
+    this._getFamilyMembersUseCase,
+    this._watchMedicationsUseCase, {
     FirebaseAuth? firebaseAuth,
   })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
         super(AddEventState(
@@ -36,7 +40,9 @@ class AddEventCubit extends BaseCubit<AddEventState> {
   final NotificationService _notificationService;
   final FetchFamilyUseCase _fetchFamilyUseCase;
   final GetFamilyMembersUseCase _getFamilyMembersUseCase;
+  final WatchMedicationsUseCase _watchMedicationsUseCase;
   final FirebaseAuth _firebaseAuth;
+  StreamSubscription? _medsSubscription;
 
   Future<void> init({MedicalEvent? event}) async {
     emit(state.copyWith(pageStatus: PageStatus.Loading));
@@ -51,6 +57,7 @@ class AddEventCubit extends BaseCubit<AddEventState> {
           if (family != null) {
             final members = await _getFamilyMembersUseCase.call(params: family.memberIds);
             emit(state.copyWith(familyMembers: members));
+            _loadMedications(familyId);
           }
         }
       }
@@ -71,6 +78,8 @@ class AddEventCubit extends BaseCubit<AddEventState> {
         selectedParticipantIds: event.participantIds,
         creatorId: event.creatorId,
         status: event.status,
+        imageUrl: event.imageUrl,
+        medicationId: event.medicationId,
       ));
     } else {
       final now = DateTime.now();
@@ -103,6 +112,39 @@ class AddEventCubit extends BaseCubit<AddEventState> {
 
   void updateType(EventType type) {
     emit(state.copyWith(eventType: type));
+  }
+
+  void _loadMedications(String familyId) {
+    _medsSubscription?.cancel();
+    emit(state.copyWith(isLoadingMedications: true));
+    _medsSubscription = _watchMedicationsUseCase.call(familyId).listen((meds) {
+      emit(state.copyWith(
+        availableMedications: meds,
+        isLoadingMedications: false,
+      ));
+      
+      // If editing and has medicationId, try to find the selected medication
+      if (state.medicationId != null && state.selectedMedication == null) {
+        final med = meds.where((m) => m.id == state.medicationId).firstOrNull;
+        if (med != null) {
+          emit(state.copyWith(selectedMedication: med));
+        }
+      }
+    });
+  }
+
+  void selectMedication(Medication? med) {
+    emit(state.copyWith(
+      selectedMedication: med,
+      medicationId: med?.id,
+      imageUrl: med?.imageUrl,
+    ));
+  }
+
+  @override
+  Future<void> close() {
+    _medsSubscription?.cancel();
+    return super.close();
   }
 
   void updateStartTime(DateTime time) {
@@ -166,6 +208,8 @@ class AddEventCubit extends BaseCubit<AddEventState> {
         creatorId: state.isEditing ? state.creatorId : user.uid,
         participantIds: state.selectedParticipantIds,
         status: state.isEditing ? state.status : 'UPCOMING',
+        medicationId: state.medicationId,
+        imageUrl: state.imageUrl,
       );
 
       await _saveMedicalEventUseCase.call(params: eventToSave);

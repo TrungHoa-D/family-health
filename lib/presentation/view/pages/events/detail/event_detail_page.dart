@@ -8,6 +8,7 @@ import 'package:family_health/presentation/resources/styles.dart';
 import 'package:family_health/presentation/router/router.dart';
 import 'package:family_health/presentation/view/widgets/app_avatar.dart';
 import 'package:family_health/presentation/view/widgets/app_button.dart';
+import 'package:family_health/presentation/view/widgets/app_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -42,12 +43,18 @@ class EventDetailPage extends BaseCubitPage<EventDetailCubit, EventDetailState> 
               icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
               onPressed: () => context.router.maybePop(true),
             ),
+            title: Text(
+              'events.title'.tr(),
+              style: AppStyles.titleMedium.copyWith(color: AppColors.textPrimary),
+            ),
             actions: [
               IconButton(
                 icon: const Icon(Icons.edit, color: AppColors.primary),
                 onPressed: () {
-                  context.router.push(AddEventRoute(event: ev)).then((_) {
-                    context.read<EventDetailCubit>().init(ev); // Refresh could need an id load but we assume parent repolls
+                  context.router.push(AddEventRoute(event: ev)).then((res) {
+                    if (res == true) {
+                      context.router.maybePop(true); // Pop back to list to refresh if edited
+                    }
                   });
                 },
               ),
@@ -58,6 +65,9 @@ class EventDetailPage extends BaseCubitPage<EventDetailCubit, EventDetailState> 
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                _buildBanner(ev),
+                const SizedBox(height: AppSpacing.lg),
+
                 if (isCancelled)
                   Container(
                     margin: const EdgeInsets.only(bottom: AppSpacing.md),
@@ -70,7 +80,7 @@ class EventDetailPage extends BaseCubitPage<EventDetailCubit, EventDetailState> 
                       children: [
                         const Icon(Icons.cancel, color: AppColors.error),
                         const SizedBox(width: 8),
-                        Text('Sự kiện đã huỷ bỏ', style: AppStyles.labelMedium.copyWith(color: AppColors.error, fontWeight: FontWeight.bold)),
+                        Text('Đã huỷ', style: AppStyles.labelMedium.copyWith(color: AppColors.error, fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ),
@@ -86,7 +96,7 @@ class EventDetailPage extends BaseCubitPage<EventDetailCubit, EventDetailState> 
                       children: [
                         const Icon(Icons.check_circle, color: AppColors.success),
                         const SizedBox(width: 8),
-                        Text('Sự kiện đã diễn ra / Hoàn thành', style: AppStyles.labelMedium.copyWith(color: AppColors.success, fontWeight: FontWeight.bold)),
+                        Text('Hoàn thành', style: AppStyles.labelMedium.copyWith(color: AppColors.success, fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ),
@@ -98,6 +108,10 @@ class EventDetailPage extends BaseCubitPage<EventDetailCubit, EventDetailState> 
                     decoration: isCancelled ? TextDecoration.lineThrough : null,
                     color: isCancelled ? AppColors.textSecondary : AppColors.textPrimary,
                   ),
+                ),
+                Text(
+                  _getEventTypeName(ev.eventType),
+                  style: AppStyles.titleMedium.copyWith(color: AppColors.primary),
                 ),
                 const SizedBox(height: AppSpacing.lg),
 
@@ -216,5 +230,66 @@ class EventDetailPage extends BaseCubitPage<EventDetailCubit, EventDetailState> 
         );
       },
     );
+  }
+
+  Widget _buildBanner(MedicalEvent event) {
+    String assetPath;
+    final type = _getEventType(event.eventType);
+    switch (type) {
+      case EventType.VACCINE:
+        assetPath = 'assets/images/event_vaccine.png';
+        break;
+      case EventType.CHECKUP:
+        assetPath = 'assets/images/event_checkup.png';
+        break;
+      case EventType.DENTAL:
+        assetPath = 'assets/images/event_dental.png';
+        break;
+      case EventType.MEDICATION:
+        assetPath = 'assets/images/event_medication.png';
+        break;
+      case EventType.OTHER:
+      default:
+        assetPath = 'assets/images/event_other.png';
+        break;
+    }
+
+    return AppCard(
+      padding: EdgeInsets.zero,
+      clipBehavior: Clip.antiAlias,
+      child: AspectRatio(
+        aspectRatio: 16 / 9,
+        child: (event.imageUrl != null && event.imageUrl!.isNotEmpty)
+            ? Image.network(
+                event.imageUrl!,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Image.asset(assetPath, fit: BoxFit.cover),
+              )
+            : Image.asset(assetPath, fit: BoxFit.cover),
+      ),
+    );
+  }
+
+  EventType _getEventType(String type) {
+    return EventType.values.firstWhere(
+      (e) => e.name.toUpperCase() == type.toUpperCase(),
+      orElse: () => EventType.OTHER,
+    );
+  }
+
+  String _getEventTypeName(String typeString) {
+    final type = _getEventType(typeString);
+    switch (type) {
+      case EventType.VACCINE:
+        return 'events.type.vaccine'.tr();
+      case EventType.CHECKUP:
+        return 'events.type.checkup'.tr();
+      case EventType.DENTAL:
+        return 'events.type.dental'.tr();
+      case EventType.MEDICATION:
+        return 'events.type.medication'.tr();
+      case EventType.OTHER:
+        return 'events.type.other'.tr();
+    }
   }
 }

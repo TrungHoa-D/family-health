@@ -212,7 +212,33 @@
     "title": "Sự kiện y tế",
     "today": "Hôm nay",
     "add_event": "Thêm sự kiện",
-    "coming_soon": "Tính năng sẽ sớm ra mắt!"
+    "edit_event": "Sửa sự kiện",
+    "coming_soon": "Tính năng sẽ sớm ra mắt!",
+    "type": {
+      "vaccine": "Tiêm chủng",
+      "checkup": "Khám bệnh",
+      "dental": "Nha khoa",
+      "medication": "Uống thuốc",
+      "other": "Khác"
+    },
+    "medication_picker": {
+      "title": "Thuốc liên quan",
+      "add_new": "+ Thêm thuốc mới",
+      "none": "Không chọn thuốc",
+      "hint": "Chọn thuốc trong tủ thuốc..."
+    },
+    "image_section": {
+      "title": "Ảnh minh họa"
+    },
+    "fields": {
+      "title": "Tiêu đề sự kiện *",
+      "type": "Loại sự kiện",
+      "start_time": "Thời gian bắt đầu",
+      "end_time": "Thời gian kết thúc",
+      "location": "Địa điểm",
+      "note": "Ghi chú (Tùy chọn)",
+      "participants": "Người tham gia"
+    }
   },
   "chat": {
     "group_name": "Gia đình Nguyễn",

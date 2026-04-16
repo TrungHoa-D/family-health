@@ -7,6 +7,7 @@ enum EventType {
   VACCINE,
   CHECKUP,
   DENTAL,
+  MEDICATION,
   OTHER,
 }
 
@@ -30,6 +31,8 @@ class MedicalEvent with _$MedicalEvent {
     @JsonKey(name: 'creator_id') String? creatorId,
     @JsonKey(name: 'participant_ids') @Default([]) List<String> participantIds,
     @JsonKey(name: 'status') @Default('UPCOMING') String status,
+    @JsonKey(name: 'medication_id') String? medicationId,
+    @JsonKey(name: 'image_url') String? imageUrl,
   }) = _MedicalEvent;
 
   factory MedicalEvent.fromJson(Map<String, dynamic> json) =>

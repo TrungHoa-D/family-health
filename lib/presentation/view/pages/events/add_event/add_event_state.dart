@@ -18,9 +18,14 @@ class AddEventState with _$AddEventState implements BaseCubitState {
     String? creatorId,
     @Default('UPCOMING') String status,
     String? titleError,
+    @Default([]) List<Medication> availableMedications,
+    Medication? selectedMedication,
+    @Default(false) bool isLoadingMedications,
     @Default(false) bool isSaving,
     @Default(false) bool isSaved,
     String? saveError,
+    String? imageUrl,
+    String? medicationId,
   }) = _AddEventState;
 
   const AddEventState._();

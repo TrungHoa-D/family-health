@@ -190,7 +190,33 @@
     "title": "Medical Events",
     "today": "Today",
     "add_event": "Add Event",
-    "coming_soon": "Feature coming soon!"
+    "edit_event": "Edit Event",
+    "coming_soon": "Feature coming soon!",
+    "type": {
+      "vaccine": "Vaccination",
+      "checkup": "Medical Checkup",
+      "dental": "Dental Care",
+      "medication": "Medication",
+      "other": "Other"
+    },
+    "medication_picker": {
+      "title": "Related Medication",
+      "add_new": "+ Add new medication",
+      "none": "None",
+      "hint": "Select from cabinet..."
+    },
+    "image_section": {
+      "title": "Illustration"
+    },
+    "fields": {
+      "title": "Event Title *",
+      "type": "Event Type",
+      "start_time": "Start Time",
+      "end_time": "End Time",
+      "location": "Location",
+      "note": "Note (Optional)",
+      "participants": "Participants"
+    }
   },
   "chat": {
     "group_name": "Nguyen Family",
