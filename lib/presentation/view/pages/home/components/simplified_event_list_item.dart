@@ -1,27 +1,28 @@
-import 'package:easy_localization/easy_localization.dart';
-import 'package:family_health/domain/entities/patient_schedule.dart';
+import 'package:family_health/domain/entities/medical_event.dart';
 import 'package:family_health/presentation/resources/app_spacing.dart';
 import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-class SimplifiedMedicationListItem extends StatelessWidget {
-  const SimplifiedMedicationListItem({
+class SimplifiedEventListItem extends StatelessWidget {
+  const SimplifiedEventListItem({
     super.key,
-    required this.schedule,
+    required this.event,
     this.onTap,
-    this.onTaken,
+    this.onComplete,
   });
 
-  final PatientSchedule schedule;
+  final MedicalEvent event;
   final VoidCallback? onTap;
-  final VoidCallback? onTaken;
+  final VoidCallback? onComplete;
 
   @override
   Widget build(BuildContext context) {
-    final bool isTaken = false; // logic will be linked later with logs
-    // For now, let's treat medication as "always active" for the simplified view to ensure they can mark it
-    final isActive = !isTaken;
+    final now = DateTime.now();
+    final isActive = now.isAfter(event.startTime) && 
+                    now.isBefore(event.endTime.add(const Duration(minutes: 30)));
+    final timeStr = DateFormat('HH:mm').format(event.startTime);
 
     return GestureDetector(
       onTap: onTap,
@@ -29,9 +30,9 @@ class SimplifiedMedicationListItem extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: AppSpacing.md),
         padding: EdgeInsets.all(isActive ? AppSpacing.xl : AppSpacing.lg),
         decoration: BoxDecoration(
-          color: isActive ? AppColors.primary.withValues(alpha: 0.05) : AppColors.white,
+          color: isActive ? _getEventColor().withValues(alpha: 0.05) : AppColors.white,
           borderRadius: BorderRadius.circular(32),
-          border: isActive ? Border.all(color: AppColors.primary.withValues(alpha: 0.3), width: 2) : null,
+          border: isActive ? Border.all(color: _getEventColor().withValues(alpha: 0.3), width: 2) : null,
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.05),
@@ -48,12 +49,20 @@ class SimplifiedMedicationListItem extends StatelessWidget {
                   width: isActive ? 100 : 80,
                   height: isActive ? 100 : 80,
                   decoration: BoxDecoration(
-                    color: AppColors.surface,
+                    color: _getEventColor().withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(isActive ? 28 : 20),
                   ),
-                  child: Icon(Icons.medication, 
-                      color: AppColors.primary, 
-                      size: isActive ? 50 : 40),
+                  child: event.imageUrl != null && event.imageUrl!.isNotEmpty
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(isActive ? 28 : 20),
+                          child: Image.network(
+                            event.imageUrl!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => Icon(_getEventIcon(),
+                                color: _getEventColor(), size: isActive ? 50 : 40),
+                          ),
+                        )
+                      : Icon(_getEventIcon(), color: _getEventColor(), size: isActive ? 50 : 40),
                 ),
                 const SizedBox(width: AppSpacing.lg),
                 Expanded(
@@ -61,18 +70,23 @@ class SimplifiedMedicationListItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        schedule.medName,
+                        event.title,
                         style: AppStyles.titleLarge.copyWith(
                           fontWeight: FontWeight.w900,
                           fontSize: isActive ? 32 : 24,
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
+                      const SizedBox(height: 4),
                       Text(
-                        '${'meds.info_dosage'.tr()}: ${schedule.dosage}',
+                        '$timeStr - ${event.location}',
                         style: AppStyles.bodyLarge.copyWith(
                           color: AppColors.textSecondary,
                           fontSize: isActive ? 22 : 18,
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
@@ -84,11 +98,11 @@ class SimplifiedMedicationListItem extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  onPressed: onTaken,
+                  onPressed: onComplete,
                   icon: const Icon(Icons.check_circle_outline, size: 32),
-                  label: Text(
-                    'simplified.taken_btn'.tr().toUpperCase(),
-                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
+                  label: const Text(
+                    'HOÀN THÀNH',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
@@ -105,5 +119,33 @@ class SimplifiedMedicationListItem extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  IconData _getEventIcon() {
+    switch (event.eventType) {
+      case 'VACCINE':
+        return Icons.vaccines;
+      case 'CHECKUP':
+        return Icons.medical_services;
+      case 'DENTAL':
+        return Icons.medical_information;
+      case 'MEDICATION':
+        return Icons.medication;
+      default:
+        return Icons.event;
+    }
+  }
+
+  Color _getEventColor() {
+    switch (event.eventType) {
+      case 'VACCINE':
+        return Colors.orange;
+      case 'CHECKUP':
+        return Colors.blue;
+      case 'DENTAL':
+        return Colors.teal;
+      default:
+        return AppColors.primary;
+    }
   }
 }

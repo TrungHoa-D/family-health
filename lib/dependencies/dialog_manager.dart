@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:family_health/shared/utils/alert.dart';
 import 'package:flutter/material.dart';
 
@@ -59,11 +60,25 @@ class AppDialogService implements DialogService {
     VoidCallback? onCancelBtnTap,
     bool barrierDismissible = true,
   }) async {
+    String? confirmText;
+    String? cancelText;
+    String? displayTitle = title;
+
+    if (type == AppAlertType.confirm) {
+      confirmText = 'settings.confirm'.tr();
+      cancelText = 'common.cancel'.tr();
+      displayTitle ??= 'settings.confirm'.tr();
+    } else if (type != AppAlertType.loading && type != AppAlertType.loadingWithMessage) {
+      confirmText = 'common.ok'.tr();
+    }
+
     return AppAlertDialog.show(
-      title: title,
+      title: displayTitle,
       context: context,
       message: message,
       type: type,
+      confirmBtnText: confirmText,
+      cancelBtnText: cancelText,
       onConfirmBtnTap: onConfirmBtnTap,
       onCancelBtnTap: onCancelBtnTap,
       barrierDismissible: barrierDismissible,

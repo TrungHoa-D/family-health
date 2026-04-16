@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:family_health/domain/entities/ai_chat_message.dart';
+import 'package:family_health/domain/entities/health_profile.dart';
 import 'package:family_health/domain/repositories/auth_repository.dart';
 import 'package:family_health/domain/usecases/get_ai_chat_history_usecase.dart';
 import 'package:family_health/domain/usecases/get_ai_response_usecase.dart';
+import 'package:family_health/domain/usecases/get_health_profile_usecase.dart';
 import 'package:family_health/domain/usecases/send_ai_chat_message_usecase.dart';
 import 'package:family_health/presentation/base/page_status.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit.dart';
@@ -20,12 +22,14 @@ class AIChatSupportCubit extends BaseCubit<AIChatSupportState> {
     this._getAIChatHistoryUseCase,
     this._sendAIChatMessageUseCase,
     this._getAIResponseUseCase,
+    this._getHealthProfileUseCase,
   ) : super(const AIChatSupportState());
 
   final AuthRepository _authRepository;
   final GetAIChatHistoryUseCase _getAIChatHistoryUseCase;
   final SendAIChatMessageUseCase _sendAIChatMessageUseCase;
   final GetAIResponseUseCase _getAIResponseUseCase;
+  final GetHealthProfileUseCase _getHealthProfileUseCase;
 
   StreamSubscription? _historySubscription;
 
@@ -38,11 +42,16 @@ class AIChatSupportCubit extends BaseCubit<AIChatSupportState> {
     try {
       _historySubscription?.cancel();
       final stream = await _getAIChatHistoryUseCase.call(params: user.uid);
+      
+      // Fetch health profile
+      final profile = await _getHealthProfileUseCase.call(params: user.uid);
+
       _historySubscription = stream.listen((messages) {
         if (!isClosed) {
           emit(state.copyWith(
             messages: messages,
             pageStatus: PageStatus.Loaded,
+            healthProfile: profile,
           ));
         }
       });
@@ -75,11 +84,33 @@ class AIChatSupportCubit extends BaseCubit<AIChatSupportState> {
       // Prepare context from history
       final historyContext = state.messages.take(10).map((m) => '${m.role}: ${m.content}').join('\n');
       
+      // Prepare user health context
+      String healthContext = '';
+      final profile = state.healthProfile;
+      if (profile != null) {
+        healthContext = '''
+        Thông tin sức khỏe người dùng:
+        - Chiều cao: ${profile.height} cm
+        - Cân nặng: ${profile.weight} kg
+        - Nhóm máu: ${profile.bloodType ?? 'Chưa cập nhật'} ${profile.isRhPositive ? 'Rh+' : 'Rh-'}
+        - Giới tính: ${profile.isMale ? 'Nam' : 'Nữ'}
+        - Tiền sử y tế: ${profile.medicalHistory.isEmpty ? 'Không có' : profile.medicalHistory.join(', ')}
+        
+        Giờ sinh hoạt hàng ngày:
+        - Ăn sáng: ${profile.anchorTimes.breakfast}
+        - Ăn trưa: ${profile.anchorTimes.lunch}
+        - Ăn tối: ${profile.anchorTimes.dinner}
+        - Đi ngủ: ${profile.anchorTimes.sleep}
+        ''';
+      }
+
       final prompt = '''
         Bạn là một Trợ lý Y khoa AI chuyên nghiệp và thân thiện. 
-        Hãy trả lời các câu hỏi về sức khỏe một cách chính xác.
+        Hãy trả lời các câu hỏi về sức khỏe một cách chính xác dựa trên thông tin hồ sơ của người dùng (nếu có).
         Lưu ý quan trọng: Luôn nhắc nhở người dùng "Hãy tham khảo ý kiến bác sĩ chuyên khoa để có chẩn đoán chính xác nhất".
         Sử dụng định dạng Markdown cho câu trả lời.
+
+        $healthContext
 
         Lịch sử trò chuyện gần đây:
         $historyContext

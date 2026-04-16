@@ -9,6 +9,7 @@ import 'package:family_health/presentation/view/pages/ai_support/ai_chat_cubit.d
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:family_health/shared/utils/keyboard.dart';
 
 @RoutePage()
 class AIChatSupportPage extends BaseCubitPage<AIChatSupportCubit, AIChatSupportState> {
@@ -64,16 +65,25 @@ class _AIChatSupportViewState extends State<AIChatSupportView> {
         _scrollToBottom();
       },
       builder: (context, state) {
-        return Scaffold(
+        return PopScope(
+          canPop: true,
+          onPopInvokedWithResult: (didPop, result) {
+            if (didPop) return;
+            hideKeyboard();
+          },
+          child: Scaffold(
           backgroundColor: AppColors.background,
           appBar: AppBar(
             backgroundColor: AppColors.background,
             elevation: 0,
-            leadingWidth: 40,
+            leadingWidth: 56,
             leading: IconButton(
               padding: EdgeInsets.zero,
               icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textPrimary, size: 20),
-              onPressed: () => context.router.back(),
+              onPressed: () {
+                hideKeyboard();
+                context.router.maybePop();
+              },
             ),
             titleSpacing: 0,
             title: Row(
@@ -129,10 +139,11 @@ class _AIChatSupportViewState extends State<AIChatSupportView> {
               _buildInputSection(context),
             ],
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
+    },
+  );
+}
 
   Widget _buildMessageList(AIChatSupportState state) {
     if (state.messages.isEmpty) {

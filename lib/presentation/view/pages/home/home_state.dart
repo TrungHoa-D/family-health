@@ -9,6 +9,7 @@ class HomeState with _$HomeState implements BaseCubitState {
     UserEntity? user,
     HomeStats? todayStats,
     @Default([]) List<PatientSchedule> simplifiedMeds,
+    @Default([]) List<MedicalEvent> upcomingEvents,
   }) = _HomeState;
 
   const HomeState._();

@@ -9,7 +9,9 @@
     "cancel": "Cancel",
     "save": "Save",
     "refresh": "Refresh",
-    "edit": "Edit"
+    "edit": "Edit",
+    "ok": "Ok",
+    "confirm_title": "Confirm"
   },
   "login": {
     "title": "Log in",
@@ -302,6 +304,7 @@
     "ai_chat_btn": "AI ASSISTANT",
     "today_schedule": "Today's Schedule",
     "no_meds": "No medications scheduled for today",
+    "no_events": "No events scheduled for today",
     "taken_confirm": "You've taken your medication, right?",
     "not_yet": "Not yet",
     "yes_done": "Yes, I did",

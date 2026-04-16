@@ -354,7 +354,6 @@ class AddEventPage extends BaseCubitPage<AddEventCubit, AddEventState> {
         assetPath = 'assets/images/event_medication.png';
         break;
       case EventType.OTHER:
-      default:
         assetPath = 'assets/images/event_other.png';
         break;
     }
@@ -400,18 +399,23 @@ class AddEventPage extends BaseCubitPage<AddEventCubit, AddEventState> {
 
   Widget _buildMedicationPicker(BuildContext context, AddEventState state) {
     final cubit = context.read<AddEventCubit>();
+    final selectedMedicationId = state.availableMedications.any(
+      (m) => m.id == state.medicationId,
+    )
+        ? state.medicationId
+        : null;
 
     return Column(
       children: [
-        DropdownButtonFormField<String>(
-          value: state.medicationId,
+        DropdownButtonFormField<String?>(
+          value: selectedMedicationId,
           hint: Text('events.medication_picker.hint'.tr()),
           items: [
-            DropdownMenuItem<String>(
+            DropdownMenuItem<String?>(
               value: null,
               child: Text('events.medication_picker.none'.tr()),
             ),
-            ...state.availableMedications.map((m) => DropdownMenuItem(
+            ...state.availableMedications.map((m) => DropdownMenuItem<String?>(
                   value: m.id,
                   child: Row(
                     children: [

@@ -8,6 +8,7 @@ class AIChatSupportState with _$AIChatSupportState implements BaseCubitState {
     @Default([]) List<AIChatMessage> messages,
     @Default(false) bool isTyping,
     String? userId,
+    HealthProfile? healthProfile,
   }) = _AIChatSupportState;
 
   const AIChatSupportState._();

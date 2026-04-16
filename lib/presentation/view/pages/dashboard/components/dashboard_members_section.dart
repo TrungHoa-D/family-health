@@ -149,37 +149,14 @@ class _MemberItem extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Stack(
-            children: [
-              AppAvatar.large(imageUrl: member.photoUrl),
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: Container(
-                  width: 14,
-                  height: 14,
-                  decoration: BoxDecoration(
-                    color: member.statusColor,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.white, width: 2),
-                  ),
-                ),
-              ),
-            ],
-          ),
+          AppAvatar.large(imageUrl: member.photoUrl),
           const SizedBox(height: AppSpacing.sm),
           Text(
             member.name,
             style: AppStyles.labelMedium.copyWith(fontWeight: FontWeight.bold),
-            maxLines: 1,
+            maxLines: 2,
+            textAlign: TextAlign.center,
             overflow: TextOverflow.ellipsis,
-          ),
-          Text(
-            member.progress,
-            style: AppStyles.labelSmall.copyWith(
-              color: member.statusColor,
-              fontWeight: FontWeight.w900,
-            ),
           ),
         ],
       ),

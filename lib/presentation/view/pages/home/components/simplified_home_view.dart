@@ -1,19 +1,22 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:family_health/domain/entities/medical_event.dart';
 import 'package:family_health/domain/entities/patient_schedule.dart';
 import 'package:family_health/presentation/resources/app_spacing.dart';
 import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
 import 'package:flutter/material.dart';
 
+import 'simplified_event_list_item.dart';
 import 'simplified_medication_list_item.dart';
 
 class SimplifiedHomeView extends StatelessWidget {
   const SimplifiedHomeView({
     super.key,
     required this.userName,
-    required this.progress,
     required this.meds,
+    required this.upcomingEvents,
     required this.onTakenMedication,
+    required this.onCompleteEvent,
     required this.onEmergencyCall,
     required this.onExitSimplifiedMode,
     required this.onChatTap,
@@ -21,9 +24,10 @@ class SimplifiedHomeView extends StatelessWidget {
   });
 
   final String? userName;
-  final double progress; // 0.0 to 1.0
   final List<PatientSchedule> meds;
-  final VoidCallback onTakenMedication;
+  final List<MedicalEvent> upcomingEvents;
+  final Function(PatientSchedule) onTakenMedication;
+  final Function(MedicalEvent) onCompleteEvent;
   final VoidCallback onEmergencyCall;
   final VoidCallback onExitSimplifiedMode;
   final VoidCallback onChatTap;
@@ -70,78 +74,36 @@ class SimplifiedHomeView extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.xl),
 
-              // Progress Card
-              Container(
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(24),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      blurRadius: 15,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    Text(
-                      'simplified.med_progress'.tr(),
-                      style: AppStyles.titleMedium
-                          .copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: LinearProgressIndicator(
-                        value: progress,
-                        minHeight: 20,
-                        backgroundColor: AppColors.border,
-                        valueColor: const AlwaysStoppedAnimation<Color>(
-                            AppColors.success),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    Text(
-                      'simplified.completion'.tr(args: [(progress * 100).toInt().toString()]),
-                      style: AppStyles.bodyMedium.copyWith(
-                        color: AppColors.success,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // Medication List
-              const SizedBox(height: AppSpacing.xl),
+              const SizedBox(height: AppSpacing.md),
+              // Combined List (Medications + Events)
               Text(
                 'simplified.today_schedule'.tr(),
-                style: AppStyles.titleMedium.copyWith(fontWeight: FontWeight.bold, fontSize: 20),
+                style: AppStyles.titleMedium.copyWith(fontWeight: FontWeight.bold, fontSize: 24),
               ),
               const SizedBox(height: AppSpacing.md),
-              meds.isEmpty
+              (meds.isEmpty && upcomingEvents.isEmpty)
                   ? Center(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                             vertical: AppSpacing.xxl),
                         child: Text(
-                          'simplified.no_meds'.tr(),
+                          'simplified.no_events'.tr(),
                           style: AppStyles.bodyLarge
-                              .copyWith(color: AppColors.textSecondary),
+                              .copyWith(color: AppColors.textSecondary, fontSize: 20),
                         ),
                       ),
                     )
-                  : ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: meds.length,
-                      itemBuilder: (context, index) {
-                        return SimplifiedMedicationListItem(
-                          schedule: meds[index],
-                          onTap: onTakenMedication,
-                        );
-                      },
+                  : Column(
+                      children: [
+                        ...meds.map((m) => SimplifiedMedicationListItem(
+                              schedule: m,
+                              onTaken: () => onTakenMedication?.call(m),
+                            )),
+                        ...upcomingEvents.map((e) => SimplifiedEventListItem(
+                              event: e,
+                              onComplete: () => onCompleteEvent?.call(e),
+                            )),
+                      ],
                     ),
               const SizedBox(height: AppSpacing.lg),
 
@@ -168,15 +130,6 @@ class SimplifiedHomeView extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.lg),
 
-              // Huge "Taken Medication" Button
-              _BigActionButton(
-                title: 'simplified.taken_btn'.tr(),
-                subtitle: 'simplified.taken_subtitle'.tr(),
-                icon: Icons.check_circle,
-                color: AppColors.primary,
-                onTap: onTakenMedication,
-              ),
-              const SizedBox(height: AppSpacing.md),
             ],
           ),
         ),

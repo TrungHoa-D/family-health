@@ -9,7 +9,9 @@
     "cancel": "Hủy",
     "save": "Lưu",
     "refresh": "Làm mới",
-    "edit": "Chỉnh sửa"
+    "edit": "Chỉnh sửa",
+    "ok": "Đồng ý",
+    "confirm_title": "Xác nhận"
   },
   "login": {
     "title": "Đăng nhập",
@@ -223,7 +225,7 @@
     },
     "medication_picker": {
       "title": "Thuốc liên quan",
-      "add_new": "+ Thêm thuốc mới",
+      "add_new": "Thêm thuốc mới",
       "none": "Không chọn thuốc",
       "hint": "Chọn thuốc trong tủ thuốc..."
     },
@@ -325,6 +327,7 @@
     "ai_chat_btn": "TRỢ LÝ AI",
     "today_schedule": "Lịch uống thuốc hôm nay",
     "no_meds": "Hôm nay không có liều thuốc nào",
+    "no_events": "Hôm nay gia đình không có sự kiện gì",
     "taken_confirm": "Bạn đã uống thuốc rồi đúng không?",
     "not_yet": "Chưa",
     "yes_done": "Đúng vậy",

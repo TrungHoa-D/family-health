@@ -3,15 +3,18 @@ import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 
 import 'package:family_health/domain/entities/home_stats.dart';
+import 'package:family_health/domain/entities/medical_event.dart';
 import 'package:family_health/domain/entities/patient_schedule.dart';
 import 'package:family_health/domain/entities/user_entity.dart';
 import 'package:family_health/domain/repositories/auth_repository.dart';
 import 'package:family_health/domain/entities/medication_log.dart';
 import 'package:family_health/domain/usecases/add_medication_log_usecase.dart';
 import 'package:family_health/domain/usecases/get_today_stats_usecase.dart';
+import 'package:family_health/domain/usecases/save_medical_event_usecase.dart';
 import 'package:family_health/domain/usecases/sign_out_usecase.dart';
 import 'package:family_health/domain/usecases/update_ui_preference_usecase.dart';
 import 'package:family_health/domain/usecases/watch_family_schedules_usecase.dart';
+import 'package:family_health/domain/usecases/watch_medical_events_usecase.dart';
 import 'package:family_health/domain/usecases/watch_user_usecase.dart';
 import 'package:family_health/presentation/base/page_status.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit.dart';
@@ -35,6 +38,8 @@ class HomeCubit extends BaseCubit<HomeState> {
     this._updateUIPreferenceUseCase,
     this._watchFamilySchedulesUseCase,
     this._addMedicationLogUseCase,
+    this._watchMedicalEventsUseCase,
+    this._saveMedicalEventUseCase,
   ) : super(const HomeState());
 
   final AuthRepository _authRepository;
@@ -44,9 +49,12 @@ class HomeCubit extends BaseCubit<HomeState> {
   final UpdateUIPreferenceUseCase _updateUIPreferenceUseCase;
   final WatchFamilySchedulesUseCase _watchFamilySchedulesUseCase;
   final AddMedicationLogUseCase _addMedicationLogUseCase;
+  final WatchMedicalEventsUseCase _watchMedicalEventsUseCase;
+  final SaveMedicalEventUseCase _saveMedicalEventUseCase;
 
   StreamSubscription? _userSubscription;
   StreamSubscription? _medsSubscription;
+  StreamSubscription? _eventsSubscription;
 
   Future<void> loadData() async {
     final UserEntity? authUser = _authRepository.getCurrentUser();
@@ -73,6 +81,23 @@ class HomeCubit extends BaseCubit<HomeState> {
                 schedules.where((s) => s.targetUserId == user.uid).toList();
             if (!isClosed) {
               emit(state.copyWith(simplifiedMeds: userSchedules));
+            }
+          });
+
+          _eventsSubscription?.cancel();
+          _eventsSubscription = _watchMedicalEventsUseCase
+              .call(user!.familyId!)
+              .listen((events) {
+            final now = DateTime.now();
+            final upcomingEvents = events
+                .where((e) =>
+                    e.status == 'UPCOMING' &&
+                    (e.startTime.isAfter(now) ||
+                        (e.startTime.isBefore(now) && e.endTime.isAfter(now))))
+                .toList()
+              ..sort((a, b) => a.startTime.compareTo(b.startTime));
+            if (!isClosed) {
+              emit(state.copyWith(upcomingEvents: upcomingEvents));
             }
           });
         }
@@ -150,6 +175,23 @@ class HomeCubit extends BaseCubit<HomeState> {
     }
   }
 
+  Future<void> markScheduleAsTaken(PatientSchedule schedule) async {
+    final log = MedicationLog(
+      logId: DateTime.now().millisecondsSinceEpoch.toString(),
+      familyId: state.user?.familyId ?? '',
+      scheduleId: schedule.id,
+      scheduledTime: DateTime.now(), // approximation
+      status: 'TAKEN',
+      takenTime: DateTime.now(),
+    );
+
+    try {
+      await _addMedicationLogUseCase.call(params: log);
+    } catch (e) {
+      logger.e('Failed to mark schedule as taken: $e');
+    }
+  }
+
   Future<void> markNearestDoseAsTaken() async {
     if (state.simplifiedMeds.isEmpty) return;
 
@@ -171,6 +213,15 @@ class HomeCubit extends BaseCubit<HomeState> {
     }
   }
 
+  Future<void> completeMedicalEvent(MedicalEvent event) async {
+    try {
+      final updatedEvent = event.copyWith(status: 'COMPLETED');
+      await _saveMedicalEventUseCase.call(params: updatedEvent);
+    } catch (e) {
+      logger.e('Failed to complete medical event: $e');
+    }
+  }
+
   Future<void> signOut() async {
     try {
       showLoading();
@@ -186,6 +237,7 @@ class HomeCubit extends BaseCubit<HomeState> {
   Future<void> close() {
     _userSubscription?.cancel();
     _medsSubscription?.cancel();
+    _eventsSubscription?.cancel();
     return super.close();
   }
 }

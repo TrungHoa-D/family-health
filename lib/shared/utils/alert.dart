@@ -20,6 +20,8 @@ class AppAlertDialog {
     String? message,
     AppAlertType type = AppAlertType.info,
     bool barrierDismissible = true,
+    String? confirmBtnText,
+    String? cancelBtnText,
     VoidCallback? onConfirmBtnTap,
     VoidCallback? onCancelBtnTap,
   }) async {
@@ -95,6 +97,17 @@ class AppAlertDialog {
       title: title,
       text: message,
       barrierDismissible: barrierDismissible,
+      confirmBtnText: confirmBtnText ?? 'Ok',
+      cancelBtnText: cancelBtnText ?? 'Cancel',
+      confirmBtnTextStyle: const TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      ),
+      cancelBtnTextStyle: const TextStyle(
+        fontSize: 18,
+        color: Colors.grey,
+      ),
       onConfirmBtnTap: () {
         onConfirmBtnTap?.call();
       },

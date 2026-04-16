@@ -33,9 +33,9 @@ class HomePage extends BaseCubitPage<HomeCubit, HomeState> {
         if (uiPreference == 'simplified' && state.currentTabIndex == 0) {
           return SimplifiedHomeView(
             userName: state.user?.displayName,
-            progress: state.todayStats?.completionPercentage ?? 0.0,
             meds: state.simplifiedMeds,
-            onTakenMedication: () {
+            upcomingEvents: state.upcomingEvents,
+            onTakenMedication: (schedule) {
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
@@ -48,7 +48,7 @@ class HomePage extends BaseCubitPage<HomeCubit, HomeState> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        context.read<HomeCubit>().markNearestDoseAsTaken();
+                        context.read<HomeCubit>().markScheduleAsTaken(schedule);
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('simplified.recorded'.tr())),
@@ -58,6 +58,12 @@ class HomePage extends BaseCubitPage<HomeCubit, HomeState> {
                     ),
                   ],
                 ),
+              );
+            },
+            onCompleteEvent: (event) {
+              context.read<HomeCubit>().completeMedicalEvent(event);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('simplified.recorded'.tr())),
               );
             },
             onEmergencyCall: () {
