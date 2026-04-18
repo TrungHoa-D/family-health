@@ -144,6 +144,25 @@ class AddEventPage extends BaseCubitPage<AddEventCubit, AddEventState> {
                       const SizedBox(height: AppSpacing.lg),
                     ],
 
+                    // Dosage Input — chỉ hiện với sự kiện MEDICATION
+                    if (state.eventType == EventType.MEDICATION) ...[
+                      _buildFieldTitle('Liều lượng uống'),
+                      TextField(
+                        onChanged: cubit.updateDosage,
+                        controller: TextEditingController(text: state.dosage)
+                          ..selection = TextSelection.collapsed(
+                              offset: state.dosage.length),
+                        decoration: InputDecoration(
+                          hintText: 'Ví dụ: 2 viên, 500mg, 1 muỗng canh...',
+                          prefixIcon: const Icon(Icons.medication_outlined),
+                          border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.circular(AppSpacing.radiusInput)),
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                    ],
+
                     // ─── Time Mode Selector ────────────────────────────────
                     _buildFieldTitle('events.fields.time_mode'.tr()),
                     _buildTimeModeSelector(context, state, cubit),

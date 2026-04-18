@@ -89,6 +89,30 @@ class SimplifiedEventListItem extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.left,
             ),
+            // Liều lượng — chỉ hiện với sự kiện MEDICATION
+            if (event.eventType == 'MEDICATION' &&
+                event.dosage != null &&
+                event.dosage!.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  Icon(
+                    Icons.medication_outlined,
+                    size: isActive ? 20 : 16,
+                    color: AppColors.primary,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    event.dosage!,
+                    style: AppStyles.bodyLarge.copyWith(
+                      color: AppColors.primary,
+                      fontSize: isActive ? 20 : 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ],
             if (isActive && canComplete) ...[
               const SizedBox(height: AppSpacing.lg),
               SizedBox(

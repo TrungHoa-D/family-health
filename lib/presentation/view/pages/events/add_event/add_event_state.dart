@@ -36,6 +36,8 @@ class AddEventState with _$AddEventState implements BaseCubitState {
     String? saveError,
     String? imageUrl,
     String? medicationId,
+    /// Liều lượng uống cho sự kiện MEDICATION, ví dụ: "2 viên", "500mg"
+    @Default('') String dosage,
   }) = _AddEventState;
 
   const AddEventState._();

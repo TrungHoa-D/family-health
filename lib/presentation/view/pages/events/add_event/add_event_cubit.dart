@@ -95,6 +95,7 @@ class AddEventCubit extends BaseCubit<AddEventState> {
         mealTime: event.mealTime,
         imageUrl: event.imageUrl,
         medicationId: event.medicationId,
+        dosage: event.dosage ?? '',
       ));
     } else {
       final now = DateTime.now();
@@ -119,6 +120,10 @@ class AddEventCubit extends BaseCubit<AddEventState> {
 
   void updateDescription(String value) {
     emit(state.copyWith(description: value));
+  }
+
+  void updateDosage(String value) {
+    emit(state.copyWith(dosage: value));
   }
 
   void updateLocation(String value) {
@@ -256,6 +261,8 @@ class AddEventCubit extends BaseCubit<AddEventState> {
       selectedMedication: med,
       medicationId: med?.id,
       imageUrl: med?.imageUrl,
+      // Auto-fill liều lượng từ dosageStandard nếu đang trống
+      dosage: state.dosage.isEmpty ? (med?.dosageStandard ?? state.dosage) : state.dosage,
     ));
   }
 
@@ -315,6 +322,7 @@ class AddEventCubit extends BaseCubit<AddEventState> {
         mealTime: state.mealTime,
         medicationId: state.medicationId,
         imageUrl: state.imageUrl,
+        dosage: state.dosage.isNotEmpty ? state.dosage : null,
       );
 
       await _saveMedicalEventUseCase.call(params: eventToSave);

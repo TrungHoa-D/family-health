@@ -203,6 +203,46 @@ class EventDetailPage extends BaseCubitPage<EventDetailCubit, EventDetailState> 
                     ],
                   ),
                 ),
+                const SizedBox(height: AppSpacing.md),
+
+                // Dosage box — chỉ hiện với sự kiện MEDICATION và có liều lượng
+                if (ev.eventType == 'MEDICATION' &&
+                    ev.dosage != null &&
+                    ev.dosage!.isNotEmpty) ...[
+                  Container(
+                    padding: const EdgeInsets.all(AppSpacing.md),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius:
+                          BorderRadius.circular(AppSpacing.radiusCard),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.medication,
+                            color: AppColors.primary, size: 32),
+                        const SizedBox(width: AppSpacing.md),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Liều lượng',
+                                style: AppStyles.labelSmall.copyWith(
+                                    color: AppColors.textSecondary),
+                              ),
+                              Text(
+                                ev.dosage!,
+                                style: AppStyles.bodyLarge
+                                    .copyWith(fontWeight: FontWeight.w600),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                ],
                 const SizedBox(height: AppSpacing.lg),
 
                 Text('Thành viên tham gia', style: AppStyles.titleMedium.copyWith(fontWeight: FontWeight.bold)),

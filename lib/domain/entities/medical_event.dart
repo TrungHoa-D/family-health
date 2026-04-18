@@ -54,8 +54,10 @@ class MedicalEvent with _$MedicalEvent {
     @JsonKey(name: 'finished') @Default(false) bool finished,
     /// Chế độ thời gian: 'from_to' | 'all_day' | 'meal_based'
     @JsonKey(name: 'time_mode') @Default('from_to') String timeMode,
-    /// Bữa ăn (chỉ dùng khi timeMode = 'meal_based'): 'breakfast' | 'lunch' | 'dinner' | 'snack'
+    /// Bữa ăn (chỉ dùng khi timeMode = 'meal_based'): 'breakfast' | 'lunch' | 'dinner'
     @JsonKey(name: 'meal_time') String? mealTime,
+    /// Liều lượng uống (chỉ dùng khi eventType = 'MEDICATION'), ví dụ: "2 viên", "500mg"
+    @JsonKey(name: 'dosage') String? dosage,
   }) = _MedicalEvent;
 
   factory MedicalEvent.fromJson(Map<String, dynamic> json) =>
