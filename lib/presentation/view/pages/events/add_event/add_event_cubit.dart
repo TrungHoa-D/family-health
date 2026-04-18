@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:family_health/domain/entities/medical_event.dart';
 import 'package:family_health/domain/entities/medication.dart';
 import 'package:family_health/domain/entities/user_entity.dart';
@@ -18,6 +19,15 @@ import 'dart:async';
 
 part 'add_event_cubit.freezed.dart';
 part 'add_event_state.dart';
+
+/// Giờ mặc định cho mỗi bữa ăn (Option B: cố định, không phụ thuộc anchor_times)
+const _mealStartHours = {
+  'breakfast': 7,
+  'lunch': 12,
+  'dinner': 18,
+  'snack': 15,
+};
+const _mealDurationHours = 1;
 
 @injectable
 class AddEventCubit extends BaseCubit<AddEventState> {
@@ -46,7 +56,7 @@ class AddEventCubit extends BaseCubit<AddEventState> {
 
   Future<void> init({MedicalEvent? event}) async {
     emit(state.copyWith(pageStatus: PageStatus.Loading));
-    
+
     try {
       final user = _firebaseAuth.currentUser;
       if (user != null) {
@@ -55,7 +65,8 @@ class AddEventCubit extends BaseCubit<AddEventState> {
         if (familyId != null) {
           final family = await _fetchFamilyUseCase.call(params: familyId);
           if (family != null) {
-            final members = await _getFamilyMembersUseCase.call(params: family.memberIds);
+            final members =
+                await _getFamilyMembersUseCase.call(params: family.memberIds);
             emit(state.copyWith(familyMembers: members));
             _loadMedications(familyId);
           }
@@ -64,6 +75,7 @@ class AddEventCubit extends BaseCubit<AddEventState> {
     } catch (e) {
       // Ignore load members failure
     }
+
     if (event != null) {
       emit(state.copyWith(
         pageStatus: PageStatus.Loaded,
@@ -78,6 +90,9 @@ class AddEventCubit extends BaseCubit<AddEventState> {
         selectedParticipantIds: event.participantIds,
         creatorId: event.creatorId,
         status: event.status,
+        finished: event.finished,
+        timeMode: event.timeMode,
+        mealTime: event.mealTime,
         imageUrl: event.imageUrl,
         medicationId: event.medicationId,
       ));
@@ -114,6 +129,109 @@ class AddEventCubit extends BaseCubit<AddEventState> {
     emit(state.copyWith(eventType: type));
   }
 
+  // ─── Time Mode ──────────────────────────────────────────────────────────────
+
+  void updateTimeMode(String mode) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    DateTime newStart;
+    DateTime newEnd;
+
+    switch (mode) {
+      case 'all_day':
+        // Cả ngày: 00:00 — 23:59 hôm nay
+        newStart = today;
+        newEnd = today.add(const Duration(hours: 23, minutes: 59));
+        break;
+      case 'meal_based':
+        // Mặc định theo bữa sáng
+        final mealTime = state.mealTime ?? 'breakfast';
+        newStart = _buildMealTime(today, mealTime);
+        newEnd = newStart.add(const Duration(hours: _mealDurationHours));
+        break;
+      case 'from_to':
+      default:
+        newStart = state.startTime;
+        newEnd = state.endTime;
+        break;
+    }
+
+    emit(state.copyWith(
+      timeMode: mode,
+      startTime: newStart,
+      endTime: newEnd,
+    ));
+  }
+
+  void updateMealTime(String mealTime) {
+    final today = DateTime(
+      state.startTime.year,
+      state.startTime.month,
+      state.startTime.day,
+    );
+    final newStart = _buildMealTime(today, mealTime);
+    final newEnd = newStart.add(const Duration(hours: _mealDurationHours));
+    emit(state.copyWith(
+      mealTime: mealTime,
+      startTime: newStart,
+      endTime: newEnd,
+    ));
+  }
+
+  void updateAllDayDate(DateTime date) {
+    final today = DateTime(date.year, date.month, date.day);
+    emit(state.copyWith(
+      startTime: today,
+      endTime: today.add(const Duration(hours: 23, minutes: 59)),
+    ));
+  }
+
+  void updateMealDate(DateTime date) {
+    final today = DateTime(date.year, date.month, date.day);
+    final mealTime = state.mealTime ?? 'breakfast';
+    final newStart = _buildMealTime(today, mealTime);
+    emit(state.copyWith(
+      startTime: newStart,
+      endTime: newStart.add(const Duration(hours: _mealDurationHours)),
+    ));
+  }
+
+  DateTime _buildMealTime(DateTime date, String mealTime) {
+    final hour = _mealStartHours[mealTime] ?? 7;
+    return DateTime(date.year, date.month, date.day, hour, 0);
+  }
+
+  // ─── Standard Time Pickers ───────────────────────────────────────────────────
+
+  void updateStartTime(DateTime time) {
+    emit(state.copyWith(startTime: time));
+    if (state.endTime.isBefore(time)) {
+      emit(state.copyWith(endTime: time.add(const Duration(hours: 1))));
+    }
+  }
+
+  void updateEndTime(DateTime time) {
+    emit(state.copyWith(endTime: time));
+  }
+
+  // ─── Participants ────────────────────────────────────────────────────────────
+
+  void toggleParticipant(String uid) {
+    final current = List<String>.from(state.selectedParticipantIds);
+    if (current.contains(uid)) {
+      current.remove(uid);
+    } else {
+      current.add(uid);
+    }
+    emit(state.copyWith(
+      selectedParticipantIds: current,
+      participantError: null,
+    ));
+  }
+
+  // ─── Medications ─────────────────────────────────────────────────────────────
+
   void _loadMedications(String familyId) {
     _medsSubscription?.cancel();
     emit(state.copyWith(isLoadingMedications: true));
@@ -122,7 +240,7 @@ class AddEventCubit extends BaseCubit<AddEventState> {
         availableMedications: meds,
         isLoadingMedications: false,
       ));
-      
+
       // If editing and has medicationId, try to find the selected medication
       if (state.medicationId != null && state.selectedMedication == null) {
         final med = meds.where((m) => m.id == state.medicationId).firstOrNull;
@@ -141,41 +259,25 @@ class AddEventCubit extends BaseCubit<AddEventState> {
     ));
   }
 
-  @override
-  Future<void> close() {
-    _medsSubscription?.cancel();
-    return super.close();
-  }
-
-  void updateStartTime(DateTime time) {
-    emit(state.copyWith(startTime: time));
-    if (state.endTime.isBefore(time)) {
-      emit(state.copyWith(endTime: time.add(const Duration(hours: 1))));
-    }
-  }
-
-  void updateEndTime(DateTime time) {
-    emit(state.copyWith(endTime: time));
-  }
-
-  void toggleParticipant(String uid) {
-    final current = List<String>.from(state.selectedParticipantIds);
-    if (current.contains(uid)) {
-      current.remove(uid);
-    } else {
-      current.add(uid);
-    }
-    emit(state.copyWith(selectedParticipantIds: current));
-  }
+  // ─── Validate & Save ─────────────────────────────────────────────────────────
 
   bool validate() {
     String? titleError;
+    String? participantError;
+
     if (state.title.trim().isEmpty) {
-      titleError = 'Vui lòng nhập tiêu đề sự kiện';
+      titleError = 'events.validation.title_required'.tr();
     }
 
-    if (titleError != null) {
-      emit(state.copyWith(titleError: titleError));
+    if (state.selectedParticipantIds.isEmpty) {
+      participantError = 'events.validation.participant_required'.tr();
+    }
+
+    if (titleError != null || participantError != null) {
+      emit(state.copyWith(
+        titleError: titleError,
+        participantError: participantError,
+      ));
       return false;
     }
     return true;
@@ -208,17 +310,16 @@ class AddEventCubit extends BaseCubit<AddEventState> {
         creatorId: state.isEditing ? state.creatorId : user.uid,
         participantIds: state.selectedParticipantIds,
         status: state.isEditing ? state.status : 'UPCOMING',
+        finished: state.isEditing ? state.finished : false,
+        timeMode: state.timeMode,
+        mealTime: state.mealTime,
         medicationId: state.medicationId,
         imageUrl: state.imageUrl,
       );
 
       await _saveMedicalEventUseCase.call(params: eventToSave);
 
-      // Schedule notification
-      if (state.isEditing) {
-        await _notificationService.cancelEventReminders(eventToSave.id);
-      }
-      await _notificationService.scheduleEventReminder(eventToSave);
+      // Notifications for events will now be handled globally by AutoSchedulerService
 
       emit(state.copyWith(isSaving: false, isSaved: true));
     } catch (e) {
@@ -227,5 +328,11 @@ class AddEventCubit extends BaseCubit<AddEventState> {
         saveError: e.toString(),
       ));
     }
+  }
+
+  @override
+  Future<void> close() {
+    _medsSubscription?.cancel();
+    return super.close();
   }
 }

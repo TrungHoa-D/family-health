@@ -88,12 +88,9 @@ class HomeCubit extends BaseCubit<HomeState> {
           _eventsSubscription = _watchMedicalEventsUseCase
               .call(user!.familyId!)
               .listen((events) {
-            final now = DateTime.now();
+            // Dùng computedStatus để lọc đúng: hiện event đang sắp tới hoặc đang diễn ra
             final upcomingEvents = events
-                .where((e) =>
-                    e.status == 'UPCOMING' &&
-                    (e.startTime.isAfter(now) ||
-                        (e.startTime.isBefore(now) && e.endTime.isAfter(now))))
+                .where((e) => e.isActiveOrUpcoming)
                 .toList()
               ..sort((a, b) => a.startTime.compareTo(b.startTime));
             if (!isClosed) {

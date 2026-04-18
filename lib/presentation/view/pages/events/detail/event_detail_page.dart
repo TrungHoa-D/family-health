@@ -32,7 +32,10 @@ class EventDetailPage extends BaseCubitPage<EventDetailCubit, EventDetailState> 
       builder: (context, state) {
         final ev = state.event;
         final isCancelled = ev.status == 'CANCELLED';
-        final isCompleted = ev.status == 'COMPLETED';
+        final displayStatus = ev.computedStatus;
+        final isFinished = displayStatus == EventDisplayStatus.finished;
+        final isOngoing = displayStatus == EventDisplayStatus.ongoing;
+        final isIncomplete = displayStatus == EventDisplayStatus.incomplete;
 
         return Scaffold(
           backgroundColor: AppColors.background,
@@ -68,7 +71,7 @@ class EventDetailPage extends BaseCubitPage<EventDetailCubit, EventDetailState> 
                 _buildBanner(ev),
                 const SizedBox(height: AppSpacing.lg),
 
-                if (isCancelled)
+                  if (isCancelled)
                   Container(
                     margin: const EdgeInsets.only(bottom: AppSpacing.md),
                     padding: const EdgeInsets.all(AppSpacing.sm),
@@ -80,11 +83,11 @@ class EventDetailPage extends BaseCubitPage<EventDetailCubit, EventDetailState> 
                       children: [
                         const Icon(Icons.cancel, color: AppColors.error),
                         const SizedBox(width: 8),
-                        Text('Đã huỷ', style: AppStyles.labelMedium.copyWith(color: AppColors.error, fontWeight: FontWeight.bold)),
+                        Text('events.status.cancelled'.tr(), style: AppStyles.labelMedium.copyWith(color: AppColors.error, fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ),
-                if (isCompleted)
+                if (isFinished)
                   Container(
                     margin: const EdgeInsets.only(bottom: AppSpacing.md),
                     padding: const EdgeInsets.all(AppSpacing.sm),
@@ -96,7 +99,39 @@ class EventDetailPage extends BaseCubitPage<EventDetailCubit, EventDetailState> 
                       children: [
                         const Icon(Icons.check_circle, color: AppColors.success),
                         const SizedBox(width: 8),
-                        Text('Hoàn thành', style: AppStyles.labelMedium.copyWith(color: AppColors.success, fontWeight: FontWeight.bold)),
+                        Text('events.status.finished'.tr(), style: AppStyles.labelMedium.copyWith(color: AppColors.success, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  ),
+                if (isOngoing)
+                  Container(
+                    margin: const EdgeInsets.only(bottom: AppSpacing.md),
+                    padding: const EdgeInsets.all(AppSpacing.sm),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.play_circle_outline, color: Colors.orange),
+                        const SizedBox(width: 8),
+                        Text('events.status.ongoing'.tr(), style: AppStyles.labelMedium.copyWith(color: Colors.orange, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  ),
+                if (isIncomplete)
+                  Container(
+                    margin: const EdgeInsets.only(bottom: AppSpacing.md),
+                    padding: const EdgeInsets.all(AppSpacing.sm),
+                    decoration: BoxDecoration(
+                      color: AppColors.error.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.error_outline, color: AppColors.error),
+                        const SizedBox(width: 8),
+                        Text('events.status.incomplete'.tr(), style: AppStyles.labelMedium.copyWith(color: AppColors.error, fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ),
@@ -135,7 +170,7 @@ class EventDetailPage extends BaseCubitPage<EventDetailCubit, EventDetailState> 
                               style: AppStyles.labelMedium.copyWith(fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              '${DateFormat('HH:mm').format(ev.startTime)} - ${DateFormat('HH:mm').format(ev.endTime)}',
+                              _formatEventTime(ev),
                               style: AppStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
                             ),
                           ],
@@ -207,21 +242,21 @@ class EventDetailPage extends BaseCubitPage<EventDetailCubit, EventDetailState> 
                 ],
                 
                 const SizedBox(height: 48),
-                if (!isCancelled && !isCompleted) ...[
+                if (!isCancelled && !isFinished) ...[
                   AppButton.primary(
-                    title: 'Đánh dấu Hoàn thành',
-                    onPressed: () => context.read<EventDetailCubit>().changeStatus('COMPLETED'),
+                    title: 'events.actions.mark_finished'.tr(),
+                    onPressed: () => context.read<EventDetailCubit>().markAsFinished(),
                   ),
                   const SizedBox(height: 16),
                   AppButton.outline(
-                    title: 'Huỷ bỏ sự kiện',
+                    title: 'events.actions.cancel_event'.tr(),
                     onPressed: () => context.read<EventDetailCubit>().changeStatus('CANCELLED'),
                   ),
                 ],
-                if (isCompleted || isCancelled)
+                if (isFinished || isCancelled)
                   AppButton.outline(
-                    title: 'Mở lại sự kiện',
-                    onPressed: () => context.read<EventDetailCubit>().changeStatus('UPCOMING'),
+                    title: 'events.actions.reopen_event'.tr(),
+                    onPressed: () => context.read<EventDetailCubit>().markAsUnfinished(),
                   ),
                 const SizedBox(height: 48),
               ],
@@ -292,4 +327,25 @@ class EventDetailPage extends BaseCubitPage<EventDetailCubit, EventDetailState> 
         return 'events.type.other'.tr();
     }
   }
+
+  /// Hiển thị thời gian theo timeMode của event
+  String _formatEventTime(MedicalEvent event) {
+    switch (event.timeMode) {
+      case 'all_day':
+        return 'events.time_mode.all_day'.tr();
+      case 'meal_based':
+        final mealKeys = {
+          'breakfast': 'events.meal.breakfast',
+          'lunch': 'events.meal.lunch',
+          'dinner': 'events.meal.dinner',
+          'snack': 'events.meal.snack',
+        };
+        final key = mealKeys[event.mealTime ?? 'breakfast'] ?? 'events.meal.breakfast';
+        return key.tr();
+      case 'from_to':
+      default:
+        return '${DateFormat('HH:mm').format(event.startTime)} - ${DateFormat('HH:mm').format(event.endTime)}';
+    }
+  }
 }
+

@@ -5,7 +5,6 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter/foundation.dart';
 import 'package:family_health/domain/entities/patient_schedule.dart';
-import 'package:family_health/domain/entities/medical_event.dart';
 
 @singleton
 class NotificationService {
@@ -200,65 +199,6 @@ class NotificationService {
           scheduledDate: scheduledTime,
           payload: 'med_${schedule.id}',
         );
-    }
-  }
-
-  Future<void> scheduleEventReminder(MedicalEvent event) async {
-    final baseId = event.id.hashCode;
-
-    // 1. 1 giờ trước khi bắt đầu
-    await _scheduleEventAt(
-      id: baseId,
-      event: event,
-      time: event.startTime.subtract(const Duration(hours: 1)),
-      body: 'Còn 1 giờ nữa là đến sự kiện: ${event.title}',
-    );
-
-    // 2. 15 phút trước khi bắt đầu
-    await _scheduleEventAt(
-      id: baseId + 1,
-      event: event,
-      time: event.startTime.subtract(const Duration(minutes: 15)),
-      body: 'Sự kiện "${event.title}" sẽ bắt đầu trong 15 phút tới',
-    );
-
-    // 3. Lúc bắt đầu
-    await _scheduleEventAt(
-      id: baseId + 2,
-      event: event,
-      time: event.startTime,
-      body: 'Sự kiện "${event.title}" đang diễn ra',
-    );
-
-    // 4. Lúc kết thúc
-    await _scheduleEventAt(
-      id: baseId + 3,
-      event: event,
-      time: event.endTime,
-      body: 'Sự kiện "${event.title}" đã kết thúc',
-    );
-  }
-
-  Future<void> _scheduleEventAt({
-    required int id,
-    required MedicalEvent event,
-    required DateTime time,
-    required String body,
-  }) async {
-    if (time.isBefore(DateTime.now())) return;
-    await scheduleNotification(
-      id: id,
-      title: '📅 Nhắc nhở sự kiện',
-      body: body,
-      scheduledDate: time,
-      payload: 'event_${event.id}',
-    );
-  }
-
-  Future<void> cancelEventReminders(String eventId) async {
-    final baseId = eventId.hashCode;
-    for (int i = 0; i < 4; i++) {
-      await cancelNotification(baseId + i);
     }
   }
 

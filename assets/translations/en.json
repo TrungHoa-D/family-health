@@ -217,9 +217,41 @@
       "end_time": "End Time",
       "location": "Location",
       "note": "Note (Optional)",
-      "participants": "Participants"
+      "participants": "Participants",
+      "time_mode": "Time Mode",
+      "date": "Date",
+      "meal_time": "Meal"
+    },
+    "time_mode": {
+      "from_to": "From - To",
+      "all_day": "All Day",
+      "meal_based": "By Meal",
+      "all_day_hint": "Event lasts the whole day"
+    },
+    "meal": {
+      "breakfast": "Breakfast",
+      "lunch": "Lunch",
+      "dinner": "Dinner",
+      "snack": "Snack"
+    },
+    "status": {
+      "upcoming": "Upcoming",
+      "ongoing": "Ongoing",
+      "incomplete": "Incomplete",
+      "finished": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "validation": {
+      "title_required": "Please enter event title",
+      "participant_required": "At least 1 participant is required"
+    },
+    "actions": {
+      "mark_finished": "Mark as Completed",
+      "cancel_event": "Cancel Event",
+      "reopen_event": "Reopen Event"
     }
   },
+
   "chat": {
     "group_name": "Nguyen Family",
     "online_status": "{} MEMBERS ONLINE",

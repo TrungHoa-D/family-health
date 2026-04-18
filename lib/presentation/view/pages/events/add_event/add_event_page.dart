@@ -82,9 +82,7 @@ class AddEventPage extends BaseCubitPage<AddEventCubit, AddEventState> {
                         horizontal: AppSpacing.md, vertical: 8),
                     child: AppButton.mini(
                       enable: !state.isSaving,
-                      title: state.isEditing
-                          ? 'common.save'.tr()
-                          : 'common.save'.tr(),
+                      title: 'common.save'.tr(),
                       onPressed: () => cubit.save(),
                     ),
                   ),
@@ -146,23 +144,13 @@ class AddEventPage extends BaseCubitPage<AddEventCubit, AddEventState> {
                       const SizedBox(height: AppSpacing.lg),
                     ],
 
-                    // Start Time
-                    _buildFieldTitle('events.fields.start_time'.tr()),
-                    _buildDateTimePicker(
-                      context: context,
-                      dateTime: state.startTime,
-                      onChanged: cubit.updateStartTime,
-                    ),
+                    // ─── Time Mode Selector ────────────────────────────────
+                    _buildFieldTitle('events.fields.time_mode'.tr()),
+                    _buildTimeModeSelector(context, state, cubit),
                     const SizedBox(height: AppSpacing.lg),
 
-                    // End Time
-                    _buildFieldTitle('events.fields.end_time'.tr()),
-                    _buildDateTimePicker(
-                      context: context,
-                      dateTime: state.endTime,
-                      onChanged: cubit.updateEndTime,
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
+                    // ─── Conditional Time Input ────────────────────────────
+                    ..._buildTimeSection(context, state, cubit),
 
                     // Location
                     _buildFieldTitle('events.fields.location'.tr()),
@@ -185,9 +173,10 @@ class AddEventPage extends BaseCubitPage<AddEventCubit, AddEventState> {
                     _buildFieldTitle('events.fields.note'.tr()),
                     TextField(
                       onChanged: cubit.updateDescription,
-                      controller: TextEditingController(text: state.description)
-                        ..selection = TextSelection.collapsed(
-                            offset: state.description.length),
+                      controller:
+                          TextEditingController(text: state.description)
+                            ..selection = TextSelection.collapsed(
+                                offset: state.description.length),
                       maxLines: 3,
                       decoration: InputDecoration(
                         hintText:
@@ -199,52 +188,72 @@ class AddEventPage extends BaseCubitPage<AddEventCubit, AddEventState> {
                     ),
                     const SizedBox(height: AppSpacing.lg),
 
-                    // Participants
+                    // ─── Participants ──────────────────────────────────────
                     if (state.familyMembers.isNotEmpty) ...[
-                      _buildFieldTitle('events.fields.participants'.tr()),
-                      Wrap(
-                        spacing: AppSpacing.md,
-                        runSpacing: AppSpacing.sm,
-                        children: state.familyMembers.map((member) {
-                          final isSelected =
-                              state.selectedParticipantIds.contains(member.uid);
-                          return GestureDetector(
-                            onTap: () => cubit.toggleParticipant(member.uid),
-                            child: AnimatedOpacity(
-                              duration: const Duration(milliseconds: 200),
-                              opacity: isSelected ? 1.0 : 0.4,
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Container(
-                                    decoration: isSelected
-                                        ? BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            border: Border.all(
-                                                color: AppColors.primary,
-                                                width: 2),
-                                          )
-                                        : null,
-                                    child: AppAvatar.medium(
-                                        imageUrl: member.avatarUrl),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    member.displayName?.split(' ').last ?? '',
-                                    style: AppStyles.labelSmall.copyWith(
-                                        color: isSelected
-                                            ? AppColors.primary
-                                            : AppColors.textSecondary,
-                                        fontWeight: isSelected
-                                            ? FontWeight.bold
-                                            : FontWeight.normal),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        }).toList(),
+                      Row(
+                        children: [
+                          _buildFieldTitle(
+                              'events.fields.participants'.tr()),
+                        ],
                       ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+                        child: Wrap(
+                          spacing: AppSpacing.md,
+                          runSpacing: AppSpacing.sm,
+                          children: state.familyMembers.map((member) {
+                            final isSelected = state.selectedParticipantIds
+                                .contains(member.uid);
+                            return GestureDetector(
+                              onTap: () =>
+                                  cubit.toggleParticipant(member.uid),
+                              child: AnimatedOpacity(
+                                duration: const Duration(milliseconds: 200),
+                                opacity: isSelected ? 1.0 : 0.4,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                      decoration: isSelected
+                                          ? BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                  color: AppColors.primary,
+                                                  width: 2),
+                                            )
+                                          : null,
+                                      child: AppAvatar.medium(
+                                          imageUrl: member.avatarUrl),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      member.displayName?.split(' ').last ??
+                                          '',
+                                      style: AppStyles.labelSmall.copyWith(
+                                          color: isSelected
+                                              ? AppColors.primary
+                                              : AppColors.textSecondary,
+                                          fontWeight: isSelected
+                                              ? FontWeight.bold
+                                              : FontWeight.normal),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      if (state.participantError != null)
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: AppSpacing.xs, left: AppSpacing.sm),
+                          child: Text(
+                            state.participantError!,
+                            style: AppStyles.labelSmall
+                                .copyWith(color: AppColors.error),
+                          ),
+                        ),
                       const SizedBox(height: AppSpacing.xl * 2),
                     ],
                   ],
@@ -263,6 +272,217 @@ class AddEventPage extends BaseCubitPage<AddEventCubit, AddEventState> {
       },
     );
   }
+
+  // ─── Time Mode Selector Widget ────────────────────────────────────────────
+
+  Widget _buildTimeModeSelector(
+      BuildContext context, AddEventState state, AddEventCubit cubit) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusCard),
+      ),
+      padding: const EdgeInsets.all(4),
+      child: Row(
+        children: [
+          _timeModeTab(
+            context: context,
+            label: 'events.time_mode.from_to'.tr(),
+            icon: Icons.schedule,
+            mode: 'from_to',
+            currentMode: state.timeMode,
+            onTap: () => cubit.updateTimeMode('from_to'),
+          ),
+          _timeModeTab(
+            context: context,
+            label: 'events.time_mode.all_day'.tr(),
+            icon: Icons.wb_sunny_outlined,
+            mode: 'all_day',
+            currentMode: state.timeMode,
+            onTap: () => cubit.updateTimeMode('all_day'),
+          ),
+          _timeModeTab(
+            context: context,
+            label: 'events.time_mode.meal_based'.tr(),
+            icon: Icons.restaurant_outlined,
+            mode: 'meal_based',
+            currentMode: state.timeMode,
+            onTap: () => cubit.updateTimeMode('meal_based'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _timeModeTab({
+    required BuildContext context,
+    required String label,
+    required IconData icon,
+    required String mode,
+    required String currentMode,
+    required VoidCallback onTap,
+  }) {
+    final isSelected = currentMode == mode;
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding:
+              const EdgeInsets.symmetric(vertical: AppSpacing.sm, horizontal: 4),
+          decoration: BoxDecoration(
+            color: isSelected ? AppColors.white : Colors.transparent,
+            borderRadius: BorderRadius.circular(AppSpacing.radiusCard - 4),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.08),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    )
+                  ]
+                : [],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                icon,
+                size: 18,
+                color: isSelected ? AppColors.primary : AppColors.textSecondary,
+              ),
+              const SizedBox(height: 2),
+              Text(
+                label,
+                style: AppStyles.labelSmall.copyWith(
+                  color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                  fontWeight:
+                      isSelected ? FontWeight.bold : FontWeight.normal,
+                  fontSize: 10,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ─── Conditional Time Section ─────────────────────────────────────────────
+
+  List<Widget> _buildTimeSection(
+      BuildContext context, AddEventState state, AddEventCubit cubit) {
+    switch (state.timeMode) {
+      case 'all_day':
+        return [
+          _buildFieldTitle('events.fields.date'.tr()),
+          _buildDateOnlyPicker(
+            context: context,
+            dateTime: state.startTime,
+            onChanged: cubit.updateAllDayDate,
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Container(
+            padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(AppSpacing.radiusInput),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.wb_sunny_outlined,
+                    size: 16, color: AppColors.primary),
+                const SizedBox(width: AppSpacing.sm),
+                Text(
+                  'events.time_mode.all_day_hint'.tr(),
+                  style: AppStyles.labelSmall
+                      .copyWith(color: AppColors.primary),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+        ];
+
+      case 'meal_based':
+        return [
+          _buildFieldTitle('events.fields.date'.tr()),
+          _buildDateOnlyPicker(
+            context: context,
+            dateTime: state.startTime,
+            onChanged: cubit.updateMealDate,
+          ),
+          const SizedBox(height: AppSpacing.md),
+          _buildFieldTitle('events.fields.meal_time'.tr()),
+          _buildMealTimeDropdown(state, cubit),
+          const SizedBox(height: AppSpacing.lg),
+        ];
+
+      case 'from_to':
+      default:
+        return [
+          _buildFieldTitle('events.fields.start_time'.tr()),
+          _buildDateTimePicker(
+            context: context,
+            dateTime: state.startTime,
+            onChanged: cubit.updateStartTime,
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          _buildFieldTitle('events.fields.end_time'.tr()),
+          _buildDateTimePicker(
+            context: context,
+            dateTime: state.endTime,
+            onChanged: cubit.updateEndTime,
+          ),
+          const SizedBox(height: AppSpacing.lg),
+        ];
+    }
+  }
+
+  Widget _buildMealTimeDropdown(AddEventState state, AddEventCubit cubit) {
+    final mealOptions = ['breakfast', 'lunch', 'dinner'];
+    final mealKeys = {
+      'breakfast': 'events.meal.breakfast',
+      'lunch': 'events.meal.lunch',
+      'dinner': 'events.meal.dinner',
+    };
+    final mealIcons = {
+      'breakfast': Icons.coffee_outlined,
+      'lunch': Icons.lunch_dining_outlined,
+      'dinner': Icons.dinner_dining_outlined,
+    };
+
+    final currentMeal = state.mealTime ?? 'breakfast';
+
+    return DropdownButtonFormField<String>(
+      value: mealOptions.contains(currentMeal) ? currentMeal : 'breakfast',
+      items: mealOptions.map((meal) {
+        return DropdownMenuItem(
+          value: meal,
+          child: Row(
+            children: [
+              Icon(mealIcons[meal], size: 20, color: AppColors.primary),
+              const SizedBox(width: AppSpacing.sm),
+              Text((mealKeys[meal] ?? meal).tr()),
+            ],
+          ),
+        );
+      }).toList(),
+      onChanged: (val) {
+        if (val != null) cubit.updateMealTime(val);
+      },
+      decoration: InputDecoration(
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppSpacing.radiusInput)),
+      ),
+    );
+  }
+
+  // ─── Helpers ─────────────────────────────────────────────────────────────
 
   Widget _buildFieldTitle(String title) {
     return Padding(
@@ -313,6 +533,47 @@ class AddEventPage extends BaseCubitPage<AddEventCubit, AddEventState> {
             const SizedBox(width: AppSpacing.md),
             Text(
               DateFormat('dd/MM/yyyy HH:mm').format(dateTime),
+              style: AppStyles.bodyLarge,
+            ),
+            const Spacer(),
+            const Icon(Icons.arrow_drop_down),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDateOnlyPicker({
+    required BuildContext context,
+    required DateTime dateTime,
+    required Function(DateTime) onChanged,
+  }) {
+    return InkWell(
+      onTap: () async {
+        final date = await showDatePicker(
+          context: context,
+          initialDate: dateTime,
+          firstDate: DateTime.now().subtract(const Duration(days: 365)),
+          lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
+        );
+        if (date != null) {
+          onChanged(date);
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md, vertical: AppSpacing.md),
+        decoration: BoxDecoration(
+          border: Border.all(color: AppColors.border),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusInput),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.calendar_today,
+                size: 20, color: AppColors.primary),
+            const SizedBox(width: AppSpacing.md),
+            Text(
+              DateFormat('dd/MM/yyyy').format(dateTime),
               style: AppStyles.bodyLarge,
             ),
             const Spacer(),
@@ -381,7 +642,8 @@ class AddEventPage extends BaseCubitPage<AddEventCubit, AddEventState> {
               bottom: AppSpacing.sm,
               right: AppSpacing.sm,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: Colors.black54,
                   borderRadius: BorderRadius.circular(4),
@@ -415,31 +677,34 @@ class AddEventPage extends BaseCubitPage<AddEventCubit, AddEventState> {
               value: null,
               child: Text('events.medication_picker.none'.tr()),
             ),
-            ...state.availableMedications.map((m) => DropdownMenuItem<String?>(
-                  value: m.id,
-                  child: Row(
-                    children: [
-                      if (m.imageUrl != null)
-                        Container(
-                          width: 24,
-                          height: 24,
-                          margin: const EdgeInsets.only(right: 8),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
-                            image: DecorationImage(
-                              image: CachedNetworkImageProvider(m.imageUrl!),
-                              fit: BoxFit.cover,
+            ...state.availableMedications
+                .map((m) => DropdownMenuItem<String?>(
+                      value: m.id,
+                      child: Row(
+                        children: [
+                          if (m.imageUrl != null)
+                            Container(
+                              width: 24,
+                              height: 24,
+                              margin: const EdgeInsets.only(right: 8),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(4),
+                                image: DecorationImage(
+                                  image:
+                                      CachedNetworkImageProvider(m.imageUrl!),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      Text(m.name),
-                    ],
-                  ),
-                )),
+                          Text(m.name),
+                        ],
+                      ),
+                    )),
           ],
           onChanged: (id) {
-            final med =
-                state.availableMedications.where((m) => m.id == id).firstOrNull;
+            final med = state.availableMedications
+                .where((m) => m.id == id)
+                .firstOrNull;
             cubit.selectMedication(med);
           },
           decoration: InputDecoration(

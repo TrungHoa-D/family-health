@@ -52,7 +52,8 @@ class SimplifiedHomeView extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'simplified.welcome'.tr(args: [userName ?? 'user.user'.tr()]),
+                          'simplified.welcome'
+                              .tr(args: [userName ?? 'user.user'.tr()]),
                           style: AppStyles.titleLarge.copyWith(
                             fontSize: 32,
                             fontWeight: FontWeight.w900,
@@ -67,7 +68,8 @@ class SimplifiedHomeView extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.logout, size: 32, color: AppColors.textSecondary),
+                    icon: const Icon(Icons.logout,
+                        size: 32, color: AppColors.textSecondary),
                     onPressed: onExitSimplifiedMode,
                   ),
                 ],
@@ -78,33 +80,40 @@ class SimplifiedHomeView extends StatelessWidget {
               // Combined List (Medications + Events)
               Text(
                 'simplified.today_schedule'.tr(),
-                style: AppStyles.titleMedium.copyWith(fontWeight: FontWeight.bold, fontSize: 24),
+                style: AppStyles.titleMedium
+                    .copyWith(fontWeight: FontWeight.bold, fontSize: 24),
               ),
               const SizedBox(height: AppSpacing.md),
-              (meds.isEmpty && upcomingEvents.isEmpty)
-                  ? Center(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: AppSpacing.xxl),
-                        child: Text(
-                          'simplified.no_events'.tr(),
-                          style: AppStyles.bodyLarge
-                              .copyWith(color: AppColors.textSecondary, fontSize: 20),
-                        ),
-                      ),
-                    )
-                  : Column(
-                      children: [
-                        ...meds.map((m) => SimplifiedMedicationListItem(
-                              schedule: m,
-                              onTaken: () => onTakenMedication?.call(m),
-                            )),
-                        ...upcomingEvents.map((e) => SimplifiedEventListItem(
-                              event: e,
-                              onComplete: () => onCompleteEvent?.call(e),
-                            )),
-                      ],
+              if (meds.isEmpty && upcomingEvents.isEmpty)
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppSpacing.xxl,
                     ),
+                    child: Text(
+                      'simplified.no_events'.tr(),
+                      style: AppStyles.bodyLarge.copyWith(
+                          color: AppColors.textSecondary, fontSize: 20),
+                    ),
+                  ),
+                )
+              else
+                Column(
+                  children: [
+                    ...meds.map(
+                      (m) => SimplifiedMedicationListItem(
+                        schedule: m,
+                        onTaken: () => onTakenMedication.call(m),
+                      ),
+                    ),
+                    ...upcomingEvents.map(
+                      (e) => SimplifiedEventListItem(
+                        event: e,
+                        onComplete: () => onCompleteEvent.call(e),
+                      ),
+                    ),
+                  ],
+                ),
               const SizedBox(height: AppSpacing.lg),
 
               // Action Buttons
@@ -129,7 +138,6 @@ class SimplifiedHomeView extends StatelessWidget {
                 onTap: onEmergencyCall,
               ),
               const SizedBox(height: AppSpacing.lg),
-
             ],
           ),
         ),

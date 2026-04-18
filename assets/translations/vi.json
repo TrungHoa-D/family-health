@@ -239,9 +239,41 @@
       "end_time": "Thời gian kết thúc",
       "location": "Địa điểm",
       "note": "Ghi chú (Tùy chọn)",
-      "participants": "Người tham gia"
+      "participants": "Người tham gia",
+      "time_mode": "Chế độ thời gian",
+      "date": "Ngày",
+      "meal_time": "Buổi ăn"
+    },
+    "time_mode": {
+      "from_to": "Từ - đến",
+      "all_day": "Cả ngày",
+      "meal_based": "Theo bữa ăn",
+      "all_day_hint": "Sự kiện diễn ra suốt cả ngày"
+    },
+    "meal": {
+      "breakfast": "Bữa sáng",
+      "lunch": "Bữa trưa",
+      "dinner": "Bữa tối",
+      "snack": "Bữa phụ"
+    },
+    "status": {
+      "upcoming": "Sắp tới",
+      "ongoing": "Đang diễn ra",
+      "incomplete": "Chưa hoàn thành",
+      "finished": "Hoàn thành",
+      "cancelled": "Đã hủy"
+    },
+    "validation": {
+      "title_required": "Vui lòng nhập tiêu đề sự kiện",
+      "participant_required": "Sự kiện cần ít nhất 1 người tham gia"
+    },
+    "actions": {
+      "mark_finished": "Đánh dấu Hoàn thành",
+      "cancel_event": "Hủy bỏ sự kiện",
+      "reopen_event": "Mở lại sự kiện"
     }
   },
+
   "chat": {
     "group_name": "Gia đình Nguyễn",
     "online_status": "{} THÀNH VIÊN TRỰC TUYẾN",

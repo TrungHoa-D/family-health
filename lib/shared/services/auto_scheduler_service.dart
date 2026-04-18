@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'package:family_health/domain/entities/patient_schedule.dart';
 import 'package:family_health/domain/entities/health_profile.dart';
+import 'package:family_health/domain/entities/medical_event.dart';
 import 'package:family_health/domain/entities/medication_log.dart';
 import 'package:family_health/domain/usecases/add_medication_log_usecase.dart';
 import 'package:family_health/domain/usecases/get_health_profile_usecase.dart';
 import 'package:family_health/domain/usecases/get_medication_logs_usecase.dart';
 import 'package:family_health/domain/usecases/get_user_usecase.dart';
 import 'package:family_health/domain/usecases/watch_family_schedules_usecase.dart';
+import 'package:family_health/domain/usecases/watch_medical_events_usecase.dart';
 import 'package:family_health/shared/services/fcm_service.dart';
 import 'package:family_health/shared/services/notification_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,6 +21,7 @@ class AutoSchedulerService {
   AutoSchedulerService(
     this._notificationService,
     this._watchFamilySchedulesUseCase,
+    this._watchMedicalEventsUseCase,
     this._getHealthProfileUseCase,
     this._getUserUseCase,
     this._addMedicationLogUseCase,
@@ -28,6 +31,7 @@ class AutoSchedulerService {
 
   final NotificationService _notificationService;
   final WatchFamilySchedulesUseCase _watchFamilySchedulesUseCase;
+  final WatchMedicalEventsUseCase _watchMedicalEventsUseCase;
   final GetHealthProfileUseCase _getHealthProfileUseCase;
   final GetUserUseCase _getUserUseCase;
   final AddMedicationLogUseCase _addMedicationLogUseCase;
@@ -35,6 +39,7 @@ class AutoSchedulerService {
   final FcmService _fcmService;
 
   StreamSubscription? _scheduleSubscription;
+  StreamSubscription? _eventsSubscription;
   StreamSubscription? _notificationResponseSubscription;
 
   // Cache anchor_times theo userId để tránh query lặp
@@ -64,6 +69,12 @@ class AutoSchedulerService {
       _anchorTimesCache.clear(); // Reset cache khi schedules thay đổi
       await _rescheduleAll(user.uid, familyId, schedules);
       await _createTodayPendingLogs(familyId, schedules);
+    });
+
+    _eventsSubscription?.cancel();
+    _eventsSubscription =
+        _watchMedicalEventsUseCase.call(familyId).listen((events) async {
+      await _rescheduleAllEvents(user.uid, familyId, events);
     });
   }
 
@@ -219,6 +230,137 @@ class AutoSchedulerService {
     }
   }
 
+  Future<void> _rescheduleAllEvents(
+    String currentUserId,
+    String familyId,
+    List<MedicalEvent> events,
+  ) async {
+    // Để giữ id notification duy nhất và có thể cancel, _rescheduleAllEvents sẽ KHÔNG gọi cancelAll
+    // Thay vào đó, notification service hiện không có cancelAll for specific tags (vì local notification plugin ko support tag/grouping tốt),
+    // nhưng ta có thể hủy dựa vào hash của event ID (đang làm trong NotificationService nhưng ta sẽ làm ở đây luôn).
+    // Đơn giản nhất: gọi cancelEventReminders bên trong hàm nếu cần, nhưng ta ko loop cancelAllEvent được dễ dàng nêys ko lưu id.
+    // Vì vậy ta set ID cố định dựa trên sự kiện và thời gian để nó sẽ đè lên ID cũ.
+
+    final healthProfile =
+        await _getHealthProfileUseCase.call(params: currentUserId);
+    final anchorTimes = healthProfile?.anchorTimes ?? const AnchorTimes();
+
+    for (final event in events) {
+      // Chỉ lập lịch nếu user hiện tại là người tham gia
+      if (!event.participantIds.contains(currentUserId)) continue;
+      
+      // Bỏ qua event đã kết thúc/hoàn thành hoặc đã bị hủy
+      if (event.finished || event.status == 'CANCELLED' || event.status == 'COMPLETED') continue;
+      
+      final baseId = event.id.hashCode.abs() % 1000000000; // Đẩy base id xa ra khỏi medication
+      final notificationBaseId = baseId + 100000;
+
+      // Hủy mấy cái reminder cũ cho chắc ăn 
+      for (int i = 0; i < 4; i++) {
+        await _notificationService.cancelNotification(notificationBaseId + i);
+      }
+
+      switch(event.timeMode) {
+        case 'all_day':
+          // Event cả ngày gửi lúc 6h sáng và 17h
+          final dayStart = DateTime(event.startTime.year, event.startTime.month, event.startTime.day);
+          await _scheduleEventNotification(
+            id: notificationBaseId,
+            title: '📅 Sự kiện hôm nay: ${event.title}',
+            body: 'Sự kiện diễn ra cả ngày hôm nay',
+            time: dayStart.add(const Duration(hours: 6)),
+            payload: 'event_${event.id}',
+          );
+          await _scheduleEventNotification(
+            id: notificationBaseId + 1,
+            title: '📅 Sự kiện diễn ra: ${event.title}',
+            body: 'Nhắc nhở sự kiện đang diễn ra hôm nay',
+            time: dayStart.add(const Duration(hours: 17)),
+            payload: 'event_${event.id}',
+          );
+          break;
+        case 'meal_based':
+          // Event bữa ăn: dựa trên anchor time (breakfast, lunch, dinner)
+          final anchorStr = _getAnchorTimeStr(event.mealTime ?? 'breakfast', anchorTimes);
+          if (anchorStr != null) {
+            final parsedTime = _parseTimeString(anchorStr);
+            final mealTime = DateTime(event.startTime.year, event.startTime.month, event.startTime.day, parsedTime.hour, parsedTime.minute);
+            
+            // trước 15p
+            await _scheduleEventNotification(
+              id: notificationBaseId,
+              title: '🍽️ Sắp tới giờ ${event.mealTime == 'lunch' ? 'ăn trưa' : event.mealTime == 'dinner' ? 'ăn tối' : 'ăn sáng'}',
+              body: 'Trong vòng 15 phút tới bạn có sự kiện: ${event.title}',
+              time: mealTime.subtract(const Duration(minutes: 15)),
+              payload: 'event_${event.id}',
+            );
+            
+            // sau 15p
+            await _scheduleEventNotification(
+              id: notificationBaseId + 1,
+              title: '🍽️ Nhắc nhở sau ăn',
+              body: 'Sự kiện của bạn: ${event.title}',
+              time: mealTime.add(const Duration(minutes: 15)),
+              payload: 'event_${event.id}',
+            );
+          }
+          break;
+        case 'from_to':
+        default:
+          // trước 1h
+          await _scheduleEventNotification(
+            id: notificationBaseId,
+            title: '⏰ Sắp diễn ra: ${event.title}',
+            body: 'Còn 1 giờ nữa là đến sự kiện',
+            time: event.startTime.subtract(const Duration(hours: 1)),
+            payload: 'event_${event.id}',
+          );
+          // trước 15p
+          await _scheduleEventNotification(
+            id: notificationBaseId + 1,
+            title: '⏰ Sắp diễn ra: ${event.title}',
+            body: 'Sự kiện sẽ bắt đầu trong 15 phút tới',
+            time: event.startTime.subtract(const Duration(minutes: 15)),
+            payload: 'event_${event.id}',
+          );
+          // trước kết thúc 15p
+          await _scheduleEventNotification(
+            id: notificationBaseId + 2,
+            title: '⏳ Sắp kết thúc: ${event.title}',
+            body: 'Còn 15 phút nữa là kết thúc sự kiện',
+            time: event.endTime.subtract(const Duration(minutes: 15)),
+            payload: 'event_${event.id}',
+          );
+          // kết thúc
+          await _scheduleEventNotification(
+            id: notificationBaseId + 3,
+            title: '✅ Kết thúc: ${event.title}',
+            body: 'Sự kiện đã kết thúc, bạn có thể đánh dấu hoàn thành',
+            time: event.endTime,
+            payload: 'event_${event.id}',
+          );
+          break;
+      }
+    }
+  }
+
+  Future<void> _scheduleEventNotification({
+    required int id,
+    required String title,
+    required String body,
+    required DateTime time,
+    required String payload,
+  }) async {
+    if (time.isBefore(DateTime.now())) return;
+    await _notificationService.scheduleNotification(
+      id: id,
+      title: title,
+      body: body,
+      scheduledDate: time,
+      payload: payload,
+    );
+  }
+
   // ─── Helpers ─────────────────────────────────────────────────────────────
 
   String? _getAnchorTimeStr(String? event, AnchorTimes anchors) {
@@ -248,6 +390,7 @@ class AutoSchedulerService {
 
   void stop() {
     _scheduleSubscription?.cancel();
+    _eventsSubscription?.cancel();
     _notificationResponseSubscription?.cancel();
     _anchorTimesCache.clear();
     _fcmService.stop();

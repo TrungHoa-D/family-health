@@ -56,4 +56,34 @@ class EventDetailCubit extends BaseCubit<EventDetailState> {
       ));
     }
   }
+
+  /// Đánh dấu sự kiện là hoàn thành (finished = true)
+  Future<void> markAsFinished() async {
+    emit(state.copyWith(pageStatus: PageStatus.Loading));
+    try {
+      final updatedEvent = state.event.copyWith(finished: true);
+      await _saveMedicalEventUseCase.call(params: updatedEvent);
+      emit(state.copyWith(pageStatus: PageStatus.Loaded, event: updatedEvent));
+    } catch (e) {
+      emit(state.copyWith(
+        pageStatus: PageStatus.Error,
+        pageErrorMessage: e.toString(),
+      ));
+    }
+  }
+
+  /// Mở lại sự kiện (finished = false)
+  Future<void> markAsUnfinished() async {
+    emit(state.copyWith(pageStatus: PageStatus.Loading));
+    try {
+      final updatedEvent = state.event.copyWith(finished: false, status: 'UPCOMING');
+      await _saveMedicalEventUseCase.call(params: updatedEvent);
+      emit(state.copyWith(pageStatus: PageStatus.Loaded, event: updatedEvent));
+    } catch (e) {
+      emit(state.copyWith(
+        pageStatus: PageStatus.Error,
+        pageErrorMessage: e.toString(),
+      ));
+    }
+  }
 }

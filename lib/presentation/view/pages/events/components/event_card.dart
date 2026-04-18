@@ -1,10 +1,10 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:family_health/domain/entities/medical_event.dart';
 import 'package:family_health/presentation/resources/app_spacing.dart';
 import 'package:family_health/presentation/resources/colors.dart';
 import 'package:family_health/presentation/resources/styles.dart';
 import 'package:family_health/presentation/view/widgets/app_card.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class EventCard extends StatelessWidget {
   const EventCard({super.key, required this.event, this.onTap});
@@ -36,7 +36,6 @@ class EventCard extends StatelessWidget {
         eventIcon = Icons.medication;
         break;
       case EventType.OTHER:
-      default:
         eventColor = Colors.purple;
         eventIcon = Icons.event_note;
         break;
@@ -57,7 +56,6 @@ class EventCard extends StatelessWidget {
         assetPath = 'assets/images/event_medication.png';
         break;
       case EventType.OTHER:
-      default:
         assetPath = 'assets/images/event_other.png';
         break;
     }
@@ -125,7 +123,7 @@ class EventCard extends StatelessWidget {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
-                                _StatusChip(status: event.status),
+                                _StatusChip(event: event),
                               ],
                             ),
                             const SizedBox(height: 8),
@@ -135,7 +133,7 @@ class EventCard extends StatelessWidget {
                                     size: 14, color: AppColors.primary),
                                 const SizedBox(width: 4),
                                 Text(
-                                  '${DateFormat('HH:mm').format(event.startTime)} - ${DateFormat('HH:mm').format(event.endTime)}',
+                                  _formatEventTime(event),
                                   style: AppStyles.bodySmall.copyWith(
                                       color: AppColors.textSecondary,
                                       fontWeight: FontWeight.w500),
@@ -225,31 +223,66 @@ class EventCard extends StatelessWidget {
       orElse: () => EventType.OTHER,
     );
   }
+
+  /// Hiển thị thời gian theo timeMode
+  String _formatEventTime(MedicalEvent event) {
+    switch (event.timeMode) {
+      case 'all_day':
+        return 'events.time_mode.all_day'.tr();
+      case 'meal_based':
+        final mealKeys = {
+          'breakfast': 'events.meal.breakfast',
+          'lunch': 'events.meal.lunch',
+          'dinner': 'events.meal.dinner',
+          'snack': 'events.meal.snack',
+        };
+        final key = mealKeys[event.mealTime ?? 'breakfast'] ?? 'events.meal.breakfast';
+        return key.tr();
+      case 'from_to':
+      default:
+        return '${DateFormat('HH:mm').format(event.startTime)} - ${DateFormat('HH:mm').format(event.endTime)}';
+    }
+  }
 }
 
 class _StatusChip extends StatelessWidget {
-  const _StatusChip({required this.status});
-  final String status;
+  const _StatusChip({required this.event});
+  final MedicalEvent event;
 
   @override
   Widget build(BuildContext context) {
     Color color;
     String text;
+    IconData icon;
 
-    switch (status) {
-      case 'COMPLETED':
-        color = AppColors.success;
-        text = 'Hoàn thành';
-        break;
-      case 'CANCELLED':
-        color = AppColors.error;
-        text = 'Đã huỷ';
-        break;
-      case 'UPCOMING':
-      default:
-        color = AppColors.primary;
-        text = 'Sắp tới';
-        break;
+    if (event.status == 'CANCELLED') {
+      color = AppColors.textSecondary;
+      text = 'events.status.cancelled'.tr();
+      icon = Icons.cancel_outlined;
+    } else {
+      switch (event.computedStatus) {
+        case EventDisplayStatus.finished:
+          color = AppColors.success;
+          text = 'events.status.finished'.tr();
+          icon = Icons.check_circle_outline;
+          break;
+        case EventDisplayStatus.ongoing:
+          color = Colors.orange;
+          text = 'events.status.ongoing'.tr();
+          icon = Icons.play_circle_outline;
+          break;
+        case EventDisplayStatus.incomplete:
+          color = AppColors.error;
+          text = 'events.status.incomplete'.tr();
+          icon = Icons.error_outline;
+          break;
+        case EventDisplayStatus.upcoming:
+        default:
+          color = AppColors.primary;
+          text = 'events.status.upcoming'.tr();
+          icon = Icons.schedule_outlined;
+          break;
+      }
     }
 
     return Container(
@@ -257,15 +290,22 @@ class _StatusChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: color.withValues(alpha: 0.2)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
-      child: Text(
-        text,
-        style: AppStyles.labelSmall.copyWith(
-          color: color,
-          fontWeight: FontWeight.bold,
-          fontSize: 10,
-        ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 10, color: color),
+          const SizedBox(width: 3),
+          Text(
+            text,
+            style: AppStyles.labelSmall.copyWith(
+              color: color,
+              fontWeight: FontWeight.bold,
+              fontSize: 10,
+            ),
+          ),
+        ],
       ),
     );
   }

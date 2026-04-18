@@ -17,10 +17,20 @@ class AddEventState with _$AddEventState implements BaseCubitState {
     @Default([]) List<String> selectedParticipantIds,
     String? creatorId,
     @Default('UPCOMING') String status,
+    @Default(false) bool finished,
+    // --- Time mode ---
+    /// Chế độ thời gian: 'from_to' | 'all_day' | 'meal_based'
+    @Default('from_to') String timeMode,
+    /// Bữa ăn nếu timeMode = 'meal_based'
+    String? mealTime,
+    // --- Validation errors ---
     String? titleError,
+    String? participantError,
+    // --- Medications ---
     @Default([]) List<Medication> availableMedications,
     Medication? selectedMedication,
     @Default(false) bool isLoadingMedications,
+    // --- Save state ---
     @Default(false) bool isSaving,
     @Default(false) bool isSaved,
     String? saveError,

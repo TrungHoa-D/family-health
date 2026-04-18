@@ -101,13 +101,13 @@ exports.onMedicalEventCreated = onDocumentCreated("medical_events/{eventId}", as
             return null;
         }
         
-        const familyData = familyDoc.data();
-        const memberIds = familyData.memberIds || [];
+        // Tạo danh sách tài khoản liên quan (người tham gia + người tạo)
+        const participantIds = data.participantIds || [];
+        const relatedUids = [...new Set([...participantIds, creatorId])];
 
         let tokens = [];
-        // Duyệt qua các thành viên để lấy FCM tokens
-        for (const uid of memberIds) {
-            if (uid === creatorId) continue; // Không gửi cho chính người tạo
+        // Duyệt qua các tài khoản liên quan để lấy FCM tokens
+        for (const uid of relatedUids) {
 
             const userDoc = await db.collection("users").doc(uid).get();
             if (userDoc.exists) {
