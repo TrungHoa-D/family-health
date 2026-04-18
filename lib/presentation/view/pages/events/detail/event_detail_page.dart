@@ -36,6 +36,8 @@ class EventDetailPage extends BaseCubitPage<EventDetailCubit, EventDetailState> 
         final isFinished = displayStatus == EventDisplayStatus.finished;
         final isOngoing = displayStatus == EventDisplayStatus.ongoing;
         final isIncomplete = displayStatus == EventDisplayStatus.incomplete;
+        final isParticipant = state.currentUserId != null && ev.participantIds.contains(state.currentUserId);
+        final isCreator = state.currentUserId != null && ev.creatorId == state.currentUserId;
 
         return Scaffold(
           backgroundColor: AppColors.background,
@@ -242,18 +244,20 @@ class EventDetailPage extends BaseCubitPage<EventDetailCubit, EventDetailState> 
                 ],
                 
                 const SizedBox(height: 48),
-                if (!isCancelled && !isFinished) ...[
+                if (ev.computedStatus == EventDisplayStatus.ongoing && isParticipant) ...[
                   AppButton.primary(
                     title: 'events.actions.mark_finished'.tr(),
                     onPressed: () => context.read<EventDetailCubit>().markAsFinished(),
                   ),
                   const SizedBox(height: 16),
+                ],
+                if ((ev.computedStatus == EventDisplayStatus.ongoing || ev.computedStatus == EventDisplayStatus.upcoming) && isCreator) ...[
                   AppButton.outline(
                     title: 'events.actions.cancel_event'.tr(),
                     onPressed: () => context.read<EventDetailCubit>().changeStatus('CANCELLED'),
                   ),
                 ],
-                if (isFinished || isCancelled)
+                if ((isFinished || isCancelled) && isCreator)
                   AppButton.outline(
                     title: 'events.actions.reopen_event'.tr(),
                     onPressed: () => context.read<EventDetailCubit>().markAsUnfinished(),

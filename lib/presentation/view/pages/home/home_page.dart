@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:family_health/presentation/router/router.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:family_health/presentation/cubit_base/base_cubit_page.dart';
+import 'package:family_health/presentation/router/router.dart';
 import 'package:family_health/presentation/view/pages/home/home_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,6 +33,7 @@ class HomePage extends BaseCubitPage<HomeCubit, HomeState> {
         if (uiPreference == 'simplified' && state.currentTabIndex == 0) {
           return SimplifiedHomeView(
             userName: state.user?.displayName,
+            currentUserId: state.user?.uid,
             meds: state.simplifiedMeds,
             upcomingEvents: state.upcomingEvents,
             onTakenMedication: (schedule) {
@@ -65,6 +66,9 @@ class HomePage extends BaseCubitPage<HomeCubit, HomeState> {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text('simplified.recorded'.tr())),
               );
+            },
+            onEventTap: (event) {
+              context.router.push(EventDetailRoute(event: event));
             },
             onEmergencyCall: () {
               ScaffoldMessenger.of(context).showSnackBar(

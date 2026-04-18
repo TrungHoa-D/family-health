@@ -71,9 +71,19 @@ class MedicalEvent with _$MedicalEvent {
   EventDisplayStatus get computedStatus {
     if (status == 'CANCELLED') return EventDisplayStatus.cancelled;
     if (finished) return EventDisplayStatus.finished;
+    
     final now = DateTime.now();
-    if (now.isBefore(startTime)) return EventDisplayStatus.upcoming;
-    if (now.isAfter(endTime)) return EventDisplayStatus.incomplete;
+    DateTime effectiveStart = startTime;
+    DateTime effectiveEnd = endTime;
+
+    if (timeMode == 'meal_based') {
+      // Bữa ăn: Đang diễn ra tính từ 30 phút trước đên 30 phút sau giờ ăn.
+      effectiveStart = startTime.subtract(const Duration(minutes: 30));
+      effectiveEnd = startTime.add(const Duration(minutes: 30));
+    }
+    
+    if (now.isBefore(effectiveStart)) return EventDisplayStatus.upcoming;
+    if (now.isAfter(effectiveEnd)) return EventDisplayStatus.incomplete;
     return EventDisplayStatus.ongoing;
   }
 

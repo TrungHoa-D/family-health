@@ -7,6 +7,7 @@ class EventDetailState with _$EventDetailState implements BaseCubitState {
     String? pageErrorMessage,
     required MedicalEvent event,
     @Default([]) List<UserEntity> participants,
+    String? currentUserId,
   }) = _EventDetailState;
 
   const EventDetailState._();

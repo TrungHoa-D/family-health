@@ -13,6 +13,7 @@ class SimplifiedHomeView extends StatelessWidget {
   const SimplifiedHomeView({
     super.key,
     required this.userName,
+    required this.currentUserId,
     required this.meds,
     required this.upcomingEvents,
     required this.onTakenMedication,
@@ -21,13 +22,16 @@ class SimplifiedHomeView extends StatelessWidget {
     required this.onExitSimplifiedMode,
     required this.onChatTap,
     required this.onAiChatTap,
+    required this.onEventTap,
   });
 
   final String? userName;
+  final String? currentUserId;
   final List<PatientSchedule> meds;
   final List<MedicalEvent> upcomingEvents;
   final Function(PatientSchedule) onTakenMedication;
   final Function(MedicalEvent) onCompleteEvent;
+  final Function(MedicalEvent) onEventTap;
   final VoidCallback onEmergencyCall;
   final VoidCallback onExitSimplifiedMode;
   final VoidCallback onChatTap;
@@ -109,6 +113,8 @@ class SimplifiedHomeView extends StatelessWidget {
                     ...upcomingEvents.map(
                       (e) => SimplifiedEventListItem(
                         event: e,
+                        canComplete: currentUserId != null && e.participantIds.contains(currentUserId),
+                        onTap: () => onEventTap.call(e),
                         onComplete: () => onCompleteEvent.call(e),
                       ),
                     ),

@@ -9,20 +9,44 @@ class SimplifiedEventListItem extends StatelessWidget {
   const SimplifiedEventListItem({
     super.key,
     required this.event,
+    required this.canComplete,
     this.onTap,
     this.onComplete,
   });
 
   final MedicalEvent event;
+  final bool canComplete;
   final VoidCallback? onTap;
   final VoidCallback? onComplete;
 
   @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
-    final isActive = now.isAfter(event.startTime) && 
-                    now.isBefore(event.endTime.add(const Duration(minutes: 30)));
-    final timeStr = DateFormat('HH:mm').format(event.startTime);
+    final isActive = event.computedStatus == EventDisplayStatus.ongoing;
+    
+    final String timeLocStr;
+    switch (event.timeMode) {
+      case 'all_day':
+        timeLocStr = 'Cả ngày';
+        break;
+      case 'meal_based':
+        final mealName = event.mealTime == 'lunch'
+            ? 'ăn trưa'
+            : event.mealTime == 'dinner'
+                ? 'ăn tối'
+                : 'ăn sáng';
+        timeLocStr = 'Sau $mealName';
+        break;
+      case 'from_to':
+      default:
+        final startStr = DateFormat('HH:mm').format(event.startTime);
+        final endStr = DateFormat('HH:mm').format(event.endTime);
+        timeLocStr = 'Từ $startStr đến $endStr';
+        break;
+    }
+    final fullInfoStr = event.location != null && event.location!.isNotEmpty
+        ? '$timeLocStr tại ${event.location}'
+        : timeLocStr;
 
     return GestureDetector(
       onTap: onTap,
@@ -42,58 +66,30 @@ class SimplifiedEventListItem extends StatelessWidget {
           ],
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              children: [
-                Container(
-                  width: isActive ? 100 : 80,
-                  height: isActive ? 100 : 80,
-                  decoration: BoxDecoration(
-                    color: _getEventColor().withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(isActive ? 28 : 20),
-                  ),
-                  child: event.imageUrl != null && event.imageUrl!.isNotEmpty
-                      ? ClipRRect(
-                          borderRadius: BorderRadius.circular(isActive ? 28 : 20),
-                          child: Image.network(
-                            event.imageUrl!,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Icon(_getEventIcon(),
-                                color: _getEventColor(), size: isActive ? 50 : 40),
-                          ),
-                        )
-                      : Icon(_getEventIcon(), color: _getEventColor(), size: isActive ? 50 : 40),
-                ),
-                const SizedBox(width: AppSpacing.lg),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        event.title,
-                        style: AppStyles.titleLarge.copyWith(
-                          fontWeight: FontWeight.w900,
-                          fontSize: isActive ? 32 : 24,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '$timeStr - ${event.location}',
-                        style: AppStyles.bodyLarge.copyWith(
-                          color: AppColors.textSecondary,
-                          fontSize: isActive ? 22 : 18,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+            Text(
+              event.title,
+              style: AppStyles.titleLarge.copyWith(
+                fontWeight: FontWeight.w900,
+                fontSize: isActive ? 32 : 24,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.left,
             ),
-            if (isActive) ...[
+            const SizedBox(height: 8),
+            Text(
+              fullInfoStr,
+              style: AppStyles.bodyLarge.copyWith(
+                color: AppColors.textSecondary,
+                fontSize: isActive ? 22 : 18,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.left,
+            ),
+            if (isActive && canComplete) ...[
               const SizedBox(height: AppSpacing.lg),
               SizedBox(
                 width: double.infinity,

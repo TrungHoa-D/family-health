@@ -212,7 +212,7 @@ class HomeCubit extends BaseCubit<HomeState> {
 
   Future<void> completeMedicalEvent(MedicalEvent event) async {
     try {
-      final updatedEvent = event.copyWith(status: 'COMPLETED');
+      final updatedEvent = event.copyWith(finished: true);
       await _saveMedicalEventUseCase.call(params: updatedEvent);
     } catch (e) {
       logger.e('Failed to complete medical event: $e');

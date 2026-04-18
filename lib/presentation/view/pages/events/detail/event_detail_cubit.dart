@@ -1,5 +1,6 @@
 import 'package:family_health/domain/entities/medical_event.dart';
 import 'package:family_health/domain/entities/user_entity.dart';
+import 'package:family_health/domain/repositories/auth_repository.dart';
 import 'package:family_health/domain/usecases/get_user_usecase.dart';
 import 'package:family_health/domain/usecases/save_medical_event_usecase.dart';
 import 'package:family_health/presentation/base/page_status.dart';
@@ -16,6 +17,7 @@ class EventDetailCubit extends BaseCubit<EventDetailState> {
   EventDetailCubit(
     this._saveMedicalEventUseCase,
     this._getUserUseCase,
+    this._authRepository,
   ) : super(EventDetailState(
         event: MedicalEvent(
           id: '', familyId: '', title: '', eventType: 'OTHER', 
@@ -25,9 +27,15 @@ class EventDetailCubit extends BaseCubit<EventDetailState> {
 
   final SaveMedicalEventUseCase _saveMedicalEventUseCase;
   final GetUserUseCase _getUserUseCase;
+  final AuthRepository _authRepository;
 
   Future<void> init(MedicalEvent event) async {
-    emit(state.copyWith(event: event, pageStatus: PageStatus.Loading));
+    final currentUser = _authRepository.getCurrentUser();
+    emit(state.copyWith(
+      event: event, 
+      pageStatus: PageStatus.Loading,
+      currentUserId: currentUser?.uid,
+    ));
     
     try {
       final participants = <UserEntity>[];
