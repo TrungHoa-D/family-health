@@ -256,7 +256,7 @@ class AutoSchedulerService {
       final notificationBaseId = baseId + 100000;
 
       // Hủy mấy cái reminder cũ cho chắc ăn 
-      for (int i = 0; i < 4; i++) {
+      for (int i = 0; i < 5; i++) {
         await _notificationService.cancelNotification(notificationBaseId + i);
       }
 
@@ -307,9 +307,17 @@ class AutoSchedulerService {
           break;
         case 'from_to':
         default:
-          // trước 1h
+          // lúc bắt đầu sự kiện
           await _scheduleEventNotification(
             id: notificationBaseId,
+            title: '🟢 Đang diễn ra: ${event.title}',
+            body: 'Sự kiện đã chính thức bắt đầu',
+            time: event.startTime,
+            payload: 'event_${event.id}',
+          );
+          // trước 1h
+          await _scheduleEventNotification(
+            id: notificationBaseId + 1,
             title: '⏰ Sắp diễn ra: ${event.title}',
             body: 'Còn 1 giờ nữa là đến sự kiện',
             time: event.startTime.subtract(const Duration(hours: 1)),
@@ -317,7 +325,7 @@ class AutoSchedulerService {
           );
           // trước 15p
           await _scheduleEventNotification(
-            id: notificationBaseId + 1,
+            id: notificationBaseId + 2,
             title: '⏰ Sắp diễn ra: ${event.title}',
             body: 'Sự kiện sẽ bắt đầu trong 15 phút tới',
             time: event.startTime.subtract(const Duration(minutes: 15)),
@@ -325,7 +333,7 @@ class AutoSchedulerService {
           );
           // trước kết thúc 15p
           await _scheduleEventNotification(
-            id: notificationBaseId + 2,
+            id: notificationBaseId + 3,
             title: '⏳ Sắp kết thúc: ${event.title}',
             body: 'Còn 15 phút nữa là kết thúc sự kiện',
             time: event.endTime.subtract(const Duration(minutes: 15)),
@@ -333,7 +341,7 @@ class AutoSchedulerService {
           );
           // kết thúc
           await _scheduleEventNotification(
-            id: notificationBaseId + 3,
+            id: notificationBaseId + 4,
             title: '✅ Kết thúc: ${event.title}',
             body: 'Sự kiện đã kết thúc, bạn có thể đánh dấu hoàn thành',
             time: event.endTime,

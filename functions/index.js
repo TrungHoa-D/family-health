@@ -16,7 +16,7 @@ exports.checkMissedDoses = onSchedule("every 5 minutes", async (event) => {
             const snapshot = await db
                 .collection("medication_logs")
                 .where("status", "==", "PENDING")
-                .where("scheduledTime", "<=", timeThreshold)
+                .where("scheduled_time", "<=", timeThreshold)
                 .where("alert_sent", "==", false)
                 .get();
 
@@ -27,7 +27,7 @@ exports.checkMissedDoses = onSchedule("every 5 minutes", async (event) => {
 
             for (const logDoc of snapshot.docs) {
                 const logData = logDoc.data();
-                const familyId = logData.familyId;
+                const familyId = logData.family_id;
 
                 if (!familyId) continue;
 
@@ -63,7 +63,7 @@ exports.checkMissedDoses = onSchedule("every 5 minutes", async (event) => {
                         },
                         data: {
                             logId: logDoc.id,
-                            scheduleId: logData.scheduleId,
+                            scheduleId: logData.schedule_id,
                         }
                     };
 
@@ -84,9 +84,9 @@ exports.checkMissedDoses = onSchedule("every 5 minutes", async (event) => {
 
 exports.onMedicalEventCreated = onDocumentCreated("medical_events/{eventId}", async (event) => {
     const data = event.data.data();
-    const familyId = data.familyId;
+    const familyId = data.family_id;
     const title = data.title;
-    const creatorId = data.creatorId;
+    const creatorId = data.creator_id;
 
     if (!familyId) {
         console.log("No familyId found in event data.");
@@ -102,7 +102,7 @@ exports.onMedicalEventCreated = onDocumentCreated("medical_events/{eventId}", as
         }
         
         // Tạo danh sách tài khoản liên quan (người tham gia + người tạo)
-        const participantIds = data.participantIds || [];
+        const participantIds = data.participant_ids || [];
         const relatedUids = [...new Set([...participantIds, creatorId])];
 
         let tokens = [];
