@@ -139,6 +139,17 @@ class EventListPage extends BaseCubitPage<EventListCubit, EventListState> {
                                         ? null
                                         : 'COMPLETED'),
                           ),
+                          const SizedBox(width: AppSpacing.sm),
+                          _FilterChip(
+                            label: 'Chưa hoàn thành',
+                            isSelected: state.statusFilter == 'INCOMPLETE',
+                            onTap: () => context
+                                .read<EventListCubit>()
+                                .updateStatusFilter(
+                                    state.statusFilter == 'INCOMPLETE'
+                                        ? null
+                                        : 'INCOMPLETE'),
+                          ),
                         ],
                       ),
                     ),

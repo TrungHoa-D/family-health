@@ -5,21 +5,71 @@ import 'package:family_health/presentation/resources/styles.dart';
 import 'package:family_health/presentation/view/widgets/app_card.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'dart:async';
 
 enum DashboardScheduleMode { ongoing, upcoming }
 
-class DashboardScheduleSection extends StatelessWidget {
+class DashboardScheduleSection extends StatefulWidget {
   const DashboardScheduleSection({
     super.key,
     required this.schedules,
+    required this.title,
     this.mode = DashboardScheduleMode.upcoming,
   });
   final List<DashboardScheduleModel> schedules;
   final DashboardScheduleMode mode;
+  final String title;
+
+  @override
+  State<DashboardScheduleSection> createState() =>
+      _DashboardScheduleSectionState();
+}
+
+class _DashboardScheduleSectionState extends State<DashboardScheduleSection> {
+  final PageController _pageController = PageController(viewportFraction: 0.85);
+  Timer? _timer;
+  int _currentPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.schedules.length > 1) {
+      _startAutoPlay();
+    }
+  }
+
+  void _startAutoPlay() {
+    _timer = Timer.periodic(const Duration(seconds: 10), (Timer timer) {
+      if (_pageController.hasClients) {
+        _currentPage++;
+        if (_currentPage >= widget.schedules.length) {
+          _currentPage = 0;
+          _pageController.animateToPage(
+            _currentPage,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+          );
+        } else {
+          _pageController.animateToPage(
+            _currentPage,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeIn,
+          );
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    _timer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final isOngoing = mode == DashboardScheduleMode.ongoing;
+    if (widget.schedules.isEmpty) return const SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -27,15 +77,30 @@ class DashboardScheduleSection extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
           child: Text(
-            isOngoing
-                ? 'home.ongoing_events'.tr()
-                : 'home.next_schedule'.tr(),
+            widget.title,
             style: AppStyles.titleMedium.copyWith(fontWeight: FontWeight.bold),
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
-        ...schedules.map((schedule) =>
-            _ScheduleCard(schedule: schedule, mode: mode)),
+        const SizedBox(height: AppSpacing.xs),
+        SizedBox(
+          height: 96, // fixed height for page view
+          child: PageView.builder(
+            controller: _pageController,
+            itemCount: widget.schedules.length,
+            onPageChanged: (int page) {
+              _currentPage = page;
+            },
+            itemBuilder: (context, index) {
+              final schedule = widget.schedules[index];
+              final isLast = index == widget.schedules.length - 1;
+              return _ScheduleCard(
+                schedule: schedule,
+                mode: widget.mode,
+                isLast: isLast,
+              );
+            },
+          ),
+        ),
       ],
     );
   }
@@ -46,7 +111,9 @@ class DashboardScheduleModel {
     required this.title,
     required this.dateTime,
     required this.location,
-    this.isAllDay = false,
+    this.timeMode = 'from_to',
+    this.endTime,
+    this.mealTime,
     this.imageUrl,
     this.eventType = 'OTHER',
     this.onTap,
@@ -54,7 +121,9 @@ class DashboardScheduleModel {
   final String title;
   final DateTime dateTime;
   final String location;
-  final bool isAllDay;
+  final String timeMode;
+  final DateTime? endTime;
+  final String? mealTime;
   final String? imageUrl;
   final String eventType;
   final VoidCallback? onTap;
@@ -77,9 +146,14 @@ class DashboardScheduleModel {
 }
 
 class _ScheduleCard extends StatelessWidget {
-  const _ScheduleCard({required this.schedule, required this.mode});
+  const _ScheduleCard({
+    required this.schedule,
+    required this.mode,
+    this.isLast = false,
+  });
   final DashboardScheduleModel schedule;
   final DashboardScheduleMode mode;
+  final bool isLast;
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +162,7 @@ class _ScheduleCard extends StatelessWidget {
 
     return AppCard(
       margin: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.md,
+        horizontal: AppSpacing.sm,  // cân bằng cả 2 bên để căn giữa hoàn hảo
         vertical: AppSpacing.xs,
       ),
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -132,9 +206,7 @@ class _ScheduleCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  schedule.isAllDay
-                      ? 'home.all_day'.tr()
-                      : '${DateFormat('HH:mm').format(schedule.dateTime)} • ${schedule.location}',
+                  _getSubtitle(),
                   style: AppStyles.labelSmall.copyWith(
                     color: AppColors.textSecondary,
                     fontWeight: FontWeight.w500,
@@ -163,5 +235,33 @@ class _ScheduleCard extends StatelessWidget {
         fit: BoxFit.cover,
       ),
     );
+  }
+
+  String _getSubtitle() {
+    String timeStr = '';
+    if (schedule.timeMode == 'all_day') {
+      timeStr = 'home.all_day'.tr(); // "Cả ngày"
+    } else if (schedule.timeMode == 'meal_based') {
+      String mealName = 'Bữa ăn';
+      if (schedule.mealTime == 'breakfast')
+        mealName = 'Bữa sáng';
+      else if (schedule.mealTime == 'lunch')
+        mealName = 'Bữa trưa';
+      else if (schedule.mealTime == 'dinner') mealName = 'Bữa tối';
+      timeStr = '$mealName (${DateFormat('HH:mm').format(schedule.dateTime)})';
+    } else {
+      if (schedule.endTime != null) {
+        timeStr =
+            'Từ ${DateFormat('HH:mm').format(schedule.dateTime)} đến ${DateFormat('HH:mm').format(schedule.endTime!)}';
+      } else {
+        timeStr = DateFormat('HH:mm').format(schedule.dateTime);
+      }
+    }
+
+    if (schedule.location.isNotEmpty) {
+      // Bỏ dấu chấm nếu text location rỗng tránh dư thừa
+      return '$timeStr • ${schedule.location}';
+    }
+    return timeStr;
   }
 }

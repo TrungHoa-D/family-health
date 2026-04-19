@@ -61,7 +61,9 @@ class DashboardCubit extends BaseCubit<DashboardState> {
     if (user.familyId != null) {
       final familyId = user.familyId!;
 
-      // 1. Watch schedules → tính stats + member progress
+      // Note: We don't use medication logs for stats in the dashboard progress card anymore,
+      // but we still watch schedules if we want to show generic alerts or member stats.
+      // However to avoid conflict, we calculate the progress inside the events stream block.
       _schedulesSubscription?.cancel();
       _schedulesSubscription =
           _watchFamilySchedulesUseCase.call(familyId).listen(
@@ -69,14 +71,9 @@ class DashboardCubit extends BaseCubit<DashboardState> {
           final stats =
               await _getTodayStatsUseCase.call(params: familyId);
 
-          final waiting = stats.totalDoses - stats.takenDoses - stats.missedDoses;
+          // We just update member stats and alerts from medication stats
           emit(state.copyWith(
             pageStatus: PageStatus.Loaded,
-            totalCount: stats.totalDoses,
-            takenCount: stats.takenDoses,
-            waitingCount: waiting.clamp(0, stats.totalDoses),
-            missedCount: stats.missedDoses,
-            progress: stats.completionPercentage / 100,
             alerts: stats.alerts,
             memberStats: stats.memberStats,
           ));
@@ -89,49 +86,48 @@ class DashboardCubit extends BaseCubit<DashboardState> {
         },
       );
 
-      // 2. Watch events → lọc sự kiện đang diễn ra và sắp tới
+      // 2. Watch events → lọc sự kiện và tính toán progress trong ngày thay cho medication load
       _eventsSubscription?.cancel();
       _eventsSubscription =
           _eventRepository.watchMedicalEvents(familyId).listen(
         (events) {
           final now = DateTime.now();
           final today = DateTime(now.year, now.month, now.day);
-          final tomorrow = today.add(const Duration(days: 1));
+          
+          final todayEvents = events.where((e) {
+            if (e.computedStatus == EventDisplayStatus.cancelled) return false;
+            final startDay = DateTime(e.startTime.year, e.startTime.month, e.startTime.day);
+            final endDay = DateTime(e.endTime.year, e.endTime.month, e.endTime.day);
+            return !startDay.isAfter(today) && !endDay.isBefore(today);
+          }).toList();
 
-          // Ongoing: sự kiện đang diễn ra
-          final ongoing = events.where((e) {
-            if (e.status == 'CANCELLED' || e.finished) return false;
-
-            if (e.timeMode == 'all_day') {
-              // Sự kiện cả ngày: ongoing nếu startTime là hôm nay
-              final eventDay = DateTime(
-                  e.startTime.year, e.startTime.month, e.startTime.day);
-              return eventDay == today;
-            }
-
-            // from_to / meal_based: ongoing nếu startTime <= now <= endTime
-            return !e.startTime.isAfter(now) && !e.endTime.isBefore(now);
-          }).toList()
+          final ongoing = todayEvents.where((e) => e.computedStatus == EventDisplayStatus.ongoing).toList()
             ..sort((a, b) => a.startTime.compareTo(b.startTime));
-
-          // Upcoming: sự kiện trong tương lai (bắt đầu sau now), không phải all_day hôm nay
-          final upcoming = events.where((e) {
-            if (e.status == 'CANCELLED' || e.finished) return false;
-
-            if (e.timeMode == 'all_day') {
-              // all_day: upcoming nếu là ngày mai trở đi
-              final eventDay = DateTime(
-                  e.startTime.year, e.startTime.month, e.startTime.day);
-              return !eventDay.isBefore(tomorrow);
-            }
-
-            return e.startTime.isAfter(now);
-          }).toList()
+          final upcoming = todayEvents.where((e) => e.computedStatus == EventDisplayStatus.upcoming).toList()
             ..sort((a, b) => a.startTime.compareTo(b.startTime));
+          final incomplete = todayEvents.where((e) => e.computedStatus == EventDisplayStatus.incomplete).toList()
+            ..sort((a, b) => a.startTime.compareTo(b.startTime));
+          final completed = todayEvents.where((e) => e.computedStatus == EventDisplayStatus.finished).toList()
+            ..sort((a, b) => b.startTime.compareTo(a.startTime)); // sort newest completed first
+
+          // Calculate progress using ONLY today's active events!
+          final total = ongoing.length + upcoming.length + incomplete.length + completed.length;
+          final finishedCount = todayEvents.where((e) => e.computedStatus == EventDisplayStatus.finished).length;
+          final missedCount = todayEvents.where((e) => e.computedStatus == EventDisplayStatus.incomplete).length;
+          final waitingCount = total - finishedCount - missedCount;
+          
+          final progress = total == 0 ? 0.0 : finishedCount / total;
 
           emit(state.copyWith(
-            ongoingEvents: ongoing.take(5).toList(),
-            upcomingEvents: upcoming.take(5).toList(),
+            ongoingEvents: ongoing,
+            upcomingEvents: upcoming,
+            incompleteEvents: incomplete,
+            completedEvents: completed,
+            totalCount: total,
+            takenCount: finishedCount,
+            waitingCount: ongoing.length + upcoming.length,
+            missedCount: missedCount,
+            progress: progress,
           ));
         },
         onError: (e) {

@@ -16,6 +16,8 @@ class DashboardState with _$DashboardState implements BaseCubitState {
     @Default([]) List<MemberStats> memberStats,
     @Default([]) List<MedicalEvent> ongoingEvents,
     @Default([]) List<MedicalEvent> upcomingEvents,
+    @Default([]) List<MedicalEvent> incompleteEvents,
+    @Default([]) List<MedicalEvent> completedEvents,
   }) = _DashboardState;
 
   const DashboardState._();

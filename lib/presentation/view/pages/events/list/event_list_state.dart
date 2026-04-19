@@ -13,7 +13,7 @@ class EventListState with _$EventListState implements BaseCubitState {
     String? pageErrorMessage,
     @Default('') String searchQuery,
     DateTimeRange? dateRange,
-    String? statusFilter, // UPCOMING, COMPLETED, CANCELLED or null for ALL
+    String? statusFilter, // UPCOMING, COMPLETED, INCOMPLETE or null for ALL
     @Default([]) List<MedicalEvent> allEvents,
   }) = _EventListState;
 
@@ -51,9 +51,19 @@ class EventListState with _$EventListState implements BaseCubitState {
       }).toList();
     }
 
-    // Filter by status
+    // Filter by computed status
     if (statusFilter != null) {
-      filtered = filtered.where((e) => e.status == statusFilter).toList();
+      filtered = filtered.where((e) {
+        if (statusFilter == 'UPCOMING') {
+          return e.computedStatus == EventDisplayStatus.upcoming ||
+                 e.computedStatus == EventDisplayStatus.ongoing;
+        } else if (statusFilter == 'COMPLETED') {
+          return e.computedStatus == EventDisplayStatus.finished;
+        } else if (statusFilter == 'INCOMPLETE') {
+          return e.computedStatus == EventDisplayStatus.incomplete;
+        }
+        return true;
+      }).toList();
     }
 
     // Sort by time descending (newest first)

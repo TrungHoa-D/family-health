@@ -25,21 +25,6 @@ class DashboardOverviewCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding:
-              const EdgeInsets.only(left: AppSpacing.md, top: AppSpacing.md),
-          child: Row(
-            children: [
-              const Text('📊', style: TextStyle(fontSize: 20)),
-              const SizedBox(width: AppSpacing.sm),
-              Text(
-                'home.overview_title'.tr(),
-                style:
-                    AppStyles.titleMedium.copyWith(fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-        ),
         AppCard(
           margin: const EdgeInsets.all(AppSpacing.md),
           padding: const EdgeInsets.all(AppSpacing.lg),
@@ -70,14 +55,6 @@ class DashboardOverviewCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ],
-                    ),
-                  ),
-                  const SizedBox(width: AppSpacing.md),
-                  Text(
-                    'home.status_good'.tr(),
-                    style: AppStyles.titleMedium.copyWith(
-                      color: AppColors.secondary,
-                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],

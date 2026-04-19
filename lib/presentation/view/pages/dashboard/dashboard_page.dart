@@ -103,6 +103,91 @@ class DashboardPage extends BaseCubitPage<DashboardCubit, DashboardState> {
                             ))
                         .toList(),
                   ),
+                  // Sự kiện đang diễn ra
+                  if (state.ongoingEvents.isNotEmpty) ...[
+                    const SizedBox(height: AppSpacing.md),
+                    DashboardScheduleSection(
+                      title: '${'home.ongoing_events'.tr()} (${state.ongoingEvents.length})',
+                      mode: DashboardScheduleMode.ongoing,
+                      schedules: state.ongoingEvents
+                          .map((e) => DashboardScheduleModel(
+                                title: e.title,
+                                dateTime: e.startTime,
+                                location: e.location,
+                                timeMode: e.timeMode,
+                                endTime: e.endTime,
+                                mealTime: e.mealTime,
+                                imageUrl: e.imageUrl,
+                                eventType: e.eventType,
+                                onTap: () =>
+                                    context.router.push(EventDetailRoute(event: e)),
+                              ))
+                          .toList(),
+                    ),
+                  ],
+                  // Sự kiện sắp tới
+                  if (state.upcomingEvents.isNotEmpty) ...[
+                    const SizedBox(height: AppSpacing.md),
+                    DashboardScheduleSection(
+                      title: '${'home.next_schedule'.tr()} (${state.upcomingEvents.length})',
+                      schedules: state.upcomingEvents
+                          .map((e) => DashboardScheduleModel(
+                                title: e.title,
+                                dateTime: e.startTime,
+                                location: e.location,
+                                timeMode: e.timeMode,
+                                endTime: e.endTime,
+                                mealTime: e.mealTime,
+                                imageUrl: e.imageUrl,
+                                eventType: e.eventType,
+                                onTap: () =>
+                                    context.router.push(EventDetailRoute(event: e)),
+                              ))
+                          .toList(),
+                    ),
+                  ],
+                  // Sự kiện chưa hoàn thành
+                  if (state.incompleteEvents.isNotEmpty) ...[
+                    const SizedBox(height: AppSpacing.md),
+                    DashboardScheduleSection(
+                      title: 'Chưa hoàn thành (${state.incompleteEvents.length})',
+                      schedules: state.incompleteEvents
+                          .map((e) => DashboardScheduleModel(
+                                title: e.title,
+                                dateTime: e.startTime,
+                                location: e.location,
+                                timeMode: e.timeMode,
+                                endTime: e.endTime,
+                                mealTime: e.mealTime,
+                                imageUrl: e.imageUrl,
+                                eventType: e.eventType,
+                                onTap: () =>
+                                    context.router.push(EventDetailRoute(event: e)),
+                              ))
+                          .toList(),
+                    ),
+                  ],
+                  // Sự kiện đã hoàn thành
+                  if (state.completedEvents.isNotEmpty) ...[
+                    const SizedBox(height: AppSpacing.md),
+                    DashboardScheduleSection(
+                      title: 'Đã hoàn thành (${state.completedEvents.length})',
+                      schedules: state.completedEvents
+                          .map((e) => DashboardScheduleModel(
+                                title: e.title,
+                                dateTime: e.startTime,
+                                location: e.location,
+                                timeMode: e.timeMode,
+                                endTime: e.endTime,
+                                mealTime: e.mealTime,
+                                imageUrl: e.imageUrl,
+                                eventType: e.eventType,
+                                onTap: () =>
+                                    context.router.push(EventDetailRoute(event: e)),
+                              ))
+                          .toList(),
+                    ),
+                  ],
                   const SizedBox(height: AppSpacing.lg),
                   // Members section — real data từ Firebase
                   DashboardMembersSection(
@@ -124,43 +209,6 @@ class DashboardPage extends BaseCubitPage<DashboardCubit, DashboardState> {
                       context.router.push(const FamilyManagementRoute());
                     },
                   ),
-                  // Sự kiện đang diễn ra
-                  if (state.ongoingEvents.isNotEmpty) ...[
-                    const SizedBox(height: AppSpacing.md),
-                    DashboardScheduleSection(
-                      mode: DashboardScheduleMode.ongoing,
-                      schedules: state.ongoingEvents
-                          .map((e) => DashboardScheduleModel(
-                                title: e.title,
-                                dateTime: e.startTime,
-                                location: e.location,
-                                isAllDay: e.timeMode == 'all_day',
-                                imageUrl: e.imageUrl,
-                                eventType: e.eventType,
-                                onTap: () =>
-                                    context.router.push(EventDetailRoute(event: e)),
-                              ))
-                          .toList(),
-                    ),
-                  ],
-                  // Sự kiện sắp tới
-                  if (state.upcomingEvents.isNotEmpty) ...[
-                    const SizedBox(height: AppSpacing.md),
-                    DashboardScheduleSection(
-                      schedules: state.upcomingEvents
-                          .map((e) => DashboardScheduleModel(
-                                title: e.title,
-                                dateTime: e.startTime,
-                                location: e.location,
-                                isAllDay: e.timeMode == 'all_day',
-                                imageUrl: e.imageUrl,
-                                eventType: e.eventType,
-                                onTap: () =>
-                                    context.router.push(EventDetailRoute(event: e)),
-                              ))
-                          .toList(),
-                    ),
-                  ],
                 ],
               ),
             ),
