@@ -17,6 +17,7 @@ import 'add_medication_cubit.dart';
 import 'components/ai_scanner_card.dart';
 import 'components/drug_info_section.dart';
 import 'components/inventory_info_section.dart';
+import 'components/manual_image_picker_card.dart';
 
 @RoutePage()
 class AddMedicationPage
@@ -48,6 +49,18 @@ class AddMedicationPage
           .scanMedicationImage(File(pickedFile.path));
     }
   }
+
+  Future<void> _onManualPickTap(BuildContext context) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null && context.mounted) {
+      context
+          .read<AddMedicationCubit>()
+          .pickManualImage(File(pickedFile.path));
+    }
+  }
+
 
   void _showCreateCategoryDialog(BuildContext context) {
     final nameController = TextEditingController();
@@ -214,17 +227,30 @@ class AddMedicationPage
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Vùng 2 — AI Scanner
+                    // Vùng 2 — Mode Toggle & Image Picker
                     if (!state.isEditing)
                       Padding(
                         padding: const EdgeInsets.only(bottom: AppSpacing.xl),
-                        child: AiScannerCard(
-                          isScanning: state.isScanning,
-                          scannedImage: state.scannedImage,
-                          imageUrl: state.imageUrl,
-                          onTap: state.isScanning
-                              ? null
-                              : () => _onScanTap(context),
+                        child: Column(
+                          children: [
+                            _buildModeToggle(context, state),
+                            const SizedBox(height: AppSpacing.lg),
+                            if (state.addMode == AddMode.ai)
+                              AiScannerCard(
+                                isScanning: state.isScanning,
+                                scannedImage: state.scannedImage,
+                                imageUrl: state.imageUrl,
+                                onTap: state.isScanning
+                                    ? null
+                                    : () => _onScanTap(context),
+                              )
+                            else
+                              ManualImagePickerCard(
+                                pickedImage: state.scannedImage,
+                                imageUrl: state.imageUrl,
+                                onTap: () => _onManualPickTap(context),
+                              ),
+                          ],
                         ),
                       ),
 
@@ -349,4 +375,62 @@ class AddMedicationPage
       },
     );
   }
+
+  Widget _buildModeToggle(BuildContext context, AddMedicationState state) {
+    final isAi = state.addMode == AddMode.ai;
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(AppSpacing.radiusButton),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: () => context.read<AddMedicationCubit>().setAddMode(AddMode.ai),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
+                  color: isAi ? AppColors.white : Colors.transparent,
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusButton - 4),
+                  boxShadow: isAi ? [const BoxShadow(color: Colors.black12, blurRadius: 4)] : [],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.auto_awesome, size: 16, color: isAi ? AppColors.primary : AppColors.textSecondary),
+                    const SizedBox(width: 8),
+                    Text('AI Scanner', style: AppStyles.labelLarge.copyWith(color: isAi ? AppColors.primary : AppColors.textSecondary, fontWeight: isAi ? FontWeight.bold : FontWeight.normal)),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: GestureDetector(
+              onTap: () => context.read<AddMedicationCubit>().setAddMode(AddMode.manual),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
+                  color: !isAi ? AppColors.white : Colors.transparent,
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusButton - 4),
+                  boxShadow: !isAi ? [const BoxShadow(color: Colors.black12, blurRadius: 4)] : [],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.edit_note, size: 18, color: !isAi ? AppColors.primary : AppColors.textSecondary),
+                    const SizedBox(width: 8),
+                    Text('meds.manual_mode'.tr(), style: AppStyles.labelLarge.copyWith(color: !isAi ? AppColors.primary : AppColors.textSecondary, fontWeight: !isAi ? FontWeight.bold : FontWeight.normal)),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
+

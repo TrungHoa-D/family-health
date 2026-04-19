@@ -131,6 +131,14 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
     emit(state.copyWith(selectedCategory: value));
   }
 
+  void setAddMode(AddMode mode) {
+    emit(state.copyWith(
+      addMode: mode,
+      scannedImage: null,
+      scanError: null,
+    ));
+  }
+
   /// Tạo category mới với description
   Future<void> createCategory(String name, String description) async {
     final category = MedicationCategory(
@@ -143,6 +151,13 @@ class AddMedicationCubit extends BaseCubit<AddMedicationState> {
 
     await _saveCategoryUseCase.call(params: category);
     emit(state.copyWith(selectedCategory: category.name));
+  }
+
+  void pickManualImage(File image) {
+    emit(state.copyWith(
+      scannedImage: image,
+      scanError: null,
+    ));
   }
 
   Future<void> scanMedicationImage(File image) async {

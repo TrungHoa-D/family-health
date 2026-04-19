@@ -1,9 +1,12 @@
 part of 'add_medication_cubit.dart';
 
+enum AddMode { ai, manual }
+
 @freezed
 class AddMedicationState with _$AddMedicationState implements BaseCubitState {
   const factory AddMedicationState({
     @Default(PageStatus.Uninitialized) PageStatus pageStatus,
+    @Default(AddMode.ai) AddMode addMode,
     String? pageErrorMessage,
     @Default(false) bool isEditing,
     String? editingMedicationId,
