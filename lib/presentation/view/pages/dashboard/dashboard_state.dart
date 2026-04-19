@@ -14,6 +14,7 @@ class DashboardState with _$DashboardState implements BaseCubitState {
     @Default(0) int missedCount,
     @Default([]) List<MedicationAlert> alerts,
     @Default([]) List<MemberStats> memberStats,
+    @Default([]) List<MedicalEvent> ongoingEvents,
     @Default([]) List<MedicalEvent> upcomingEvents,
   }) = _DashboardState;
 

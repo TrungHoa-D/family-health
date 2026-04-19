@@ -24,16 +24,10 @@ class DashboardMembersSection extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  const Text('👨‍👩‍👧', style: TextStyle(fontSize: 20)),
-                  const SizedBox(width: AppSpacing.sm),
-                  Text(
-                    'home.members'.tr(),
-                    style: AppStyles.titleMedium
-                        .copyWith(fontWeight: FontWeight.bold),
-                  ),
-                ],
+              Text(
+                'home.members'.tr(),
+                style: AppStyles.titleMedium
+                    .copyWith(fontWeight: FontWeight.bold),
               ),
               TextButton(
                 onPressed: onViewAll,

@@ -124,20 +124,43 @@ class DashboardPage extends BaseCubitPage<DashboardCubit, DashboardState> {
                       context.router.push(const FamilyManagementRoute());
                     },
                   ),
-                  // Schedule section — upcoming events từ Firebase
-                  if (state.upcomingEvents.isNotEmpty) ...
-                    [
-                      DashboardScheduleSection(
-                        schedules: state.upcomingEvents
-                            .map((e) => DashboardScheduleModel(
-                                  title: e.title,
-                                  dateTime: e.startTime,
-                                  location: e.location,
-                                  onTap: () => context.router.push(EventDetailRoute(event: e)),
-                                ))
-                            .toList(),
-                      ),
-                    ],
+                  // Sự kiện đang diễn ra
+                  if (state.ongoingEvents.isNotEmpty) ...[
+                    const SizedBox(height: AppSpacing.md),
+                    DashboardScheduleSection(
+                      mode: DashboardScheduleMode.ongoing,
+                      schedules: state.ongoingEvents
+                          .map((e) => DashboardScheduleModel(
+                                title: e.title,
+                                dateTime: e.startTime,
+                                location: e.location,
+                                isAllDay: e.timeMode == 'all_day',
+                                imageUrl: e.imageUrl,
+                                eventType: e.eventType,
+                                onTap: () =>
+                                    context.router.push(EventDetailRoute(event: e)),
+                              ))
+                          .toList(),
+                    ),
+                  ],
+                  // Sự kiện sắp tới
+                  if (state.upcomingEvents.isNotEmpty) ...[
+                    const SizedBox(height: AppSpacing.md),
+                    DashboardScheduleSection(
+                      schedules: state.upcomingEvents
+                          .map((e) => DashboardScheduleModel(
+                                title: e.title,
+                                dateTime: e.startTime,
+                                location: e.location,
+                                isAllDay: e.timeMode == 'all_day',
+                                imageUrl: e.imageUrl,
+                                eventType: e.eventType,
+                                onTap: () =>
+                                    context.router.push(EventDetailRoute(event: e)),
+                              ))
+                          .toList(),
+                    ),
+                  ],
                 ],
               ),
             ),

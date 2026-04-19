@@ -89,18 +89,48 @@ class DashboardCubit extends BaseCubit<DashboardState> {
         },
       );
 
-      // 2. Watch events → lọc sự kiện sắp tới
+      // 2. Watch events → lọc sự kiện đang diễn ra và sắp tới
       _eventsSubscription?.cancel();
       _eventsSubscription =
           _eventRepository.watchMedicalEvents(familyId).listen(
         (events) {
           final now = DateTime.now();
-          final upcoming = events
-              .where((e) => e.startTime.isAfter(now))
-              .toList()
+          final today = DateTime(now.year, now.month, now.day);
+          final tomorrow = today.add(const Duration(days: 1));
+
+          // Ongoing: sự kiện đang diễn ra
+          final ongoing = events.where((e) {
+            if (e.status == 'CANCELLED' || e.finished) return false;
+
+            if (e.timeMode == 'all_day') {
+              // Sự kiện cả ngày: ongoing nếu startTime là hôm nay
+              final eventDay = DateTime(
+                  e.startTime.year, e.startTime.month, e.startTime.day);
+              return eventDay == today;
+            }
+
+            // from_to / meal_based: ongoing nếu startTime <= now <= endTime
+            return !e.startTime.isAfter(now) && !e.endTime.isBefore(now);
+          }).toList()
+            ..sort((a, b) => a.startTime.compareTo(b.startTime));
+
+          // Upcoming: sự kiện trong tương lai (bắt đầu sau now), không phải all_day hôm nay
+          final upcoming = events.where((e) {
+            if (e.status == 'CANCELLED' || e.finished) return false;
+
+            if (e.timeMode == 'all_day') {
+              // all_day: upcoming nếu là ngày mai trở đi
+              final eventDay = DateTime(
+                  e.startTime.year, e.startTime.month, e.startTime.day);
+              return !eventDay.isBefore(tomorrow);
+            }
+
+            return e.startTime.isAfter(now);
+          }).toList()
             ..sort((a, b) => a.startTime.compareTo(b.startTime));
 
           emit(state.copyWith(
+            ongoingEvents: ongoing.take(5).toList(),
             upcomingEvents: upcoming.take(5).toList(),
           ));
         },

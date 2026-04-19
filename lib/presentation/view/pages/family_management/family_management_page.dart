@@ -65,7 +65,7 @@ class FamilyManagementPage
                       const SizedBox(height: AppSpacing.xl),
                       _buildMembersList(state),
                       const SizedBox(height: AppSpacing.xl),
-                      if (state.isAdmin) _buildInviteSection(context, state),
+                      _buildInviteSection(context, state),
                       const SizedBox(height: AppSpacing.xxl),
                       _buildActionButtons(context, state),
                     ],
