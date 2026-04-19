@@ -58,6 +58,10 @@ class MedicalEvent with _$MedicalEvent {
     @JsonKey(name: 'meal_time') String? mealTime,
     /// Liều lượng uống (chỉ dùng khi eventType = 'MEDICATION'), ví dụ: "2 viên", "500mg"
     @JsonKey(name: 'dosage') String? dosage,
+    /// Cờ hiệu Firebase đã đánh dấu bắn Push Notification lúc bắt đầu
+    @JsonKey(name: 'notified_start') @Default(false) bool notifiedStart,
+    /// Cờ hiệu Firebase đã đánh dấu bắn Push Notification lúc bỏ lỡ chưa hoàn thành
+    @JsonKey(name: 'notified_end_missed') @Default(false) bool notifiedEndMissed,
   }) = _MedicalEvent;
 
   factory MedicalEvent.fromJson(Map<String, dynamic> json) =>

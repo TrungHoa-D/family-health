@@ -249,9 +249,6 @@ class AutoSchedulerService {
       // Chỉ lập lịch nếu user hiện tại là người tham gia
       if (!event.participantIds.contains(currentUserId)) continue;
       
-      // Bỏ qua event đã kết thúc/hoàn thành hoặc đã bị hủy
-      if (event.finished || event.status == 'CANCELLED' || event.status == 'COMPLETED') continue;
-      
       final baseId = event.id.hashCode.abs() % 1000000000; // Đẩy base id xa ra khỏi medication
       final notificationBaseId = baseId + 100000;
 
@@ -259,6 +256,9 @@ class AutoSchedulerService {
       for (int i = 0; i < 5; i++) {
         await _notificationService.cancelNotification(notificationBaseId + i);
       }
+
+      // Bỏ qua event đã kết thúc/hoàn thành hoặc đã bị hủy sau khi ĐÃO HỦY schedule
+      if (event.finished || event.status == 'CANCELLED' || event.status == 'COMPLETED') continue;
 
       switch(event.timeMode) {
         case 'all_day':
