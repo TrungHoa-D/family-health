@@ -118,7 +118,7 @@ class LoginPage extends BaseCubitPage<LoginCubit, LoginState> {
   Widget _buildEmailPasswordForm(BuildContext context, bool isLoginMode) {
     return BlocBuilder<LoginCubit, LoginState>(
       buildWhen: (prev, curr) =>
-          prev.isSigningIn != curr.isSigningIn ||
+          prev.isSigningInEmail != curr.isSigningInEmail ||
           prev.isPasswordVisible != curr.isPasswordVisible ||
           prev.emailError != curr.emailError ||
           prev.passwordError != curr.passwordError,
@@ -183,10 +183,10 @@ class LoginPage extends BaseCubitPage<LoginCubit, LoginState> {
               title: isLoginMode
                   ? 'login.sign_in_email'.tr()
                   : 'login.sign_up_email'.tr(),
-              enable: !state.isSigningIn,
+              enable: !state.isSigningInEmail,
               onPressed: () =>
                   context.read<LoginCubit>().submitEmailForm(context),
-              icon: state.isSigningIn
+              icon: state.isSigningInEmail
                   ? const SizedBox(
                       width: 18,
                       height: 18,
@@ -203,7 +203,7 @@ class LoginPage extends BaseCubitPage<LoginCubit, LoginState> {
             // Toggle login/signup mode
             Center(
               child: TextButton(
-                onPressed: state.isSigningIn
+                onPressed: state.isSigningInEmail
                     ? null
                     : () => context.read<LoginCubit>().toggleLoginMode(),
                 style: TextButton.styleFrom(
@@ -338,13 +338,13 @@ class LoginPage extends BaseCubitPage<LoginCubit, LoginState> {
 
   Widget _buildGoogleSignInButton(BuildContext context, AppThemeData themeOwn) {
     return BlocBuilder<LoginCubit, LoginState>(
-      buildWhen: (prev, curr) => prev.isSigningIn != curr.isSigningIn,
+      buildWhen: (prev, curr) => prev.isSigningInGoogle != curr.isSigningInGoogle,
       builder: (context, state) {
         return SizedBox(
           width: double.infinity,
           height: 56,
           child: OutlinedButton(
-            onPressed: state.isSigningIn
+            onPressed: state.isSigningInGoogle
                 ? null
                 : () {
                     context.read<LoginCubit>().signInWithGoogle(context);
@@ -357,7 +357,7 @@ class LoginPage extends BaseCubitPage<LoginCubit, LoginState> {
               backgroundColor: AppColors.white,
               elevation: 0,
             ),
-            child: state.isSigningIn
+            child: state.isSigningInGoogle
                 ? SizedBox(
                     width: 20,
                     height: 20,

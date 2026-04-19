@@ -5,7 +5,8 @@ class LoginState with _$LoginState implements BaseCubitState {
   const factory LoginState({
     @Default(PageStatus.Uninitialized) PageStatus pageStatus,
     String? pageErrorMessage,
-    @Default(false) bool isSigningIn,
+    @Default(false) bool isSigningInEmail,
+    @Default(false) bool isSigningInGoogle,
     UserEntity? user,
     @Default(true) bool isLoginMode,
     // Email/Password form fields (for Windows desktop)

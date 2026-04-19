@@ -90,7 +90,7 @@ class LoginCubit extends BaseCubit<LoginState> {
       return;
     }
 
-    emit(state.copyWith(isSigningIn: true));
+    emit(state.copyWith(isSigningInEmail: true));
     try {
       final params = EmailSignInParams(
         email: state.email.trim(),
@@ -109,13 +109,13 @@ class LoginCubit extends BaseCubit<LoginState> {
       if (existingUser == null) {
         // Người dùng mới: Đồng bộ dữ liệu cơ bản và bắt đầu onboarding
         await _syncUserUseCase.call(params: user);
-        emit(state.copyWith(isSigningIn: false, user: user));
+        emit(state.copyWith(isSigningInEmail: false, user: user));
         if (context.mounted) {
           context.router.replaceAll([const InterfaceModeSelectionRoute()]);
         }
       } else {
         // Người dùng cũ: Sử dụng dữ liệu từ Firestore, tránh ghi đè dữ liệu quan trọng
-        emit(state.copyWith(isSigningIn: false, user: existingUser));
+        emit(state.copyWith(isSigningInEmail: false, user: existingUser));
         if (context.mounted) {
           // Kiểm tra xem đã cài đặt chế độ giao diện chưa
           if (existingUser.uiPreference == null) {
@@ -129,7 +129,7 @@ class LoginCubit extends BaseCubit<LoginState> {
 
     } catch (e) {
       logger.e('Email Form failed: $e');
-      emit(state.copyWith(isSigningIn: false));
+      emit(state.copyWith(isSigningInEmail: false));
       if (state.isLoginMode) {
         showErrorDialog('login.sign_in_failed'.tr());
       } else {
@@ -141,7 +141,7 @@ class LoginCubit extends BaseCubit<LoginState> {
   // ── Google Sign-In (Android / iOS) ──────────────────────────────────────
 
   Future<void> signInWithGoogle(BuildContext context) async {
-    emit(state.copyWith(isSigningIn: true));
+    emit(state.copyWith(isSigningInGoogle: true));
     try {
       final UserEntity user = await _googleSignInUseCase.call(params: null);
 
@@ -150,13 +150,13 @@ class LoginCubit extends BaseCubit<LoginState> {
       if (existingUser == null) {
         // Người dùng mới: Đồng bộ dữ liệu cơ bản và bắt đầu onboarding
         await _syncUserUseCase.call(params: user);
-        emit(state.copyWith(isSigningIn: false, user: user));
+        emit(state.copyWith(isSigningInGoogle: false, user: user));
         if (context.mounted) {
           context.router.replaceAll([const InterfaceModeSelectionRoute()]);
         }
       } else {
         // Người dùng cũ: Sử dụng dữ liệu từ Firestore, tránh ghi đè
-        emit(state.copyWith(isSigningIn: false, user: existingUser));
+        emit(state.copyWith(isSigningInGoogle: false, user: existingUser));
         if (context.mounted) {
           if (existingUser.uiPreference == null) {
             context.router.replaceAll([const InterfaceModeSelectionRoute()]);
@@ -167,7 +167,7 @@ class LoginCubit extends BaseCubit<LoginState> {
       }
     } catch (e) {
       logger.e('Google Sign-In failed: $e');
-      emit(state.copyWith(isSigningIn: false));
+      emit(state.copyWith(isSigningInGoogle: false));
       showErrorDialog('Google Sign-In failed. Please try again.');
     }
   }

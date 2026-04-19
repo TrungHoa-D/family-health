@@ -8,7 +8,7 @@ const messaging = admin.messaging();
 
 exports.checkMissedDoses = onSchedule("every 5 minutes", async (event) => {
         const now = new Date();
-        // Trễ 15 phút so với scheduledTime
+        // Trễ 15 phút so với scheduled_time
         const timeThreshold = new Date(now.getTime() - 15 * 60000);
 
         try {
@@ -42,9 +42,6 @@ exports.checkMissedDoses = onSchedule("every 5 minutes", async (event) => {
 
                 // Lấy fcm_tokens của các thành viên này
                 for (const userId of membersToNotify) {
-                    // Không gửi cho chính người bệnh
-                    // if (userId === logData.patientId) continue; 
-
                     const userDoc = await db.collection("users").doc(userId).get();
                     if (userDoc.exists) {
                         const userData = userDoc.data();
@@ -55,19 +52,38 @@ exports.checkMissedDoses = onSchedule("every 5 minutes", async (event) => {
                 }
 
                 if (tokens.length > 0) {
-                    // Gửi Push Notification
-                    const payload = {
+                    const uniqueTokens = [...new Set(tokens)];
+
+                    // Sử dụng sendEachForMulticast thay vì sendToDevice (đã bị xóa trong Admin SDK v12+)
+                    const message = {
                         notification: {
                             title: "Cảnh báo lỡ liều thuốc!",
                             body: "Đã trễ hơn 15 phút, vui lòng nhắc nhở thành viên uống thuốc.",
                         },
                         data: {
                             logId: logDoc.id,
-                            scheduleId: logData.schedule_id,
-                        }
+                            scheduleId: logData.schedule_id || "",
+                        },
+                        tokens: uniqueTokens,
                     };
 
-                    await messaging.sendToDevice(tokens, payload);
+                    const response = await messaging.sendEachForMulticast(message);
+                    console.log(`Missed dose alert sent. Success: ${response.successCount}, Failure: ${response.failureCount}`);
+
+                    // Xóa token hết hạn
+                    if (response.failureCount > 0) {
+                        const failedTokens = [];
+                        response.responses.forEach((resp, idx) => {
+                            if (!resp.success && resp.error &&
+                                (resp.error.code === 'messaging/invalid-registration-token' ||
+                                 resp.error.code === 'messaging/registration-token-not-registered')) {
+                                failedTokens.push(uniqueTokens[idx]);
+                            }
+                        });
+                        if (failedTokens.length > 0) {
+                            console.log(`Removing ${failedTokens.length} invalid tokens`);
+                        }
+                    }
 
                     // Đánh dấu đã gửi cảnh báo để không gửi lại lần nữa
                     await logDoc.ref.update({ alert_sent: true });
@@ -83,13 +99,21 @@ exports.checkMissedDoses = onSchedule("every 5 minutes", async (event) => {
     });
 
 exports.onMedicalEventCreated = onDocumentCreated("medical_events/{eventId}", async (event) => {
-    const data = event.data.data();
+    const snapshot = event.data;
+    if (!snapshot) {
+        console.log("No data associated with the event.");
+        return null;
+    }
+
+    const data = snapshot.data();
     const familyId = data.family_id;
     const title = data.title;
     const creatorId = data.creator_id;
 
+    console.log(`Event created: title="${title}", familyId="${familyId}", creatorId="${creatorId}"`);
+
     if (!familyId) {
-        console.log("No familyId found in event data.");
+        console.log("No family_id found in event data.");
         return null;
     }
 
@@ -100,21 +124,30 @@ exports.onMedicalEventCreated = onDocumentCreated("medical_events/{eventId}", as
             console.log(`Family group ${familyId} not found.`);
             return null;
         }
-        
-        // Tạo danh sách tài khoản liên quan (người tham gia + người tạo)
+
+        // Lấy tất cả thành viên gia đình (bao gồm cả người tham gia sự kiện)
+        const familyData = familyDoc.data();
+        const familyMembers = familyData.members || [];
         const participantIds = data.participant_ids || [];
-        const relatedUids = [...new Set([...participantIds, creatorId])];
+        // Gộp tất cả thành viên liên quan: family members + participants + creator
+        const relatedUids = [...new Set([...familyMembers, ...participantIds, creatorId].filter(Boolean))];
+
+        console.log(`Related UIDs to notify: ${JSON.stringify(relatedUids)}`);
 
         let tokens = [];
         // Duyệt qua các tài khoản liên quan để lấy FCM tokens
         for (const uid of relatedUids) {
-
             const userDoc = await db.collection("users").doc(uid).get();
             if (userDoc.exists) {
                 const userData = userDoc.data();
                 if (userData.fcm_tokens && userData.fcm_tokens.length > 0) {
                     tokens = tokens.concat(userData.fcm_tokens);
+                    console.log(`Found ${userData.fcm_tokens.length} token(s) for user ${uid}`);
+                } else {
+                    console.log(`No FCM tokens for user ${uid}`);
                 }
+            } else {
+                console.log(`User document ${uid} not found`);
             }
         }
 
@@ -122,7 +155,10 @@ exports.onMedicalEventCreated = onDocumentCreated("medical_events/{eventId}", as
             // Loại bỏ token trùng lặp
             const uniqueTokens = [...new Set(tokens)];
 
-            const payload = {
+            console.log(`Sending to ${uniqueTokens.length} unique token(s)`);
+
+            // Sử dụng sendEachForMulticast (API mới thay thế sendToDevice)
+            const message = {
                 notification: {
                     title: "📅 Sự kiện gia đình mới",
                     body: `Sự kiện "${title}" vừa được thêm vào lịch gia đình.`,
@@ -130,12 +166,22 @@ exports.onMedicalEventCreated = onDocumentCreated("medical_events/{eventId}", as
                 data: {
                     eventId: event.params.eventId,
                     type: "MEDICAL_EVENT",
-                    click_action: "FLUTTER_NOTIFICATION_CLICK"
-                }
+                    click_action: "FLUTTER_NOTIFICATION_CLICK",
+                },
+                tokens: uniqueTokens,
             };
 
-            const response = await messaging.sendToDevice(uniqueTokens, payload);
-            console.log(`Sent notification for event ${title} to ${uniqueTokens.length} devices. Success: ${response.successCount}`);
+            const response = await messaging.sendEachForMulticast(message);
+            console.log(`Sent notification for event "${title}". Success: ${response.successCount}, Failure: ${response.failureCount}`);
+
+            // Log chi tiết lỗi nếu có
+            if (response.failureCount > 0) {
+                response.responses.forEach((resp, idx) => {
+                    if (!resp.success) {
+                        console.error(`Failed to send to token ${uniqueTokens[idx]}: ${resp.error?.message}`);
+                    }
+                });
+            }
         } else {
             console.log("No FCM tokens found to notify.");
         }
